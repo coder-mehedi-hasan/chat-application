@@ -1,0 +1,21 @@
+::-webkit-scrollbar {
+    display: none;
+    width: 0 !important;
+    height: 0 !important;
+    background: #024439b5;
+}
+
+.css-vyflhh {
+    border: none !important;
+}
+
+.form-control:focus-visible {
+    outline: none;
+    box-shadow: none;
+}
+
+#chat-app-layout {
+    background-image: url("https://kotha.app/img/hdpi/bg.png");
+    width: 100%;
+    position: relative,
+}
