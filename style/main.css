@@ -15,7 +15,30 @@
 }
 
 #chat-app-layout {
+    /* background-color: rgb(33, 37, 41,0.3); */
     background-image: url("https://kotha.app/img/hdpi/bg.png");
     width: 100%;
-    position: relative,
+    position: relative;
+}
+
+
+.btn {
+    border: none !important;
+    outline: none !important;
+}
+
+.message-side-pill {
+    position: relative;
+    border-bottom-left-radius: 0 !important;
+}
+
+.message-side-pill::before {
+    content: "";
+    height: 15px;
+    width:10px;
+    position: absolute;
+    background: #fff;
+    left: -11px;
+    bottom: 0;
+    clip-path: polygon(100% 0, 0% 100%, 100% 100%);
 }

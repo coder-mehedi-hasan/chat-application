@@ -6,6 +6,7 @@ import Image from 'react-bootstrap/Image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { icon } from '@fortawesome/fontawesome-svg-core/import.macro'
 import MessageForm from '../MessageForm';
+import Messages from '../Messages/Messages';
 
 
 export default function ChattingInterFace({ contact_id }) {
@@ -27,14 +28,20 @@ export default function ChattingInterFace({ contact_id }) {
 
     return (
         <div style={{ height: "100vh", display: "flex", flexDirection: "column", paddingLeft: "0.5px" }} className='chat-interface'>
-            <div style={{ flex: 1, background: "#212529" }} className='text-white d-flex align-items-center justify-content-between px-3'>
+            <div style={{ flex: 1, background: "rgb(33, 37, 41,0.95)" }} className='text-white d-flex align-items-center justify-content-between px-3'>
                 <UserInfoBox user={elementWithId} size={55} />
                 <div>
                     <Button style={{ height: "45px", width: "45px", borderRadius: "50%", background: "none", border: "1px solid #3fb9a4ff" }}><Image src='https://i.ibb.co/v41GDy9/menu.png'></Image></Button>
                 </div>
             </div>
-            <div style={{ flex: 8 }} className='text-white px-3'>middle</div>
-            <div style={{ flex: 1, background: "#212529" }} >
+            <div style={{ flex: 8,padding:"" }} className='px-4 text-white overflow-scroll' >
+                <Messages />
+                <Messages />
+                <Messages />
+                <Messages />
+                <Messages />
+            </div>
+            <div style={{ flex: 1, background: "rgb(33, 37, 41,0.95)" }} >
                 <MessageForm />
             </div>
         </div>

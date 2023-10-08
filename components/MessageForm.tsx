@@ -7,7 +7,7 @@ export default function MessageForm() {
     return (
         <div className='w-100 h-100 text-white d-flex align-items-center justify-content-between px-3'>
             <Button variant='' >
-                <Image className='img-fluid' src="https://i.ibb.co/MGVXKG8/plus-icon-13062.png" alt="" height={25} width={25} />
+                <Image className='img-fluid' src="https://i.ibb.co/ZW7ZFVP/add-148781.png" alt="" height={25} width={25} />
             </Button>
             <InputGroup size='sm' className="px-1 py-1 rounded" style={{ background: "rgb(0,0,0,0.5)" }}>
                 <Button variant=''>
@@ -19,7 +19,7 @@ export default function MessageForm() {
                     className='py-2'
                 />
                 <Button variant='' >
-                    <Image className='img-fluid' src="https://i.ibb.co/FxrqnWq/kisspng-microphone-computer-icons-5b31ba8a041718-3335175915299856740168.png" alt="" height={20} width={20} />
+                    <Image className='img-fluid' src="https://i.postimg.cc/0N4P1xJr/microphone-8369015.png" alt="" height={20} width={20} />
                 </Button>
             </InputGroup>
             {/* <InputGroup className="mb-3">
@@ -28,7 +28,7 @@ export default function MessageForm() {
                 <Form.Control aria-label="Example text with two button addons" />
             </InputGroup> */}
             <Button variant='' >
-                <Image className='img-fluid' src="https://i.ibb.co/g9pyrsj/pngkit-send-icon-png-1882365.png" alt="" height={25} width={25} />
+                <Image className='img-fluid' src="https://i.ibb.co/QdZ8jVf/send-10109845.png" alt="" height={25} width={25} />
             </Button>
 
         </div>

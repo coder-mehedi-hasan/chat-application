@@ -13,7 +13,7 @@ export default function SearchBox() {
                 
             />
             <Button variant="" id="button-addon2">
-                <Image className='img-fluid' src="https://i.ibb.co/BzPr472/Vector.png" alt="" height={20} width={20} /> 
+                <Image className='img-fluid' src="https://i.ibb.co/chTSXb5/oil-5320478.png" alt="" height={20} width={20} /> 
             </Button>
         </InputGroup>
     )

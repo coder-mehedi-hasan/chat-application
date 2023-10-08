@@ -16,6 +16,7 @@ export default function Dashboard() {
     const [check, setCheck] = useState(false)
 
     const [contactId, setContactId] = useState(null)
+    const [status, setStatus] = useState(false)
 
 
     return (
@@ -49,13 +50,12 @@ export default function Dashboard() {
 
                                 },
                             }}
-
                         >
                             {
                                 user.map(item => {
                                     return (
                                         <MenuItem onClick={() => setContactId(item?.id)} key={item?.id} style={{ padding: "0px 5px", height: "65px" }} >
-                                           <UserInfoBox user={item} size={45}/>
+                                            <UserInfoBox user={item} size={45} />
                                         </MenuItem>
                                     )
                                 })
