@@ -1,6 +1,6 @@
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import SideBarItemAfter from './SideBar/SideBarItemAfter';
 import user from '../../fake_data/user.json';
 import SideBarItemBefore from './SideBar/SideBarItemBefore';
@@ -11,13 +11,24 @@ import SearchBox from './SearchBox';
 import HomeChat from '../common/HomeChat';
 import ChattingInterFace from '../common/ChattingInterFace';
 import UserInfoBox from '../common/UserInfoBox';
+import { useMediaQuery } from 'react-responsive'
+
+
+
 
 export default function Dashboard() {
     const [check, setCheck] = useState(false)
-
     const [contactId, setContactId] = useState(null)
     const [status, setStatus] = useState(false)
+    const [isMobile, setIsMobile] = useState(false);
 
+    const [windowWidth, setWindowWidth] = useState()
+    const isMobileWidth = useMediaQuery({ maxWidth: 768 })
+
+    useEffect(() => {
+        setCheck(isMobileWidth)
+    }, [isMobileWidth]
+    )
 
     return (
         <div className='w-100 p-0 container-fluid bg-dark' >
@@ -26,7 +37,7 @@ export default function Dashboard() {
                     <Sidebar
                         collapsed={check}
                         backgroundColor='#212529'
-                        width='300px'
+                        width={isMobileWidth ? "200px" : "280px"}
                         collapsedWidth='65px'
                         style={{ height: "100vh" }}
                     >
