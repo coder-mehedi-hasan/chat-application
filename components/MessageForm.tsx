@@ -5,14 +5,14 @@ import { Button, Form, Image, InputGroup } from 'react-bootstrap'
 import Toast from 'react-bootstrap/Toast';
 
 export default function MessageForm() {
-    const [showB, setShowB] = useState(true);
+    const [showB, setShowB] = useState(false);
 
     const toggleShowB = () => setShowB(!showB);
     return (
         <>
             <div className='w-100 h-100 text-white d-flex align-items-center justify-content-between px-3'>
                 <Button variant='' >
-                    <Image onClick={toggleShowB} className='img-fluid' src="https://i.ibb.co/ZW7ZFVP/add-148781.png" alt="" height={25} width={25} />
+                    <Image onClick={toggleShowB} className='img-fluid' src={showB ? "https://i.ibb.co/rmd3Jj3/minus-8637529.png" : "https://i.ibb.co/ZW7ZFVP/add-148781.png"} alt="" height={25} width={25} />
                 </Button>
                 <InputGroup size='sm' className="px-1 py-1 rounded" style={{ background: "rgb(0,0,0,0.5)" }}>
                     <Button variant=''>
@@ -36,18 +36,14 @@ export default function MessageForm() {
                     <Image className='img-fluid' src="https://i.ibb.co/QdZ8jVf/send-10109845.png" alt="" height={25} width={25} />
                 </Button>
             </div>
-            <div className='position-absolute' style={{ top: "-100%", left: 0,width:"100%" }}>
-                <Toast show={showB} animation={false}>
-                    <Toast.Header>
-                        <img
-                            src="holder.js/20x20?text=%20"
-                            className="rounded me-2"
-                            alt=""
-                        />
-                        <strong className="me-auto">Bootstrap</strong>
-                        <small>11 mins ago</small>
-                    </Toast.Header>
-                    <Toast.Body>Woohoo, you're reading this text in a Toast!</Toast.Body>
+            <div className='position-absolute py-2' style={{ top: "-35px", left: 0, width: "100%", }}>
+                <Toast show={showB} animation={false} className='w-100 rounded-0' style={{ background: "rgba(33, 37, 41, 0.95)" }}>
+                    <div className="d-flex align-items-center justify-content-center">
+                        <div>
+                            <label htmlFor="share_gallery"><Image className='cursor-pointer' width={22} src="https://i.ibb.co/YXhV2hc/gallery.png" alt="gallery" /></label>
+                            <input type="file" className='d-none' id="share_gallery" />
+                        </div>
+                    </div>
                 </Toast>
             </div>
         </>
