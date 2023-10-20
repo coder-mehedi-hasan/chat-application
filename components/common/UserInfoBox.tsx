@@ -3,7 +3,7 @@ import { Image } from 'react-bootstrap'
 
 export default function UserInfoBox({ user, size }) {
     return (
-        <div className='d-flex align-items-center'>
+        <div className='w-100 h-100 d-flex align-items-center'>
             <div>
                 <Image height={size} width={size} src={user?.image} roundedCircle />
             </div>
