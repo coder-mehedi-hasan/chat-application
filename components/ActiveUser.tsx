@@ -8,7 +8,7 @@ export default function ActiveUser({ user, click }) {
                     <img src={user.image} className='h-100 w-100' />
                 </div>
             </div>
-            <p className='text-center text-white m-0' style={{ wordWrap: "break-word" }}>{user?.name}</p>
+            <p className='text-center text-black m-0 fw-medium' style={{ wordWrap: "break-word" }}>{user?.name}</p>
         </div>
     )
 }

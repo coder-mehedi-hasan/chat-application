@@ -6,22 +6,22 @@ import Toast from 'react-bootstrap/Toast';
 
 export default function MessageForm() {
     const [showB, setShowB] = useState(false);
-
     const toggleShowB = () => setShowB(!showB);
+
     return (
         <>
-            <div className='w-100 h-100 text-white d-flex align-items-center justify-content-between px-3'>
+            <div style={{ flex: 1, background: "#fff" }}  className='position-relative w-100 h-100 text-white d-flex align-items-center justify-content-between px-3'>
                 <Button variant='' >
                     <Image onClick={toggleShowB} className='img-fluid' src={showB ? "https://i.ibb.co/rmd3Jj3/minus-8637529.png" : "https://i.ibb.co/ZW7ZFVP/add-148781.png"} alt="" height={25} width={25} />
                 </Button>
-                <InputGroup size='sm' className="px-1 py-1 rounded" style={{ background: "rgb(0,0,0,0.5)" }}>
+                <InputGroup size='sm' className="px-1 py-1 rounded bg-secondary">
                     <Button variant=''>
                         <Image className='img-fluid' src="https://i.ibb.co/sWJ1ktH/emojipng-com-14031904.png" alt="" height={20} width={20} />
                     </Button>
                     <Form.Control autoFocus
                         aria-describedby="basic-addon2"
-                        style={{ background: "none", border: "none", color: "#fff" }}
-                        className='py-2'
+                        style={{ background: "none", border: "none", color: "#000" }}
+                        className='py-1'
                     />
                     <Button variant='' >
                         <Image className='img-fluid' src="https://i.postimg.cc/0N4P1xJr/microphone-8369015.png" alt="" height={20} width={20} />

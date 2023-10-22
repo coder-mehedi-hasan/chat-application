@@ -15,7 +15,6 @@
 }
 
 #chat-app-layout {
-    /* background-color: rgb(33, 37, 41,0.3); */
     background-image: url("https://kotha.app/img/hdpi/bg.png");
     width: 100%;
     position: relative;
@@ -53,7 +52,7 @@
 }
 
 .text-sm {
-    font-size: 12px !important;
+    font-size: 13px !important;
 }
 
 .bg-secondary {
@@ -61,14 +60,15 @@
     background-color: rgba(var(--bs-secondary-rgb), var(--bs-bg-opacity)) !important;
 }
 
-.active-user{
+.active-user {
     position: relative;
 }
-.active-user::after{
+
+.active-user::after {
     content: "";
-   padding: 7px;
+    padding: 5px;
     border-radius: 50%;
-    border: 5px solid #212529;
+    border: 5px solid #fff;
     background: #3cb29d;
     position: absolute;
     right: 0px;

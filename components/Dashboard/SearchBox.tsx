@@ -13,7 +13,7 @@ export default function SearchBox() {
             <Form.Control
                 placeholder="find your friend..."
                 aria-describedby="basic-addon2"
-                style={{ background: "none", border: "none", color: "#fff" }}
+                style={{ background: "none", border: "none"}}
                 className='py-1'
 
             />
