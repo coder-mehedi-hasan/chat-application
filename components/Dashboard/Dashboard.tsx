@@ -17,6 +17,7 @@ import { CgMenu } from "react-icons/cg";
 import { BsFillChatFill, BsFillCameraVideoFill, BsPeopleFill, BsFillGeoFill, BsPencilFill, BsArrowRight, BsArrowRightShort } from "react-icons/bs";
 import ActiveUser from '../ActiveUser';
 import { Button, Modal, Offcanvas } from 'react-bootstrap';
+import { BsArrowLeftShort, BsArrowLeft, BsFillXCircleFill } from "react-icons/bs";
 
 
 
@@ -64,7 +65,9 @@ export default function Dashboard() {
                         <div className="d-flex justify-content-between align-items-center h-100 p-2">
                             <div>
                                 <Offcanvas className="bg-dark" show={canvas} onHide={() => setCanvas(!canvas)}>
-
+                                    <div className='d-flex justify-content-end'>
+                                        <div onClick={() => setCanvas(!canvas)} className='me-2 fs-4 rounded-circle text-white' style={{ cursor: 'pointer', }}><BsFillXCircleFill /></div>
+                                    </div>
                                 </Offcanvas>
                                 <div className='m-0 d-flex align-items-center'>
                                     <div onClick={() => setCanvas(!canvas)} style={{ height: "30px", width: "30px", cursor: "pointer" }} className='bg-secondary rounded-circle d-flex justify-content-center align-items-center'>

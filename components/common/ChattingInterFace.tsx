@@ -29,7 +29,7 @@ export default function ChattingInterFace({ contact_id, modal }) {
             <div style={{ height: "80px", background: "white" }} className='text-white d-flex align-items-center justify-content-between px-3'>
                 {
                     isMobileWidth ?
-                        <div onClick={modal} className='me-2 p-1 rounded-circle' style={{ cursor: 'pointer', }}><BsArrowLeft /></div>
+                        <div onClick={modal} className='me-2 p-1 rounded-circle text-dark' style={{ cursor: 'pointer', }}><BsArrowLeft /></div>
                         : ""
                 }
                 <UserInfoBox user={elementWithId} size={55} />
