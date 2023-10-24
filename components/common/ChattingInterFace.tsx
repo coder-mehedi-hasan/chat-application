@@ -26,11 +26,6 @@ export default function ChattingInterFace({ contact_id, modal }) {
         return data.find(item => item.id === contact_id);
     }
 
-    useEffect(() => {
-        // updateWindowHeight()
-        // Initial window height
-        setWindowHeight(window.innerHeight);
-    }, []);
     return (
         <div style={{ height: "100vh", display: "flex", flexDirection: "column", paddingLeft: "0.5px" }} className='chat-interface'>
             {/* <div style={{ height: "80px", background: "rgb(33, 37, 41,0.95)" }} className='text-white d-flex align-items-center justify-content-between px-3'> */}

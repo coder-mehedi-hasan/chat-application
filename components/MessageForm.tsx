@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Button, Form, Image, InputGroup } from 'react-bootstrap'
-
+import { BsFillXCircleFill, BsX } from "react-icons/bs";
 import Toast from 'react-bootstrap/Toast';
 
 export default function MessageForm() {
@@ -17,20 +17,18 @@ export default function MessageForm() {
         })
         setImage(selectedFIles);
     }
-    const getPreviewImage = (file) => {
-        const fileObj = file;
-        if (!fileObj) {
-            return;
-        }
-        const url = URL.createObjectURL(fileObj)
-        return url
-    }
+    // const getPreviewImage = () => {
+    //     return (
+
+    //     )
+    // }
     const deletePreviewImage = (index) => {
-            const img = image.splice(index, 1)
-            console.log(image)
-            setImage(image)
-            
+        const img = image.splice(index, 1)
+        const newArray = image.filter((element) => element !== img[0]);
+        setImage(newArray)
+
     }
+
     return (
         <>
             {
@@ -41,8 +39,8 @@ export default function MessageForm() {
                         {
                             image?.map((item, index) => {
                                 return (
-                                    <div key={index} className='mx-2 my-3 position-relative' draggable>
-                                        <button onClick={() => deletePreviewImage(index)}>*</button>
+                                    <div key={index} className='mx-2 my-3 position-relative'>
+                                        <div style={{ height: "20px", width: "20px", borderRadius: "50%", position: "absolute", top: "-5px", right: "0px", cursor: "pointer", }} className='bg-white d-flex justify-content-center align-items-center fs-4' onClick={() => deletePreviewImage(index)}><BsX /></div>
                                         <Image draggable src={item} height={80} width={80} rounded />
                                     </div>
                                 )
