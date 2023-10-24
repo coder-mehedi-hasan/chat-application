@@ -1,8 +1,8 @@
 ::-webkit-scrollbar {
-    display: none;
+    display: none !important;
     width: 0 !important;
-    height: 0 !important;
     background: #024439b5;
+    height: 0 !important;
 }
 
 .css-vyflhh {
@@ -74,4 +74,35 @@
     right: 0px;
     bottom: 0px;
     z-index: 1;
+}
+
+.bg_gray {
+    background: #e3e3e5 !important;
+}
+
+.text_gray {
+    color: #c4c4c7 !important;
+}
+.scrollbar_visible_x{
+    scroll-behavior: smooth;
+}
+.scrollbar_visible_x::-webkit-scrollbar {
+    display: block !important;
+    height: 6px !important;
+    width: 7px !important;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #e3e3e5;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }

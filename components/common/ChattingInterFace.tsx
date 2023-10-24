@@ -42,23 +42,23 @@ export default function ChattingInterFace({ contact_id, modal }) {
             </div>
             {/* <div style={{ height: `${isMobileWidth ? windowHeight - 160 + "px" : "100%"}`, padding: "", scrollBehavior: "smooth" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll'> */}
             <div style={{ height: "100%", padding: "", scrollBehavior: "smooth" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll'>
-                <Messages img={elementWithId?.image} />
-                <Messages img={elementWithId?.image} />
-                <Messages img={elementWithId?.image} />
-                <Messages img={elementWithId?.image} />
-                <Messages img={elementWithId?.image} />
-                <Messages img={elementWithId?.image} />
-                <Messages img={elementWithId?.image} />
-                <Messages img={elementWithId?.image} />
-                <Messages img={elementWithId?.image} />
-                <Messages img={elementWithId?.image} />
-                <Messages img={elementWithId?.image} />
-                <Messages img={elementWithId?.image} />
-                <Messages img={elementWithId?.image} />
-                <Messages img={elementWithId?.image} />
-                <Messages img={elementWithId?.image} />
-                <Messages img={elementWithId?.image} />
-                <Messages img={elementWithId?.image} />
+                <Messages del={true} img={elementWithId?.image} />
+                <Messages del={true} img={elementWithId?.image} />
+                <Messages del={true} img={elementWithId?.image} />
+                <Messages del={true} img={elementWithId?.image} />
+                <Messages del={true} img={elementWithId?.image} />
+                <Messages del={true} img={elementWithId?.image} />
+                <Messages del={true} img={elementWithId?.image} />
+                <Messages del={true} img={elementWithId?.image} />
+                <Messages del={true} img={elementWithId?.image} />
+                <Messages del={true} img={elementWithId?.image} />
+                <Messages del={true} img={elementWithId?.image} />
+                <Messages del={true} img={elementWithId?.image} />
+                <Messages del={true} img={elementWithId?.image} />
+                <Messages del={true} img={elementWithId?.image} />
+                <Messages del={true} img={elementWithId?.image} />
+                <Messages del={true} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
             </div>
             <div style={{ height: "80px", background: "#fff" }} className='position-relative' >
                 <MessageForm />
