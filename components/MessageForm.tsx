@@ -10,6 +10,7 @@ export default function MessageForm() {
     const toggleShowB = () => setShowB(!showB);
     const [image, setImage] = useState([])
     const isMobileWidth = useMediaQuery({ maxWidth: 576 })
+
     const handleImage = (e) => {
         const selectedFIles = [];
         const targetFiles = e.target.files;
@@ -24,26 +25,19 @@ export default function MessageForm() {
         const img = image.splice(index, 1)
         const newArray = image.filter((element) => element !== img[0]);
         setImage(newArray)
-
     }
 
     return (
         <>
-
-            <div style={{ flex: 1, background: "#fff" }} className='position-relative w-100 h-100 text-white d-flex align-items-center justify-content-between px-3'>
+            <div style={{ flex: 1, background: "#fff" }} className='position-relative w-100 h-100 text-white d-flex align-items-center justify-content-between px-lg-3 px-md-2 px-sm-1 px-xs-1'>
                 <div>
-                    <Button variant='' className='p-1 text-dark' >
-
-                        {/* <Image onClick={toggleShowB} className='img-fluid' src={showB ? "https://i.ibb.co/rmd3Jj3/minus-8637529.png" : "https://i.ibb.co/ZW7ZFVP/add-148781.png"} alt="" height={25} width={25} /> */}
+                    <Button variant='' className='p-1 text-dark'>
                         <BsPlusLg className="fs-5" onClick={toggleShowB} style={{ transform: showB ? "rotate(45deg)" : "", transition: ".4s" }} />
                     </Button>
                 </div>
                 <div>
-
                     <Button variant='' className='p-1 text-dark' >
-                        {/* <Image onClick={toggleShowB} className='img-fluid' src={showB ? "https://i.ibb.co/rmd3Jj3/minus-8637529.png" : "https://i.ibb.co/ZW7ZFVP/add-148781.png"} alt="" height={25} width={25} /> */}
                         <label htmlFor="share_gallery">
-                            {/* <Image className='cursor-pointer' width={22} src="https://i.ibb.co/YXhV2hc/gallery.png" alt="gallery" /> */}
                             <BsImage />
                         </label>
                     </Button>
@@ -53,7 +47,6 @@ export default function MessageForm() {
                 </div>
                 <InputGroup size='sm' className="px-1 py-1 rounded position-relative bg_gray">
                     {
-
                         image.length ?
 
                             <div className="w-100 d-flex rounded-top bg_gray scrollbar_visible_x" style={{ position: "absolute", top: isMobileWidth ? "-94px" : "-116px", left: "0", overflowX: "scroll", scrollBehavior: "smooth" }}>
@@ -61,14 +54,13 @@ export default function MessageForm() {
                                     image?.map((item, index) => {
                                         return (
                                             <div key={index} className='mx-2 my-3 position-relative'>
-                                                <div style={{ height: "20px", width: "20px", borderRadius: "50%", position: "absolute", top: "-5px", right: "0px", cursor: "pointer", }} className='text-dark bg-white d-flex justify-content-center align-items-center fs-4' onClick={() => deletePreviewImage(index)}><BsX /></div>
-                                                <Image src={item} height={isMobileWidth ? 60 : 80} width={isMobileWidth ? 60 : 80} rounded />
+                                                <div style={{ height: isMobileWidth ? "16px" : "20px", width: isMobileWidth ? "16px" : "20px", borderRadius: "50%", position: "absolute", top: "-5px", right: "0px", cursor: "pointer", fontSize: isMobileWidth ? "12px" : "16px" }} className='text-dark bg-white d-flex justify-content-center align-items-center' onClick={() => deletePreviewImage(index)}><BsX /></div>
+                                                <Image src={item} height={isMobileWidth ? 65 : 80} width={isMobileWidth ? 65 : 80} rounded />
                                             </div>
                                         )
                                     })
                                 }
                             </div>
-
                             : ""
 
                     }
@@ -76,9 +68,8 @@ export default function MessageForm() {
                         <Image className='img-fluid' src="https://i.ibb.co/sWJ1ktH/emojipng-com-14031904.png" alt="" height={20} width={20} />
                     </Button>
                     <Form.Control autoFocus
-
                         aria-describedby="basic-addon2"
-                        style={{ background: "none", border: "none", color: "#000", overflowX: "scroll", scrollBehavior: "smooth", resize: "none" }}
+                        style={{ background: "none", border: "none", color: "#000", overflowY: "scroll", scrollBehavior: "smooth", resize: "none" }}
                         className='py-1 scrollbar_visible_x'
                         as="textarea"
                         rows={1}

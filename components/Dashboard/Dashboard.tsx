@@ -1,5 +1,4 @@
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
-
 import React, { useEffect, useState, useRef } from 'react'
 import SideBarItemAfter from './SideBar/SideBarItemAfter';
 import user from '../../fake_data/user.json';
@@ -19,25 +18,15 @@ import ActiveUser from '../ActiveUser';
 import { Button, Modal, Offcanvas } from 'react-bootstrap';
 import { BsArrowLeftShort, BsArrowLeft, BsFillXCircleFill } from "react-icons/bs";
 
-
-
-
 export default function Dashboard() {
     const [contactId, setContactId] = useState(null)
-    const [status, setStatus] = useState(false)
-    const [isMobile, setIsMobile] = useState(false);
     const [showChat, setShowChat] = useState(false)
     const [active, setActive] = useState(true)
-
-    const [windowHeight, setWindowHeight] = useState(0)
     const isMobileWidth = useMediaQuery({ maxWidth: 576 })
     const isMediumWidth = useMediaQuery({ maxWidth: 768 })
-
-    // let windowHeight
-
-    // if (window !== undefined) {
-    //     windowHeight = window.innerHeight
-    // }
+    const [fullscreen, setFullscreen] = useState(true);
+    const [canvas, setCanvas] = useState(false);
+    const [show, setShow] = useState(false);
 
     const handleChatInterface = (id) => {
         setContactId(id)
@@ -45,24 +34,11 @@ export default function Dashboard() {
         if (isMobileWidth) {
             handleShow()
         }
-
     }
-    const updateWindowHeight = () => {
-        setWindowHeight(window.innerHeight);
-    };
 
-    useEffect(() => {
-        // updateWindowHeight()
-        // Initial window height
-        setWindowHeight(window.innerHeight);
-    }, []);
-    const [fullscreen, setFullscreen] = useState(true);
-    const [show, setShow] = useState(false);
-
-    function handleShow() {
+    const handleShow = () => {
         setShow(!show);
     }
-    const [canvas, setCanvas] = useState(false);
 
     return (
         <div className='w-100 p-0 container-fluid' id='chat_bar' >
@@ -73,7 +49,9 @@ export default function Dashboard() {
                             <div>
                                 <Offcanvas className="bg-dark" show={canvas} onHide={() => setCanvas(!canvas)}>
                                     <div className='d-flex justify-content-end'>
-                                        <div onClick={() => setCanvas(!canvas)} className='me-2 fs-4 rounded-circle text-white' style={{ cursor: 'pointer', }}><BsFillXCircleFill /></div>
+                                        <div onClick={() => setCanvas(!canvas)} className='me-2 fs-4 rounded-circle text-white' style={{ cursor: 'pointer', }}>
+                                            <BsFillXCircleFill />
+                                        </div>
                                     </div>
                                 </Offcanvas>
                                 <div className='m-0 d-flex align-items-center'>
@@ -91,7 +69,6 @@ export default function Dashboard() {
                         </div>
                     </div>
                     <div style={{ width: "100%", height: "100%", overflow: "scroll" }}>
-                     {/* <div style={{ width: "100%", height: `${isMobileWidth ? windowHeight - 110 + "px" : "100%"}`, overflow: "scroll" }}> */}
                         <div className='my-2'>
                             <SearchBox />
                         </div>
@@ -108,12 +85,11 @@ export default function Dashboard() {
                                     user?.length > 10 ?
                                         <div style={{ paddingRight: "10px" }} className='d-flex justify-content-center'>
                                             <div style={{ width: "60px", height: "60px", borderRadius: "50%", overflow: "hidden" }} className='flex-column text-white d-flex justify-content-center align-items-center bg-secondary rounded-circle'>
-                                                {/* <img src={user.image} className='h-100 w-100' /> */}
                                                 <BsArrowRight className="fs-4" />
-                                                {/* <BsArrowRightShort/> */}
                                             </div>
                                         </div>
-                                        : ""
+                                        :
+                                        ""
                                 }
                             </div>
                         </div>
@@ -165,7 +141,6 @@ export default function Dashboard() {
                             </div>
                         </div>
                     </div>
-
                 </div>
                 {
                     isMobileWidth ?
@@ -177,7 +152,10 @@ export default function Dashboard() {
                         :
                         <div id='chat-app-layout'>
                             {
-                                !showChat || contactId === null ? <HomeChat /> : <ChattingInterFace modal={handleShow} contact_id={contactId} />
+                                !showChat || contactId === null ?
+                                    <HomeChat />
+                                    :
+                                    <ChattingInterFace modal={handleShow} contact_id={contactId} />
                             }
                         </div>
                 }

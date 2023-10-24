@@ -4,12 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../style/main.css';
 
 export default function App({ Component, pageProps }: AppProps) {
-
-
 	return (
-
 		<>
-
 			<Component {...pageProps} />
 		</>
 	);

@@ -4,10 +4,8 @@ import { useMediaQuery } from 'react-responsive'
 import { BsCheck2All, BsCheck2, BsCheckLg, BsCheckAll } from "react-icons/bs";
 
 export default function Messages({ img, del }) {
-
   const isMediumWidth = useMediaQuery({ maxWidth: 768 })
   const isLargeWidth = useMediaQuery({ maxWidth: 992 })
-
   const currentDate = new Date()
 
   const getTime = (date) => {
@@ -15,19 +13,11 @@ export default function Messages({ img, del }) {
     const minutes = date.getMinutes();
     const seconds = date.getSeconds();
     const amOrPm = hours >= 12 ? 'PM' : 'AM';
-
-    // // Convert to 12-hour clock format
-    // if (hours > 12) {
-    //   hours -= 12;
-    // } else if (hours === 0) {
-    //   hours = 12; // 0 hours (midnight) should be 12 AM
-    // }
-    var timeString = hours + ":" + (minutes < 10 ? "0" : "") + minutes + " " + amOrPm;
-
+    const timeString = hours + ":" + (minutes < 10 ? "0" : "") + minutes + " " + amOrPm;
     return timeString
   }
-  const currTime = getTime(currentDate)
 
+  const currTime = getTime(currentDate)
 
   return (
     <div className="row my-3 w-100">
