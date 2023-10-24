@@ -45,7 +45,8 @@ export default function ChattingInterFace({ contact_id, modal }) {
                     <Button style={{ height: "45px", width: "45px", borderRadius: "50%", background: "none", border: "1px solid #3fb9a4ff" }}><Image src='https://i.ibb.co/v41GDy9/menu.png'></Image></Button>
                 </div>
             </div>
-            <div style={{ height: `${isMobileWidth ? windowHeight - 160 + "px" : "100%"}`, padding: "", scrollBehavior: "smooth" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll'>
+            {/* <div style={{ height: `${isMobileWidth ? windowHeight - 160 + "px" : "100%"}`, padding: "", scrollBehavior: "smooth" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll'> */}
+            <div style={{ height: "100%", padding: "", scrollBehavior: "smooth" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll'>
                 <Messages img={elementWithId?.image} />
                 <Messages img={elementWithId?.image} />
                 <Messages img={elementWithId?.image} />

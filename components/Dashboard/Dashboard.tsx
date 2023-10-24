@@ -90,7 +90,8 @@ export default function Dashboard() {
                             </div>
                         </div>
                     </div>
-                    <div style={{ width: "100%", height: `${isMobileWidth ? windowHeight - 110 + "px" : "100%"}`, overflow: "scroll" }}>
+                    <div style={{ width: "100%", height: "100%", overflow: "scroll" }}>
+                     {/* <div style={{ width: "100%", height: `${isMobileWidth ? windowHeight - 110 + "px" : "100%"}`, overflow: "scroll" }}> */}
                         <div className='my-2'>
                             <SearchBox />
                         </div>
