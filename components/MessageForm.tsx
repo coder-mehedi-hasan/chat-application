@@ -7,13 +7,63 @@ import Toast from 'react-bootstrap/Toast';
 export default function MessageForm() {
     const [showB, setShowB] = useState(false);
     const toggleShowB = () => setShowB(!showB);
-
+    const [image, setImage] = useState([])
+    const handleImage = (e) => {
+        const selectedFIles = [];
+        const targetFiles = e.target.files;
+        const targetFilesObject = [...targetFiles]
+        targetFilesObject.map((file) => {
+            return selectedFIles.push(URL.createObjectURL(file))
+        })
+        setImage(selectedFIles);
+    }
+    const getPreviewImage = (file) => {
+        const fileObj = file;
+        if (!fileObj) {
+            return;
+        }
+        const url = URL.createObjectURL(fileObj)
+        return url
+    }
+    const deletePreviewImage = (index) => {
+        // if (image.length === 1 && index === 0) {
+        //     setImage([])
+        // }
+        // else {
+            const img = image.splice(index, 1)
+            setImage(img)
+        // }
+    }
     return (
         <>
-            <div style={{ flex: 1, background: "#fff" }}  className='position-relative w-100 h-100 text-white d-flex align-items-center justify-content-between px-3'>
+            {
+
+                image ?
+
+                    <div className='w-100 d-flex bg-dark' style={{ position: "absolute", top: "-170%", left: "0", overflow: "scroll" }}>
+                        {
+                            image?.map((item, index) => {
+                                return (
+                                    <div key={index} className='mx-2 my-3 position-relative' draggable>
+                                        <button onClick={() => deletePreviewImage(index)}>*</button>
+                                        <Image draggable src={item} height={80} width={80} rounded />
+                                    </div>
+                                )
+                            })
+                        }
+                    </div>
+
+                    : ""
+
+            }
+            <div style={{ flex: 1, background: "#fff" }} className='position-relative w-100 h-100 text-white d-flex align-items-center justify-content-between px-3'>
                 <Button variant='' >
                     <Image onClick={toggleShowB} className='img-fluid' src={showB ? "https://i.ibb.co/rmd3Jj3/minus-8637529.png" : "https://i.ibb.co/ZW7ZFVP/add-148781.png"} alt="" height={25} width={25} />
                 </Button>
+                <div>
+                    <label htmlFor="share_gallery"><Image className='cursor-pointer' width={22} src="https://i.ibb.co/YXhV2hc/gallery.png" alt="gallery" /></label>
+                    <input multiple onChange={handleImage} type="file" className='d-none' id="share_gallery" />
+                </div>
                 <InputGroup size='sm' className="px-1 py-1 rounded bg-secondary">
                     <Button variant=''>
                         <Image className='img-fluid' src="https://i.ibb.co/sWJ1ktH/emojipng-com-14031904.png" alt="" height={20} width={20} />
