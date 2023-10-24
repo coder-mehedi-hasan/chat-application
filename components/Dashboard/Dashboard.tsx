@@ -23,21 +23,21 @@ import { BsArrowLeftShort, BsArrowLeft, BsFillXCircleFill } from "react-icons/bs
 
 
 export default function Dashboard() {
-    const [check, setCheck] = useState(false)
     const [contactId, setContactId] = useState(null)
     const [status, setStatus] = useState(false)
     const [isMobile, setIsMobile] = useState(false);
     const [showChat, setShowChat] = useState(false)
     const [active, setActive] = useState(true)
 
-    const [windowWidth, setWindowWidth] = useState()
+    const [windowHeight, setWindowHeight] = useState(0)
     const isMobileWidth = useMediaQuery({ maxWidth: 576 })
     const isMediumWidth = useMediaQuery({ maxWidth: 768 })
 
-    useEffect(() => {
-        setCheck(isMobileWidth)
-    }, [isMobileWidth]
-    )
+    // let windowHeight
+
+    // if (window !== undefined) {
+    //     windowHeight = window.innerHeight
+    // }
 
     const handleChatInterface = (id) => {
         setContactId(id)
@@ -47,6 +47,15 @@ export default function Dashboard() {
         }
 
     }
+    const updateWindowHeight = () => {
+        setWindowHeight(window.innerHeight);
+    };
+
+    useEffect(() => {
+        // updateWindowHeight()
+        // Initial window height
+        setWindowHeight(window.innerHeight);
+    }, []);
     const [fullscreen, setFullscreen] = useState(true);
     const [show, setShow] = useState(false);
 
@@ -54,8 +63,6 @@ export default function Dashboard() {
         setShow(!show);
     }
     const [canvas, setCanvas] = useState(false);
-
-
 
     return (
         <div className='w-100 p-0 container-fluid' id='chat_bar' >
@@ -83,7 +90,7 @@ export default function Dashboard() {
                             </div>
                         </div>
                     </div>
-                    <div style={{ width: "100%", height: "100%", background: "", overflow: "scroll" }}>
+                    <div style={{ width: "100%", height: `${windowHeight !== undefined || isMobileWidth ? windowHeight - 110 + "px" : "100%"}`, overflow: "scroll" }}>
                         <div className='my-2'>
                             <SearchBox />
                         </div>
@@ -174,6 +181,6 @@ export default function Dashboard() {
                         </div>
                 }
             </div>
-        </div>
+        </div >
     )
 }

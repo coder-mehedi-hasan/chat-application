@@ -26,13 +26,10 @@ export default function MessageForm() {
         return url
     }
     const deletePreviewImage = (index) => {
-        // if (image.length === 1 && index === 0) {
-        //     setImage([])
-        // }
-        // else {
             const img = image.splice(index, 1)
-            setImage(img)
-        // }
+            console.log(image)
+            setImage(image)
+            
     }
     return (
         <>
