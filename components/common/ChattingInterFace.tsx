@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import UserInfoBox from './UserInfoBox'
 import user from '../../fake_data/user.json';
 import { Button } from 'react-bootstrap';
@@ -10,15 +10,26 @@ import Messages from '../Messages/Messages';
 import Toast from 'react-bootstrap/Toast';
 import { useMediaQuery } from 'react-responsive'
 import { BsArrowLeftShort, BsArrowLeft } from "react-icons/bs";
+import { MessageConsumer } from '../../context/messageContext';
 
 export default function ChattingInterFace({ contact_id, modal }) {
     const isMobileWidth = useMediaQuery({ maxWidth: 576 })
     const userArr = user
     const elementWithId = findElementWithIdOne(userArr);
+    const divRef = useRef();
+    const [messages, setMessages] = useState([])
+    const [eff, useEff] = useState(false)
+    const messageContext = useContext(MessageConsumer)
 
     function findElementWithIdOne(data) {
         return data.find(item => item.id === contact_id);
     }
+
+    useEffect(() => {
+        setMessages(messageContext.message)
+    }, [eff])
+
+    console.log(messageContext.message)
 
     return (
         <div style={{ height: "100vh", display: "flex", flexDirection: "column", paddingLeft: "0.5px" }} className='chat-interface'>
@@ -38,27 +49,49 @@ export default function ChattingInterFace({ contact_id, modal }) {
                     </Button>
                 </div>
             </div>
-            <div style={{ height: "100%", padding: "", scrollBehavior: "smooth" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll'>
-                <Messages del={true} img={elementWithId?.image} />
-                <Messages del={true} img={elementWithId?.image} />
-                <Messages del={true} img={elementWithId?.image} />
-                <Messages del={true} img={elementWithId?.image} />
-                <Messages del={true} img={elementWithId?.image} />
-                <Messages del={true} img={elementWithId?.image} />
-                <Messages del={true} img={elementWithId?.image} />
-                <Messages del={true} img={elementWithId?.image} />
-                <Messages del={true} img={elementWithId?.image} />
-                <Messages del={true} img={elementWithId?.image} />
-                <Messages del={true} img={elementWithId?.image} />
-                <Messages del={true} img={elementWithId?.image} />
-                <Messages del={true} img={elementWithId?.image} />
-                <Messages del={true} img={elementWithId?.image} />
-                <Messages del={true} img={elementWithId?.image} />
-                <Messages del={true} img={elementWithId?.image} />
+            <div style={{ height: "100%", padding: "", scrollBehavior: "auto", overflowY: "scroll" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll scrollbar_visible_y'>
+                {/* <Messages del={false} img={elementWithId?.image} />
                 <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <Messages del={false} img={elementWithId?.image} />
+                <div ref={divRef}>
+                    <Messages del={false} img={elementWithId?.image} />
+                </div> */}
+                {
+                    messages?.length ?
+
+                        messages.map(item => {
+                            return (
+                                <Messages del={false} img={elementWithId?.image} data={item} />
+                            )
+                        })
+                        : ""
+                }
             </div>
             <div style={{ height: "80px", background: "#fff" }} className='position-relative' >
-                <MessageForm />
+                <MessageForm send={() => useEff(!eff)} />
             </div>
         </div>
     )

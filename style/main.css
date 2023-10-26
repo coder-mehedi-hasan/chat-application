@@ -86,9 +86,19 @@
 .scrollbar_visible_x{
     scroll-behavior: smooth;
 }
+.scrollbar_visible_y{
+    scroll-behavior: smooth;
+}
+
 .scrollbar_visible_x::-webkit-scrollbar {
     display: block !important;
     height: 6px !important;
+    width: 7px !important;
+}
+
+.scrollbar_visible_y::-webkit-scrollbar {
+    display: block !important;
+    height: 0px !important;
     width: 7px !important;
 }
 

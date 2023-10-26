@@ -4,12 +4,18 @@ import { Button, Form, Image, InputGroup } from 'react-bootstrap'
 import { BsFillXCircleFill, BsX, BsPlusLg, BsImage } from "react-icons/bs";
 import Toast from 'react-bootstrap/Toast';
 import { useMediaQuery } from 'react-responsive';
+import { useContext } from 'react';
+import { MessageConsumer } from '../context/messageContext';
 
-export default function MessageForm() {
+export default function MessageForm(props) {
     const [showB, setShowB] = useState(false);
     const toggleShowB = () => setShowB(!showB);
     const [image, setImage] = useState([])
     const isMobileWidth = useMediaQuery({ maxWidth: 576 })
+    const [message, setMessage] = useState("")
+    const [demoMes, setDemoMess] = useState([])
+    const [send, setSend] = useState({ content: null, content_img: null })
+    const messageContext = useContext(MessageConsumer)
 
     const handleImage = (e) => {
         const selectedFIles = [];
@@ -26,6 +32,24 @@ export default function MessageForm() {
         const newArray = image.filter((element) => element !== img[0]);
         setImage(newArray)
     }
+
+    const handleSubmitMessage = () => {
+        const msg_arr = messageContext.message || []
+        if (image?.length) {
+            image.map(item => {
+                msg_arr.push({ content: null, content_img: item })
+            })
+            setImage([])
+        }
+        if (message !== "") {
+            msg_arr.push({ content: message, content_img: null })
+            setMessage("")
+        }
+        messageContext.addMessage(msg_arr)
+        props.send()
+    }
+
+    console.log({ demoMes })
 
     return (
         <>
@@ -73,6 +97,8 @@ export default function MessageForm() {
                         className='py-1 scrollbar_visible_x'
                         as="textarea"
                         rows={1}
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
 
                     />
 
@@ -80,7 +106,7 @@ export default function MessageForm() {
                         <Image className='img-fluid' src="https://i.postimg.cc/0N4P1xJr/microphone-8369015.png" alt="" height={20} width={20} />
                     </Button>
                 </InputGroup>
-                <Button variant='' >
+                <Button variant='' onClick={handleSubmitMessage} >
                     <Image className='img-fluid' src="https://i.ibb.co/QdZ8jVf/send-10109845.png" alt="" height={25} width={25} />
                 </Button>
             </div>
