@@ -35,6 +35,17 @@ export default function Messages({ img, data }) {
   }, [messageContext.message]);
 
 
+  useEffect(() => {
+const currTime = currentDate.getTime()
+    if(currTime + 5000 ){
+      setDel(true)
+    }else{
+      setDel(false)
+    }
+  });
+
+
+
   return (
     <div className="row my-3 w-100" ref={divRef}>
       <div className="d-flex align-items-end" style={{ width: isMediumWidth ? "100%" : isLargeWidth ? "90%" : "50%", transition: ".4s" }}>
