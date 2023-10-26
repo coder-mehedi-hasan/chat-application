@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Image } from 'react-bootstrap'
 import { useMediaQuery } from 'react-responsive'
 import { BsCheck2All, BsCheck2, BsCheckLg, BsCheckAll } from "react-icons/bs";
@@ -7,10 +7,11 @@ import { useRef } from 'react';
 import { useContext } from 'react';
 import { MessageConsumer } from '../../context/messageContext';
 
-export default function Messages({ img, del, data }) {
+export default function Messages({ img, data }) {
   const isMediumWidth = useMediaQuery({ maxWidth: 768 })
   const isLargeWidth = useMediaQuery({ maxWidth: 992 })
   const messageContext = useContext(MessageConsumer)
+  const [del, setDel] = useState(false)
   const divRef = useRef()
 
   const currentDate = new Date()
@@ -27,6 +28,13 @@ export default function Messages({ img, del, data }) {
   useEffect(() => {
     divRef.current.scrollIntoView();
   }, [messageContext.message]);
+
+  useEffect(() => {
+    const curr_time = currentDate.getTime()
+    if(currTime + 2000){
+      setDel(true)
+    }
+  })
 
   return (
     <div className="row my-3 w-100" ref={divRef}>

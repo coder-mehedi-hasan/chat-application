@@ -84,7 +84,7 @@ export default function ChattingInterFace({ contact_id, modal }) {
 
                         messages.map(item => {
                             return (
-                                <Messages del={false} img={elementWithId?.image} data={item} />
+                                <Messages img={elementWithId?.image} data={item} />
                             )
                         })
                         : ""
