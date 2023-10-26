@@ -27,14 +27,13 @@ export default function Messages({ img, data }) {
   const currTime = getTime(currentDate)
   useEffect(() => {
     divRef.current.scrollIntoView();
-  }, [messageContext.message]);
-
-  useEffect(() => {
-    const curr_time = currentDate.getTime()
     if(currTime + 2000){
       setDel(true)
+    }else{
+      setDel(false)
     }
-  })
+  }, [messageContext.message]);
+
 
   return (
     <div className="row my-3 w-100" ref={divRef}>
