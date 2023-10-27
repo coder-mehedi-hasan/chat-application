@@ -49,8 +49,6 @@ export default function MessageForm(props) {
         props.send()
     }
 
-    console.log({ demoMes })
-
     return (
         <>
             <div style={{ flex: 1, background: "#fff" }} className='position-relative w-100 h-100 text-white d-flex align-items-center justify-content-between px-lg-3 px-md-2 px-sm-1 px-xs-1'>
@@ -101,7 +99,6 @@ export default function MessageForm(props) {
                         onChange={(e) => setMessage(e.target.value)}
 
                     />
-
                     <Button variant='' >
                         <Image className='img-fluid' src="https://i.postimg.cc/0N4P1xJr/microphone-8369015.png" alt="" height={20} width={20} />
                     </Button>

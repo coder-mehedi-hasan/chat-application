@@ -60,6 +60,12 @@
     background-color: rgba(var(--bs-secondary-rgb), var(--bs-bg-opacity)) !important;
 }
 
+.hover_background:hover {
+    transition: .1s;
+    --bs-bg-opacity: 0.3;
+    background-color: rgba(var(--bs-secondary-rgb), var(--bs-bg-opacity)) !important;
+}
+
 .active-user {
     position: relative;
 }
@@ -83,10 +89,12 @@
 .text_gray {
     color: #c4c4c7 !important;
 }
-.scrollbar_visible_x{
+
+.scrollbar_visible_x {
     scroll-behavior: smooth;
 }
-.scrollbar_visible_y{
+
+.scrollbar_visible_y {
     scroll-behavior: smooth;
 }
 
@@ -115,4 +123,23 @@
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
+}
+
+#tooltip-top .tooltip-inner {
+    padding: 7px;
+    background-color: #212529;
+    font-size: 15px;
+    box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
+}
+
+#tooltip-top .tooltip-arrow::before {
+    border-top-color: #212529;
+}
+
+.message_content .message_actions {
+    opacity: 0;
+}
+
+.message_content:hover .message_actions {
+    opacity: 1;
 }
