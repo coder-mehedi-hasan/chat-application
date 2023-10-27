@@ -15,7 +15,8 @@
 }
 
 #chat-app-layout {
-    background-image: url("https://kotha.app/img/hdpi/bg.png");
+    /* background-image: url("https://kotha.app/img/hdpi/bg.png"); */
+    background-color: #f5f5f5 !important;
     width: 100%;
     position: relative;
 }
@@ -125,15 +126,54 @@
     background: #555;
 }
 
-#tooltip-top .tooltip-inner {
+.action_tooltip_icon {
+    color: #555;
+    font-weight: 500;
+}
+
+.action_tooltip_top .tooltip-inner {
     padding: 7px;
     background-color: #212529;
     font-size: 15px;
     box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
 }
 
-#tooltip-top .tooltip-arrow::before {
+.action_tooltip_top .tooltip-arrow::before {
     border-top-color: #212529;
+}
+
+.inner_action_tooltip .tooltip-inner {
+    padding: 2px 0;
+    background-color: #fff;
+    box-shadow: rgba(0, 0, 0, .35) 0 4px 15px;
+}
+
+.inner_action_tooltip_more .tooltip-inner {
+    width: 106px;
+}
+
+.inner_action_tooltip .tooltip-arrow::before {
+    border-top-color: #fff;
+}
+
+.inner_action_tooltip .button {
+    cursor: pointer;
+    margin: 0 4px;
+    padding: 8px 12px;
+    font-size: 15px;
+    color: #000;
+    text-align: start !important;
+    border-radius: 5px;
+}
+
+.inner_action_tooltip_emoji .tooltip-inner {
+    max-width: fit-content;
+    border-radius: 24px;
+}
+
+.inner_action_tooltip .button:hover {
+    background-color: #c6c6c6;
+    transition: .3s;
 }
 
 .message_content .message_actions {
