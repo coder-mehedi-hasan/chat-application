@@ -44,7 +44,7 @@ export default function ChattingInterFace({ contact_id, modal }) {
                 <UserInfoBox user={elementWithId} size={55} />
                 <div>
                     <Button style={{ height: "45px", width: "45px", borderRadius: "50%", background: "none", border: "1px solid #3fb9a4ff" }}>
-                        <Image src='https://i.ibb.co/v41GDy9/menu.png'></Image>
+                        <Image src='https://i.ibb.co/v41GDy9/menu.png' className='img-fluid'></Image>
                     </Button>
                 </div>
             </div>

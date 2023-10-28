@@ -27,19 +27,19 @@ export default function Messages({ img, data }) {
   const currTime = getTime(currentDate)
   useEffect(() => {
     divRef.current.scrollIntoView();
-    if(currTime + 2000){
+    if (currTime + 2000) {
       setDel(true)
-    }else{
+    } else {
       setDel(false)
     }
   }, [messageContext.message]);
 
 
   useEffect(() => {
-const currTime = currentDate.getTime()
-    if(currTime + 5000 ){
+    const currTime = currentDate.getTime()
+    if (currTime + 5000) {
       setDel(true)
-    }else{
+    } else {
       setDel(false)
     }
   });
@@ -50,7 +50,9 @@ const currTime = currentDate.getTime()
     <div className="row my-3 w-100" ref={divRef}>
       <div className="d-flex align-items-end" style={{ width: isMediumWidth ? "100%" : isLargeWidth ? "90%" : "50%", transition: ".4s" }}>
         <div>
-          <Image height={30} width={30} roundedCircle src={img}></Image>
+          <div style={{ height: "30px", width: "30px", borderRadius: "50%", overflow: "hidden" }}>
+            <Image className='img-fluid' src={img}></Image>
+          </div>
         </div>
         <div className='mx-3 bg-white p-2 mb-4 rounded message-side-pill'>
           {

@@ -17,7 +17,7 @@ export default function ImageContet({ img }) {
                 <img src={img} alt="img" style={{ maxWidth: "100%", maxHeight:"220px"}} />
             </div>
             <div>
-                <p className='p-0 text-end' style={{ fontSize: "15px" }}>
+                <p className='p-0 text-end text-dark' style={{ fontSize: "15px" }}>
                     {sent ?
                         <BsCheckAll />
                         : <>

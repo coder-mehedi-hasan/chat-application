@@ -50,7 +50,9 @@ export default function ReceiverMessages({ img, data }) {
         <div className="row my-3 w-100" ref={divRef}>
             <div className="d-flex align-items-end">
                 <div>
-                    <Image height={30} width={30} roundedCircle src={img}></Image>
+                    <div style={{ height: "30px", width: "30px", borderRadius: "50%", overflow: "hidden" }}>
+                        <Image className='img-fluid' src={img}></Image>
+                    </div>
                 </div>
                 <div className='mx-3 bg-white p-2 mb-4 rounded message-side-pill'>
                     {

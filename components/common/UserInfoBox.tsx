@@ -5,7 +5,9 @@ export default function UserInfoBox({ user, size }) {
     return (
         <div className='w-100 h-100 d-flex align-items-center text-body-emphasis'>
             <div>
-                <Image height={size} width={size} src={user?.image} roundedCircle />
+                <div style={{ height: size, width: size, overflow: "hidden", borderRadius: "50%" }}>
+                    <Image className='img-fluid' src={user?.image} />
+                </div>
             </div>
             <div className='ms-3' >
                 <p style={{ fontSize: `${size / 3}px` }} className='m-0'>{user?.name}</p>
