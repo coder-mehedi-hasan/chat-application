@@ -76,8 +76,10 @@ export default function MessageForm(props) {
                                     image?.map((item, index) => {
                                         return (
                                             <div key={index} className='mx-2 my-3 position-relative'>
-                                                <div style={{ height: isMobileWidth ? "16px" : "20px", width: isMobileWidth ? "16px" : "20px", borderRadius: "50%", position: "absolute", top: "-5px", right: "0px", cursor: "pointer", fontSize: isMobileWidth ? "12px" : "16px" }} className='text-dark bg-white d-flex justify-content-center align-items-center' onClick={() => deletePreviewImage(index)}><BsX /></div>
-                                                <Image src={item} height={isMobileWidth ? 65 : 80} width={isMobileWidth ? 65 : 80} rounded />
+                                                <div style={{ height: isMobileWidth ? "16px" : "20px", width: isMobileWidth ? "16px" : "20px", borderRadius: "50%", position: "absolute", top: "-5px", right: "-5px", cursor: "pointer", fontSize: isMobileWidth ? "14px" : "18px" }} className='text-dark bg-white d-flex justify-content-center align-items-center' onClick={() => deletePreviewImage(index)}><BsX /></div>
+                                                <div style={{ height: isMobileWidth ? 65 : 80, width: isMobileWidth ? 65 : 80,overflow:"hidden" }} className='rounded'>
+                                                    <Image src={item} className='img-fluid' />
+                                                </div>
                                             </div>
                                         )
                                     })
@@ -102,11 +104,11 @@ export default function MessageForm(props) {
                     <Button variant='' >
                         <Image className='img-fluid' src="https://i.postimg.cc/0N4P1xJr/microphone-8369015.png" alt="" height={20} width={20} />
                     </Button>
-                </InputGroup>
+                </InputGroup >
                 <Button variant='' onClick={handleSubmitMessage} >
                     <Image className='img-fluid' src="https://i.ibb.co/QdZ8jVf/send-10109845.png" alt="" height={25} width={25} />
                 </Button>
-            </div>
+            </div >
             <div className='position-absolute py-2' style={{ top: "-35px", left: 0, width: "100%", }}>
                 <Toast show={showB} animation={false} className='w-100 rounded-0' style={{ background: "rgba(33, 37, 41, 0.95)" }}>
                     <div className="d-flex align-items-center justify-content-center">
