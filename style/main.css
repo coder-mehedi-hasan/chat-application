@@ -185,7 +185,7 @@
 }
 
 .inner_action_tooltip_emoji_picker .tooltip-inner {
-    background-color: none !important;
+    background-color: #fff !important;
     padding: 0;
 }
 .inner_action_tooltip_emoji_picker .tooltip-arrow::before {

@@ -74,7 +74,7 @@ export default function MessageForm(props) {
                 <div>
                     <input multiple onChange={handleImage} type="file" className='d-none' id="share_gallery" />
                 </div>
-                <InputGroup size='sm' className="px-1 py-1 rounded position-relative bg_gray" onSubmit={handleSubmitMessage}>
+                <InputGroup size='sm' className="px-1 py-1 rounded position-relative bg_gray" >
                     {
                         image.length ?
 
@@ -134,6 +134,7 @@ export default function MessageForm(props) {
                             onEmojiSelect={(emoji) => addEmoji(emoji.native)}
                             navPosition="bottom"
                             previewPosition="none"
+                            skinTonePosition="none"
                         />
                     </Tooltip>
                 )}
