@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Button, Form, Image, InputGroup } from 'react-bootstrap'
-import { BsFillXCircleFill, BsX, BsPlusLg, BsImage } from "react-icons/bs";
+import { Button, Form, Image, InputGroup, Overlay, Tooltip } from 'react-bootstrap'
+import { BsX, BsPlusLg, BsImage } from "react-icons/bs";
 import Toast from 'react-bootstrap/Toast';
 import { useMediaQuery } from 'react-responsive';
 import { useContext } from 'react';
 import { MessageConsumer } from '../context/messageContext';
+import data from '@emoji-mart/data'
+import Picker from '@emoji-mart/react'
 
 export default function MessageForm(props) {
     const [showB, setShowB] = useState(false);
@@ -13,9 +15,9 @@ export default function MessageForm(props) {
     const [image, setImage] = useState([])
     const isMobileWidth = useMediaQuery({ maxWidth: 576 })
     const [message, setMessage] = useState("")
-    const [demoMes, setDemoMess] = useState([])
-    const [send, setSend] = useState({ content: null, content_img: null })
+    const [showEmoji, setShowEmoji] = useState(false)
     const messageContext = useContext(MessageConsumer)
+    const emoji = useRef(null);
 
     const handleImage = (e) => {
         const selectedFIles = [];
@@ -49,6 +51,11 @@ export default function MessageForm(props) {
         props.send()
     }
 
+    const addEmoji = (emoji) => {
+        const mess = message + emoji
+        setMessage(mess)
+    }
+
     return (
         <>
             <div style={{ flex: 1, background: "#fff" }} className='position-relative w-100 h-100 text-white d-flex align-items-center justify-content-between px-lg-3 px-md-2 px-sm-1 px-xs-1'>
@@ -67,7 +74,7 @@ export default function MessageForm(props) {
                 <div>
                     <input multiple onChange={handleImage} type="file" className='d-none' id="share_gallery" />
                 </div>
-                <InputGroup size='sm' className="px-1 py-1 rounded position-relative bg_gray">
+                <InputGroup size='sm' className="px-1 py-1 rounded position-relative bg_gray" onSubmit={handleSubmitMessage}>
                     {
                         image.length ?
 
@@ -77,7 +84,7 @@ export default function MessageForm(props) {
                                         return (
                                             <div key={index} className='mx-2 my-3 position-relative'>
                                                 <div style={{ height: isMobileWidth ? "16px" : "20px", width: isMobileWidth ? "16px" : "20px", borderRadius: "50%", position: "absolute", top: "-5px", right: "-5px", cursor: "pointer", fontSize: isMobileWidth ? "14px" : "18px" }} className='text-dark bg-white d-flex justify-content-center align-items-center' onClick={() => deletePreviewImage(index)}><BsX /></div>
-                                                <div style={{ height: isMobileWidth ? 65 : 80, width: isMobileWidth ? 65 : 80,overflow:"hidden" }} className='rounded'>
+                                                <div style={{ height: isMobileWidth ? 65 : 80, width: isMobileWidth ? 65 : 80, overflow: "hidden" }} className='rounded'>
                                                     <Image src={item} className='img-fluid' />
                                                 </div>
                                             </div>
@@ -88,7 +95,7 @@ export default function MessageForm(props) {
                             : ""
 
                     }
-                    <Button variant='' className='p-1'>
+                    <Button variant='' className='p-1' ref={emoji} onClick={() => setShowEmoji(!showEmoji)}>
                         <Image className='img-fluid' src="https://i.ibb.co/sWJ1ktH/emojipng-com-14031904.png" alt="" height={20} width={20} />
                     </Button>
                     <Form.Control autoFocus
@@ -119,6 +126,18 @@ export default function MessageForm(props) {
                     </div>
                 </Toast>
             </div>
+            <Overlay target={emoji.current} show={showEmoji} placement="top">
+                {(props) => (
+                    <Tooltip id="overlay-example" {...props} className='inner_action_tooltip_emoji_picker' >
+                        <Picker
+                            data={data}
+                            onEmojiSelect={(emoji) => addEmoji(emoji.native)}
+                            navPosition="bottom"
+                            previewPosition="none"
+                        />
+                    </Tooltip>
+                )}
+            </Overlay>
         </>
     )
 }

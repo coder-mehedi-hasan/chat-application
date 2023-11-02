@@ -3,13 +3,9 @@ import UserInfoBox from './UserInfoBox'
 import user from '../../fake_data/user.json';
 import { Button } from 'react-bootstrap';
 import Image from 'react-bootstrap/Image';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { icon } from '@fortawesome/fontawesome-svg-core/import.macro'
 import MessageForm from '../MessageForm';
-import Messages from '../Messages/Messages';
-import Toast from 'react-bootstrap/Toast';
 import { useMediaQuery } from 'react-responsive'
-import { BsArrowLeftShort, BsArrowLeft } from "react-icons/bs";
+import { BsArrowLeft } from "react-icons/bs";
 import { MessageConsumer } from '../../context/messageContext';
 import SenderMessages from '../Messages/SenderMessage';
 
@@ -58,6 +54,7 @@ export default function ChattingInterFace({ contact_id, modal }) {
                             )
                         })
                         : ""
+                        
                 }
             </div>
             <div style={{ height: "80px", background: "#fff" }} className='position-relative' >

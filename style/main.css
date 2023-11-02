@@ -183,3 +183,11 @@
 .message_content:hover .message_actions {
     opacity: 1;
 }
+
+.inner_action_tooltip_emoji_picker .tooltip-inner {
+    background-color: none !important;
+    padding: 0;
+}
+.inner_action_tooltip_emoji_picker .tooltip-arrow::before {
+    border-top-color: #fff;
+}
