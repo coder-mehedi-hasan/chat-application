@@ -15,7 +15,7 @@ import { FaBeer, FaAlignLeft, FaPencilAlt, FaBars, FaVideo } from 'react-icons/f
 import { CgMenu } from "react-icons/cg";
 import { BsFillChatFill, BsFillCameraVideoFill, BsPeopleFill, BsFillGeoFill, BsPencilFill, BsArrowRight, BsArrowRightShort } from "react-icons/bs";
 import ActiveUser from '../ActiveUser';
-import { Button, Modal, Offcanvas } from 'react-bootstrap';
+import { Button, Modal, Nav, Offcanvas } from 'react-bootstrap';
 import { BsArrowLeftShort, BsArrowLeft, BsFillXCircleFill } from "react-icons/bs";
 
 export default function Dashboard() {
@@ -106,7 +106,7 @@ export default function Dashboard() {
                         </div>
                     </div>
                     <div style={{ height: "60px" }}>
-                        <div className="d-flex justify-content-between align-items-center h-100 p-2">
+                        {/* <div className="d-flex justify-content-between align-items-center h-100 p-2">
                             <div className='text-center text-white'>
                                 <p className='m-0'>
                                     <BsFillChatFill style={{ color: active ? "#3cb29d" : "gray", fontSize: "14px" }} />
@@ -139,7 +139,20 @@ export default function Dashboard() {
                                     Stories
                                 </p>
                             </div>
-                        </div>
+                        </div> */}
+                        <Nav variant="underline" defaultActiveKey="/home">
+                            <Nav.Item>
+                                <Nav.Link href="/home">Active</Nav.Link>
+                            </Nav.Item>
+                            <Nav.Item>
+                                <Nav.Link eventKey="link-1">Option 2</Nav.Link>
+                            </Nav.Item>
+                            <Nav.Item>
+                                <Nav.Link eventKey="disabled" disabled>
+                                    Disabled
+                                </Nav.Link>
+                            </Nav.Item>
+                        </Nav>
                     </div>
                 </div>
                 {
