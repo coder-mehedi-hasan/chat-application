@@ -140,18 +140,48 @@ export default function Dashboard() {
                                 </p>
                             </div>
                         </div> */}
-                        <Nav variant="underline" defaultActiveKey="/home">
+                        <Nav className="d-flex justify-content-between align-items-center h-100 p-2" variant="tabs" defaultActiveKey={1}>
                             <Nav.Item>
-                                <Nav.Link href="/home">Active</Nav.Link>
+                                <div className='text-center text-white'>
+                                    <p className='m-0'>
+                                        <BsFillChatFill style={{ color: active ? "#3cb29d" : "gray", fontSize: "14px" }} />
+                                    </p> 
+                                    <p className='m-0 text-sm fw-normal active' style={{ color: active ? "#3cb29d" : "gray" }}>
+                                        Chats
+                                    </p>
+                                </div>
                             </Nav.Item>
                             <Nav.Item>
-                                <Nav.Link eventKey="link-1">Option 2</Nav.Link>
+                                <div className='text-center text-dark-emphasis'>
+                                    <p className='m-0'>
+                                        <FaVideo style={{ color: "gray", fontSize: "14px" }} />
+                                    </p>
+                                    <p className='m-0 text-sm fw-normal'>
+                                        Calls
+                                    </p>
+                                </div>
                             </Nav.Item>
                             <Nav.Item>
-                                <Nav.Link eventKey="disabled" disabled>
-                                    Disabled
-                                </Nav.Link>
+                                <div className='text-center text-dark-emphasis'>
+                                    <p className='m-0'>
+                                        <BsPeopleFill style={{ color: "gray", fontSize: "14px" }} />
+                                    </p>
+                                    <p className='m-0 text-sm fw-normal'>
+                                        People
+                                    </p>
+                                </div>
                             </Nav.Item>
+                            <Nav.Item>
+                                <div className='text-center text-dark-emphasis'>
+                                    <p className='m-0'>
+                                        <BsFillGeoFill style={{ color: "gray", fontSize: "14px" }} />
+                                    </p>
+                                    <p className='m-0 text-sm fw-normal'>
+                                        Stories
+                                    </p>
+                                </div>
+                            </Nav.Item>
+                            {/* <Nav></Nav> */}
                         </Nav>
                     </div>
                 </div>
