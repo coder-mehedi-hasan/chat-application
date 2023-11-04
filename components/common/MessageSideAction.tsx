@@ -18,9 +18,14 @@ export default function MessageSideAction() {
         }
     }
 
+    const onMouse = () => {
+        setShowEmoji(false)
+        setShowMore(false)
+    }
+
     return (
         <>
-            <div className='d-flex align=items-center mx-1 message_actions'>
+            <div className='d-flex align=items-center mx-1 message_actions' onMouseLeave={onMouse}>
                 <div>
                     <OverlayTrigger
                         placement="top"

@@ -35,8 +35,10 @@ export default function MessageForm(props) {
         setImage(newArray)
     }
 
-    const handleSubmitMessage = () => {
+    const handleSubmitMessage = (e) => {
+        e.preventDefault()
         const msg_arr = messageContext.message || []
+        // if(image?.length)
         if (image?.length) {
             image.map(item => {
                 msg_arr.push({ content: null, content_img: item })
@@ -55,6 +57,16 @@ export default function MessageForm(props) {
         const mess = message + emoji
         setMessage(mess)
     }
+    const handleKeyPress = (event) => {
+        if (event.ctrlKey && event.key === 'Enter') {
+            setMessage(message + '\n');
+            event.preventDefault();
+        }
+        else if (event.key === 'Enter') {
+            handleSubmitMessage(event)
+        }
+
+    };
 
     return (
         <>
@@ -72,13 +84,13 @@ export default function MessageForm(props) {
                     </Button>
                 </div>
                 <div>
-                    <input multiple onChange={handleImage} type="file" className='d-none' id="share_gallery" />
+                    <input multiple onChange={handleImage} type="file" className='d-none' id="share_gallery" onKeyDown={handleKeyPress} />
                 </div>
-                <InputGroup size='sm' className="px-1 py-1 rounded position-relative bg_gray" >
+                <div size='sm' className="px-1 py-1 rounded d-flex w-100 position-relative bg_gray" >
                     {
                         image.length ?
 
-                            <div className="w-100 d-flex rounded-top bg_gray scrollbar_visible_x" style={{ position: "absolute", top: isMobileWidth ? "-94px" : "-116px", left: "0", overflowX: "scroll", scrollBehavior: "smooth" }}>
+                            <div className="w-100 d-flex rounded-top bg_gray scrollbar_visible_x" style={{ position: "absolute", top: isMobileWidth ? "-94px" : "-113px", left: "0", overflowX: "scroll", scrollBehavior: "smooth" }}>
                                 {
                                     image?.map((item, index) => {
                                         return (
@@ -98,20 +110,51 @@ export default function MessageForm(props) {
                     <Button variant='' className='p-1' ref={emoji} onClick={() => setShowEmoji(!showEmoji)}>
                         <Image className='img-fluid' src="https://i.ibb.co/sWJ1ktH/emojipng-com-14031904.png" alt="" height={20} width={20} />
                     </Button>
-                    <Form.Control autoFocus
-                        aria-describedby="basic-addon2"
-                        style={{ background: "none", border: "none", color: "#000", overflowY: "scroll", scrollBehavior: "smooth", resize: "none" }}
-                        className='py-1 scrollbar_visible_x'
-                        as="textarea"
-                        rows={1}
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
+                    <Form className='w-100'>
+                        <Form.Control
+                            autoFocus
+                            style={{ textAlign: "start", background: "none", border: "none", color: "#000", overflowY: "scroll", scrollBehavior: "smooth", resize: "none", height: "15px", fontSize: "15px" }}
+                            className='scrollbar_visible_x'
+                            as="textarea"
+                            value={message}
+                            onKeyDown={handleKeyPress}
+                            onChange={(e) => setMessage(e.target.value)}
+                        />
+                    </Form>
+                    {/* <div className="d-flex align-items-center text-dark" style={{width:"100%"}} >
+                        <div className="" onChange={(e) => setMessage(e.target)}  contentEditable="true" role="textbox" spellCheck="true" title="Type a message" tabIndex="10" data-tab="10" data-lexical-editor="true" style={{ minHeight: "15px", userSelect: "text", whiteSpace: "pre-wrap", wordBreak: "break-word", width: "100%" }}>
+                            
+                        </div>
+                    </div> */}
 
-                    />
+                    {/* <form onSubmit={handleSubmitMessage} className='w-100' >
+                        {/* <input type="text"
+                            autoFocus
+                            className='py-1 scrollbar_visible_x w-100'
+                            style={{ background: "none", border: "none", color: "#000", outline: "none" }}
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+
+                        /> */}
+                    {/* <textarea name="" id="" >
+
+                        </textarea>
+                    </form> */}
+                    {/* <Form onSubmit={handleSubmitMessage} className='w-100 d-flex align-items-center'>
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Control type="text"
+                                autoFocus
+                                style={{ background: "none", border: "none !important", color: "#000", overflowY: "scroll", scrollBehavior: "smooth", resize: "none" }}
+                                className='py-1 scrollbar_visible_x d-block w-100'
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                            />
+                        </Form.Group>
+                    </Form> */}
                     <Button variant='' >
                         <Image className='img-fluid' src="https://i.postimg.cc/0N4P1xJr/microphone-8369015.png" alt="" height={20} width={20} />
                     </Button>
-                </InputGroup >
+                </div >
                 <Button variant='' onClick={handleSubmitMessage} >
                     <Image className='img-fluid' src="https://i.ibb.co/QdZ8jVf/send-10109845.png" alt="" height={25} width={25} />
                 </Button>

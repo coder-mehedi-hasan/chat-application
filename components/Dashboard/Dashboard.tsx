@@ -17,6 +17,10 @@ import { BsFillChatFill, BsFillCameraVideoFill, BsPeopleFill, BsFillGeoFill, BsP
 import ActiveUser from '../ActiveUser';
 import { Button, Modal, Nav, Offcanvas } from 'react-bootstrap';
 import { BsArrowLeftShort, BsArrowLeft, BsFillXCircleFill } from "react-icons/bs";
+import ChattingHistory from '../History/ChattingHistory';
+import CallsHistory from '../History/CallsHistory';
+import PeopleHistory from '../History/PeopleHistory';
+import StoriesHistory from '../History/StoriesHistory';
 
 export default function Dashboard() {
     const [contactId, setContactId] = useState(null)
@@ -25,8 +29,8 @@ export default function Dashboard() {
     const isMobileWidth = useMediaQuery({ maxWidth: 576 })
     const isMediumWidth = useMediaQuery({ maxWidth: 768 })
     const [fullscreen, setFullscreen] = useState(true);
-    const [canvas, setCanvas] = useState(false);
     const [show, setShow] = useState(false);
+    const [tab, setTab] = useState("chats")
 
     const handleChatInterface = (id) => {
         setContactId(id)
@@ -40,74 +44,23 @@ export default function Dashboard() {
         setShow(!show);
     }
 
+    const handleBottomTab = (t) => {
+        setTab(t)
+    }
+
     return (
         <div className='w-100 p-0 container-fluid' id='chat_bar' >
             <div className="d-flex">
                 <div id='side-bar' style={{ height: "100vh", display: "flex", flexDirection: "column", paddingLeft: "0.5px", width: isMobileWidth ? "100%" : isMediumWidth ? "255px" : "320px" }}>
-                    <div style={{ height: "50px" }}>
-                        <div className="d-flex justify-content-between align-items-center h-100 p-2">
-                            <div>
-                                <Offcanvas className="bg-dark" show={canvas} onHide={() => setCanvas(!canvas)}>
-                                    <div className='d-flex justify-content-end'>
-                                        <div onClick={() => setCanvas(!canvas)} className='me-2 fs-4 rounded-circle text-white' style={{ cursor: 'pointer', }}>
-                                            <BsFillXCircleFill />
-                                        </div>
-                                    </div>
-                                </Offcanvas>
-                                <div className='m-0 d-flex align-items-center'>
-                                    <div onClick={() => setCanvas(!canvas)} style={{ height: "30px", width: "30px", cursor: "pointer" }} className='bg-secondary rounded-circle d-flex justify-content-center align-items-center'>
-                                        <FaBars style={{ color: "gray", fontSize: "14px" }} />
-                                    </div>
-                                    <span className='text-dark fs-5 fw-medium mx-1'>Chats</span>
-                                </div>
-                            </div>
-                            <div>
-                                <div style={{ height: "30px", width: "30px", cursor: "pointer" }} className='bg-secondary rounded-circle d-flex justify-content-center align-items-center'>
-                                    <BsPencilFill style={{ color: "gray", fontSize: "14px" }} />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     <div style={{ width: "100%", height: "100%", overflow: "scroll" }}>
-                        <div className='my-2'>
-                            <SearchBox />
-                        </div>
-                        <div className='my-2'>
-                            <div className='h-100 d-flex align-items-start' style={{ overflow: "scroll" }}>
-                                {
-                                    user?.slice(0, 10)?.map(item => {
-                                        return (
-                                            <ActiveUser click={() => handleChatInterface(item?.id)} user={item} key={item?.id} />
-                                        )
-                                    })
-                                }
-                                {
-                                    user?.length > 10 ?
-                                        <div style={{ paddingRight: "10px" }} className='d-flex justify-content-center'>
-                                            <div style={{ width: "60px", height: "60px", borderRadius: "50%", overflow: "hidden" }} className='flex-column text-white d-flex justify-content-center align-items-center bg-secondary rounded-circle'>
-                                                <BsArrowRight className="fs-4" />
-                                            </div>
-                                        </div>
-                                        :
-                                        ""
-                                }
-                            </div>
-                        </div>
-                        <div>
-                            {
-                                user?.map(item => {
-                                    return (
-                                        <div style={{ padding: "0px 5px", height: "60px" }} onClick={() => handleChatInterface(item?.id)} className='text-white' key={item?.id}>
-                                            <UserInfoBox user={item} size={45} />
-                                        </div>
-                                    )
-                                })
-                            }
-                        </div>
+                        {tab === "chats" && <ChattingHistory handleChatInterface={handleChatInterface} />}
+                        {tab === "calls" && <CallsHistory />}
+                        {tab === "people" && <PeopleHistory />}
+                        {tab === "stories" && <StoriesHistory />}
                     </div>
                     <div style={{ height: "60px" }}>
-                        {/* <div className="d-flex justify-content-between align-items-center h-100 p-2">
-                            <div className='text-center text-white'>
+                        <div className="d-flex justify-content-between align-items-center h-100 p-2">
+                            <div className='text-center text-dark-emphasis' onClick={() => handleBottomTab("chats")}>
                                 <p className='m-0'>
                                     <BsFillChatFill style={{ color: active ? "#3cb29d" : "gray", fontSize: "14px" }} />
                                 </p>
@@ -115,7 +68,7 @@ export default function Dashboard() {
                                     Chats
                                 </p>
                             </div>
-                            <div className='text-center text-dark-emphasis'>
+                            <div className='text-center text-dark-emphasis' onClick={() => handleBottomTab("calls")}>
                                 <p className='m-0'>
                                     <FaVideo style={{ color: "gray", fontSize: "14px" }} />
                                 </p>
@@ -123,7 +76,7 @@ export default function Dashboard() {
                                     Calls
                                 </p>
                             </div>
-                            <div className='text-center text-dark-emphasis'>
+                            <div className='text-center text-dark-emphasis' onClick={() => handleBottomTab("people")}>
                                 <p className='m-0'>
                                     <BsPeopleFill style={{ color: "gray", fontSize: "14px" }} />
                                 </p>
@@ -131,7 +84,7 @@ export default function Dashboard() {
                                     People
                                 </p>
                             </div>
-                            <div className='text-center text-dark-emphasis'>
+                            <div className='text-center text-dark-emphasis' onClick={() => handleBottomTab("stories")}>
                                 <p className='m-0'>
                                     <BsFillGeoFill style={{ color: "gray", fontSize: "14px" }} />
                                 </p>
@@ -139,50 +92,7 @@ export default function Dashboard() {
                                     Stories
                                 </p>
                             </div>
-                        </div> */}
-                        <Nav className="d-flex justify-content-between align-items-center h-100 p-2" variant="tabs" defaultActiveKey={1}>
-                            <Nav.Item>
-                                <div className='text-center text-white'>
-                                    <p className='m-0'>
-                                        <BsFillChatFill style={{ color: active ? "#3cb29d" : "gray", fontSize: "14px" }} />
-                                    </p> 
-                                    <p className='m-0 text-sm fw-normal active' style={{ color: active ? "#3cb29d" : "gray" }}>
-                                        Chats
-                                    </p>
-                                </div>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <div className='text-center text-dark-emphasis'>
-                                    <p className='m-0'>
-                                        <FaVideo style={{ color: "gray", fontSize: "14px" }} />
-                                    </p>
-                                    <p className='m-0 text-sm fw-normal'>
-                                        Calls
-                                    </p>
-                                </div>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <div className='text-center text-dark-emphasis'>
-                                    <p className='m-0'>
-                                        <BsPeopleFill style={{ color: "gray", fontSize: "14px" }} />
-                                    </p>
-                                    <p className='m-0 text-sm fw-normal'>
-                                        People
-                                    </p>
-                                </div>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <div className='text-center text-dark-emphasis'>
-                                    <p className='m-0'>
-                                        <BsFillGeoFill style={{ color: "gray", fontSize: "14px" }} />
-                                    </p>
-                                    <p className='m-0 text-sm fw-normal'>
-                                        Stories
-                                    </p>
-                                </div>
-                            </Nav.Item>
-                            {/* <Nav></Nav> */}
-                        </Nav>
+                        </div>
                     </div>
                 </div>
                 {
