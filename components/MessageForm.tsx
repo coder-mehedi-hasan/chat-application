@@ -65,7 +65,9 @@ export default function MessageForm(props) {
         else if (event.key === 'Enter') {
             handleSubmitMessage(event)
         }
-
+        if(showEmoji){
+            setShowEmoji(false)
+        }
     };
 
     return (

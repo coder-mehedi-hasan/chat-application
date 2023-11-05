@@ -45,7 +45,7 @@
 
 
 .cursor-pointer {
-    cursor: pointer;
+    cursor: pointer !important;
 }
 
 #chat_bar p {
@@ -190,4 +190,8 @@
 }
 .inner_action_tooltip_emoji_picker .tooltip-arrow::before {
     border-top-color: #fff;
+}
+
+#chat_bar .active{
+    color: #3cb29d !important;
 }

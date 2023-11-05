@@ -47,6 +47,9 @@ export default function Dashboard() {
     const handleBottomTab = (t) => {
         setTab(t)
     }
+    useEffect(() => {
+
+    }, [contactId])
 
     return (
         <div className='w-100 p-0 container-fluid' id='chat_bar' >
@@ -54,39 +57,39 @@ export default function Dashboard() {
                 <div id='side-bar' style={{ height: "100vh", display: "flex", flexDirection: "column", paddingLeft: "0.5px", width: isMobileWidth ? "100%" : isMediumWidth ? "255px" : "320px" }}>
                     <div style={{ width: "100%", height: "100%", overflow: "scroll" }}>
                         {tab === "chats" && <ChattingHistory handleChatInterface={handleChatInterface} />}
-                        {tab === "calls" && <CallsHistory />}
-                        {tab === "people" && <PeopleHistory />}
-                        {tab === "stories" && <StoriesHistory />}
+                        {tab === "calls" && <CallsHistory handleChatInterface={handleChatInterface} />}
+                        {tab === "people" && <PeopleHistory handleChatInterface={handleChatInterface} />}
+                        {tab === "stories" && <StoriesHistory handleChatInterface={handleChatInterface} />}
                     </div>
                     <div style={{ height: "60px" }}>
                         <div className="d-flex justify-content-between align-items-center h-100 p-2">
-                            <div className='text-center text-dark-emphasis' onClick={() => handleBottomTab("chats")}>
+                            <div className={`text-center text-dark-emphasis cursor-pointer ${tab === "chats" && 'active'}`} onClick={() => handleBottomTab("chats")}>
                                 <p className='m-0'>
-                                    <BsFillChatFill style={{ color: active ? "#3cb29d" : "gray", fontSize: "14px" }} />
+                                    <BsFillChatFill style={{ fontSize: "14px" }} />
                                 </p>
-                                <p className='m-0 text-sm fw-normal' style={{ color: active ? "#3cb29d" : "gray" }}>
+                                <p className="m-0 text-sm fw-normal">
                                     Chats
                                 </p>
                             </div>
-                            <div className='text-center text-dark-emphasis' onClick={() => handleBottomTab("calls")}>
+                            <div className={`text-center text-dark-emphasis cursor-pointer ${tab === "calls" && 'active'}`} onClick={() => handleBottomTab("calls")}>
                                 <p className='m-0'>
-                                    <FaVideo style={{ color: "gray", fontSize: "14px" }} />
+                                    <FaVideo style={{ fontSize: "14px" }} />
                                 </p>
                                 <p className='m-0 text-sm fw-normal'>
                                     Calls
                                 </p>
                             </div>
-                            <div className='text-center text-dark-emphasis' onClick={() => handleBottomTab("people")}>
+                            <div className={`text-center text-dark-emphasis cursor-pointer ${tab === "people" && 'active'}`} onClick={() => handleBottomTab("people")}>
                                 <p className='m-0'>
-                                    <BsPeopleFill style={{ color: "gray", fontSize: "14px" }} />
+                                    <BsPeopleFill style={{ fontSize: "14px" }} />
                                 </p>
                                 <p className='m-0 text-sm fw-normal'>
                                     People
                                 </p>
                             </div>
-                            <div className='text-center text-dark-emphasis' onClick={() => handleBottomTab("stories")}>
+                            <div className={`text-center text-dark-emphasis cursor-pointer ${tab === "stories" && 'active'}`} onClick={() => handleBottomTab("stories")}>
                                 <p className='m-0'>
-                                    <BsFillGeoFill style={{ color: "gray", fontSize: "14px" }} />
+                                    <BsFillGeoFill style={{ fontSize: "14px" }} />
                                 </p>
                                 <p className='m-0 text-sm fw-normal'>
                                     Stories
@@ -104,12 +107,8 @@ export default function Dashboard() {
                         </Modal>
                         :
                         <div id='chat-app-layout'>
-                            {
-                                !showChat || contactId === null ?
-                                    <HomeChat />
-                                    :
-                                    <ChattingInterFace modal={handleShow} contact_id={contactId} />
-                            }
+                            {!showChat && <HomeChat />}
+                            {showChat && <ChattingInterFace modal={handleShow} contact_id={contactId} />}
                         </div>
                 }
             </div>

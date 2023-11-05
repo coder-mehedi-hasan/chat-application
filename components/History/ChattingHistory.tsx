@@ -15,7 +15,7 @@ export default function ChattingHistory({ handleChatInterface }) {
     return (
         <>
             <TopNavBar type={"chats"} />
-            <div style={{ width: "100%", height: "100%", overflow: "scroll" }}>
+            <div style={{ width: "100%", height: "100%", overflow: "scroll" }} className='chat_history'>
                 <div className='my-2'>
                     <SearchBox />
                 </div>
