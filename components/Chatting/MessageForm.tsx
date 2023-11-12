@@ -1,23 +1,34 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Button, Form, Image, InputGroup, Overlay, Tooltip } from 'react-bootstrap'
-import { BsX, BsPlusLg, BsImage } from "react-icons/bs";
+import { BsX, BsPlusLg, BsImage, BsEmojiSmile, BsMicFill } from "react-icons/bs";
 import Toast from 'react-bootstrap/Toast';
 import { useMediaQuery } from 'react-responsive';
-import { useContext } from 'react';
-import { MessageConsumer } from '../context/messageContext';
+// import { useContext } from 'react';
+// import { MessageConsumer } from '../context/messageContext';
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
+import { io } from "socket.io-client"
+import { useStateProvider } from '../../context/StateContext';
 
-export default function MessageForm(props) {
+
+export default function MessageForm() {
     const [showB, setShowB] = useState(false);
     const toggleShowB = () => setShowB(!showB);
     const [image, setImage] = useState([])
     const isMobileWidth = useMediaQuery({ maxWidth: 576 })
-    const [message, setMessage] = useState("")
     const [showEmoji, setShowEmoji] = useState(false)
-    const messageContext = useContext(MessageConsumer)
+    // const messageContext = useContext(MessageConsumer)
     const emoji = useRef(null);
+    const [socket, setSocket] = useState<any>(undefined)
+    const [message, setMessage] = useState<any>({ messageType: 1, messageFromUserID: "", messageToUserID: '', message: "" })
+    // const [inbox, setInbox] = useState<any>([])
+    const [send, setSend] = useState<any>([])
+    const [lon, setLon] = useState<any>()
+    const [lat, setLat] = useState<any>()
+    const [inbox, setInbox] = useState<any>([])
+    const [{ currentChatUser }] = useStateProvider()
+
 
     const handleImage = (e) => {
         const selectedFIles = [];
@@ -37,42 +48,87 @@ export default function MessageForm(props) {
 
     const handleSubmitMessage = (e) => {
         e.preventDefault()
-        const msg_arr = messageContext.message || []
-        // if(image?.length)
-        if (image?.length) {
-            image.map(item => {
-                msg_arr.push({ content: null, content_img: item })
-            })
-            setImage([])
-        }
-        if (message !== "") {
-            msg_arr.push({ content: message, content_img: null })
-            setMessage("")
-        }
-        messageContext.addMessage(msg_arr)
-        props.send()
+        // const msg_arr = messageContext.message || []
+        // // if(image?.length)
+        // if (image?.length) {
+        //     image.map(item => {
+        //         msg_arr.push({ content: null, content_img: item })
+        //     })
+        //     setImage([])
+        // }
+        // if (message !== "") {
+        //     msg_arr.push({ content: message, content_img: null })
+        //     setMessage("")
+        // }
+        // messageContext.addMessage(msg_arr)
+        // props.send()
+        socket.emit('messageFromClient', message, (response) => {
+            setInbox((inbox: any) => [...inbox, response.sMessageObj])
+        })
+        setMessage({ ...message, message: "" })
     }
 
     const addEmoji = (emoji) => {
         const mess = message + emoji
         setMessage(mess)
     }
+
     const handleKeyPress = (event) => {
         if (event.ctrlKey && event.key === 'Enter') {
-            setMessage(message + '\n');
+            const msg = message?.message + '\n'
+            setMessage({ ...message, message: msg });
             event.preventDefault();
+
         }
         else if (event.key === 'Enter') {
             handleSubmitMessage(event)
         }
-        if(showEmoji){
+        if (showEmoji) {
             setShowEmoji(false)
         }
     };
 
+    const getLocation = () => {
+        if ('geolocation' in navigator) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                const { longitude, latitude } = position.coords
+                setLon(longitude)
+                setLat(latitude)
+            })
+        }
+    }
+
+    const getActiveList = () => {
+        socket?.on("onlineClientList", (response) => {
+        })
+    }
+
+    useEffect(() => {
+        getLocation()
+        const userId = window.localStorage.getItem("userId")
+        setMessage({ ...message, messageFromUserID: userId, })
+        const token = window.localStorage.getItem("token")
+        const userName = window.localStorage.getItem("userName")
+        const connectionKey = `${process.env.NEXT_PUBLIC_SOCKET_URL}?userId=${userId}&name=${userName}&lastSocketId=${"LAST_CONNECTED_SOCKETID"}&location={"longitude": ${lon}, "latitude": ${lat}}&token=${token}`
+        // console.log({ connectionKey })
+        const socket = io(connectionKey)
+
+        socket.on('clientToClientMessage', (response) => {
+            setInbox((inbox: any) => [...inbox, response.sMessageObj])
+        })
+        setSocket(socket)
+
+        getActiveList()
+
+    }, [lat, lon])
+
+    useEffect(() => {
+        setMessage({ ...message, message: "", messageToUserID: currentChatUser?.id })
+    }, [currentChatUser])
+
     return (
-        <>
-            <div style={{ flex: 1, background: "#fff" }} className='position-relative w-100 h-100 text-white d-flex align-items-center justify-content-between px-lg-3 px-md-2 px-sm-1 px-xs-1'>
+        <div className='position-relative'>
+            <div style={{ flex: 1, background: "#fff", height: "80px" }} className='position-relative w-100 h-100 text-white d-flex align-items-center justify-content-between px-lg-3 px-md-2 px-sm-1 px-xs-1'>
                 <div>
                     <Button variant='' className='p-1 text-dark'>
                         <BsPlusLg className="fs-5" onClick={toggleShowB} style={{ transform: showB ? "rotate(45deg)" : "", transition: ".4s" }} />
@@ -109,18 +165,22 @@ export default function MessageForm(props) {
                             : ""
 
                     }
-                    <Button variant='' className='p-1' ref={emoji} onClick={() => setShowEmoji(!showEmoji)}>
-                        <Image className='img-fluid' src="https://i.ibb.co/sWJ1ktH/emojipng-com-14031904.png" alt="" height={20} width={20} />
-                    </Button>
+                    {/* <Button variant='' className='p-1' ref={emoji} onClick={() => setShowEmoji(!showEmoji)}>
+                        <BsEmojiSmile />
+                    </Button> */}
+                    <div className='cursor-pointer p-1 text-dark' style={{ fontSize: "16px" }} ref={emoji} onClick={() => setShowEmoji(!showEmoji)}>
+                        <BsEmojiSmile />
+                    </div>
                     <Form className='w-100'>
                         <Form.Control
                             autoFocus
                             style={{ textAlign: "start", background: "none", border: "none", color: "#000", overflowY: "scroll", scrollBehavior: "smooth", resize: "none", height: "15px", fontSize: "15px" }}
                             className='scrollbar_visible_x'
                             as="textarea"
-                            value={message}
+                            value={message?.message}
+                            name="message"
                             onKeyDown={handleKeyPress}
-                            onChange={(e) => setMessage(e.target.value)}
+                            onChange={(e) => setMessage({ ...message, [e.target.name]: e.target.value })}
                         />
                     </Form>
                     {/* <div className="d-flex align-items-center text-dark" style={{width:"100%"}} >
@@ -153,9 +213,9 @@ export default function MessageForm(props) {
                             />
                         </Form.Group>
                     </Form> */}
-                    <Button variant='' >
-                        <Image className='img-fluid' src="https://i.postimg.cc/0N4P1xJr/microphone-8369015.png" alt="" height={20} width={20} />
-                    </Button>
+                    <div className='cursor-pointer p-1 text-dark' style={{ fontSize: "16px" }} ref={emoji} onClick={() => setShowEmoji(!showEmoji)}>
+                        <BsMicFill />
+                    </div>
                 </div >
                 <Button variant='' onClick={handleSubmitMessage} >
                     <Image className='img-fluid' src="https://i.ibb.co/QdZ8jVf/send-10109845.png" alt="" height={25} width={25} />
@@ -184,6 +244,6 @@ export default function MessageForm(props) {
                     </Tooltip>
                 )}
             </Overlay>
-        </>
+        </div>
     )
 }

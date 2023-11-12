@@ -13,7 +13,7 @@ import ImageContet from './ImageContet';
 export default function SenderMessages({ data }) {
     const isMediumWidth = useMediaQuery({ maxWidth: 768 })
     const isLargeWidth = useMediaQuery({ maxWidth: 992 })
-    const messageContext = useContext(MessageConsumer)
+    // const messageContext = useContext(MessageConsumer)
     const [del, setDel] = useState(false)
     const divRef = useRef()
 
@@ -35,7 +35,7 @@ export default function SenderMessages({ data }) {
         } else {
             setDel(false)
         }
-    }, [messageContext.message]);
+    }, []);
 
 
     return (
@@ -43,19 +43,15 @@ export default function SenderMessages({ data }) {
             <div className="d-flex align-items-center justify-content-end">
                 <MessageSideAction />
                 <div>
-                    {
-                        data?.content !== null ?
-                            <TextContent isSender={true} content={data?.content} />
-                            : ""
-                    }
+                    <TextContent isSender={true} content={data?.message} />
                 </div>
-                <div>
+                {/* <div>
                     {
                         data?.content_img !== null ?
                             <ImageContet img={data?.content_img} />
                             : ""
                     }
-                </div>
+                </div> */}
             </div>
         </div>
     )

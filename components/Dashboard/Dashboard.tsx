@@ -8,7 +8,7 @@ import Image50X50 from '../common/Image50X50';
 import UserHead from '../common/UserHead';
 import SearchBox from './SearchBox';
 import HomeChat from '../common/HomeChat';
-import ChattingInterFace from '../common/ChattingInterFace';
+import ChattingInterFace from '../Chatting/ChattingInterFace';
 import UserInfoBox from '../common/UserInfoBox';
 import { useMediaQuery } from 'react-responsive'
 import { FaBeer, FaAlignLeft, FaPencilAlt, FaBars, FaVideo } from 'react-icons/fa';
@@ -21,6 +21,7 @@ import ChattingHistory from '../History/ChattingHistory';
 import CallsHistory from '../History/CallsHistory';
 import PeopleHistory from '../History/PeopleHistory';
 import StoriesHistory from '../History/StoriesHistory';
+import { useStateProvider } from '../../context/StateContext';
 
 export default function Dashboard() {
     const [contactId, setContactId] = useState(null)
@@ -29,20 +30,8 @@ export default function Dashboard() {
     const isMobileWidth = useMediaQuery({ maxWidth: 576 })
     const isMediumWidth = useMediaQuery({ maxWidth: 768 })
     const [fullscreen, setFullscreen] = useState(true);
-    const [show, setShow] = useState(false);
     const [tab, setTab] = useState("chats")
-
-    const handleChatInterface = (id) => {
-        setContactId(id)
-        setShowChat(true)
-        if (isMobileWidth) {
-            handleShow()
-        }
-    }
-
-    const handleShow = () => {
-        setShow(!show);
-    }
+    const [{ currentChatUser }] = useStateProvider()
 
     const handleBottomTab = (t) => {
         setTab(t)
@@ -56,10 +45,10 @@ export default function Dashboard() {
             <div className="d-flex">
                 <div id='side-bar' style={{ height: "100vh", display: "flex", flexDirection: "column", paddingLeft: "0.5px", width: isMobileWidth ? "100%" : isMediumWidth ? "255px" : "320px" }}>
                     <div style={{ width: "100%", height: "100%", overflow: "scroll" }}>
-                        {tab === "chats" && <ChattingHistory handleChatInterface={handleChatInterface} />}
-                        {tab === "calls" && <CallsHistory handleChatInterface={handleChatInterface} />}
-                        {tab === "people" && <PeopleHistory handleChatInterface={handleChatInterface} />}
-                        {tab === "stories" && <StoriesHistory handleChatInterface={handleChatInterface} />}
+                        {tab === "chats" && <ChattingHistory />}
+                        {tab === "calls" && <CallsHistory />}
+                        {tab === "people" && <PeopleHistory />}
+                        {tab === "stories" && <StoriesHistory />}
                     </div>
                     <div style={{ height: "60px" }}>
                         <div className="d-flex justify-content-between align-items-center h-100 p-2">
@@ -99,17 +88,7 @@ export default function Dashboard() {
                     </div>
                 </div>
                 {
-                    isMobileWidth ?
-                        <Modal show={show} fullscreen={fullscreen}>
-                            <div id='chat-app-layout'>
-                                <ChattingInterFace modal={handleShow} contact_id={contactId} />
-                            </div>
-                        </Modal>
-                        :
-                        <div id='chat-app-layout'>
-                            {!showChat && <HomeChat />}
-                            {showChat && <ChattingInterFace modal={handleShow} contact_id={contactId} />}
-                        </div>
+                    currentChatUser ? <ChattingInterFace /> : isMobileWidth ? <HomeChat /> : ""
                 }
             </div>
         </div >

@@ -6,11 +6,13 @@ import { useEffect } from 'react';
 import { useRef } from 'react';
 import { useContext } from 'react';
 import { MessageConsumer } from '../../context/messageContext';
+import MessageSideAction from '../common/MessageSideAction';
+import TextContent from './TextContent';
 
-export default function ReceiverMessages({ img, data }) {
+export default function ReceiverMessages({ data }) {
     const isMediumWidth = useMediaQuery({ maxWidth: 768 })
     const isLargeWidth = useMediaQuery({ maxWidth: 992 })
-    const messageContext = useContext(MessageConsumer)
+    // const messageContext = useContext(MessageConsumer)
     const [del, setDel] = useState(false)
     const divRef = useRef()
 
@@ -32,7 +34,7 @@ export default function ReceiverMessages({ img, data }) {
         } else {
             setDel(false)
         }
-    }, [messageContext.message]);
+    }, []);
 
 
     useEffect(() => {
@@ -47,48 +49,20 @@ export default function ReceiverMessages({ img, data }) {
 
 
     return (
-        <div className="row my-3 w-100" ref={divRef}>
-            <div className="d-flex align-items-end">
+        <div className="row my-3 w-100 message_content" ref={divRef} >
+            <div className="d-flex align-items-center justify-content-start">
                 <div>
-                    <div style={{ height: "30px", width: "30px", borderRadius: "50%", overflow: "hidden" }}>
-                        <Image className='img-fluid' src={img}></Image>
-                    </div>
+                    <TextContent isSender={false} content={data?.message} />
                 </div>
-                <div className='mx-3 bg-white p-2 mb-4 rounded message-side-pill'>
-                    {
-                        data?.content !== null ?
-                            <div className='w-100 p-2'>
-                                <p className='text-black m-0'>
-                                    {
-                                        data?.content
-                                    }
-                                </p>
-                            </div>
-                            : ""
-                    }
+                <MessageSideAction />
+                {/* <div>
                     {
                         data?.content_img !== null ?
-                            <>
-                                <img src={data?.content_img} className='img-fluid' alt="sender img" />
-                            </> : ""
+                            <ImageContet img={data?.content_img} />
+                            : ""
                     }
-                    <div className='d-flex justify-content-end align-items-center text_gray'>
-                        <span style={{ fontSize: "12px" }} className='mx-1'>
-                            {
-                                currTime.toLocaleLowerCase()
-                            }
-                        </span>
-                        <span style={{ fontSize: "14px" }} className='mx-1'>
-                            {
-                                del ?
-                                    <BsCheckAll />
-                                    :
-                                    <BsCheckLg />
-                            }
-                        </span>
-                    </div>
-                </div>
+                </div> */}
             </div>
-        </div >
+        </div>
     )
 }

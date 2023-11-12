@@ -1,15 +1,13 @@
-import React, { useState } from 'react'
+import React from 'react'
 import SearchBox from '../Dashboard/SearchBox'
 import user from '../../fake_data/user.json';
 import ActiveUser from '../ActiveUser';
 import { BsArrowRight, BsFillXCircleFill, BsPencilFill } from 'react-icons/bs';
-import UserInfoBox from '../common/UserInfoBox';
-import { Offcanvas } from 'react-bootstrap';
-import { FaBars } from 'react-icons/fa';
 import TopNavBar from '../common/TopNavBar';
+import ChatListItem from './ChatListItem';
 
 
-export default function ChattingHistory({ handleChatInterface }) {
+export default function ChattingHistory() {
 
 
     return (
@@ -24,7 +22,7 @@ export default function ChattingHistory({ handleChatInterface }) {
                         {
                             user?.slice(0, 10)?.map(item => {
                                 return (
-                                    <ActiveUser click={() => handleChatInterface(item?.id)} user={item} key={item?.id} />
+                                    <ActiveUser user={item} key={item?.id} />
                                 )
                             })
                         }
@@ -44,9 +42,7 @@ export default function ChattingHistory({ handleChatInterface }) {
                     {
                         user?.map(item => {
                             return (
-                                <div style={{ padding: "0px 5px", height: "60px" }} onClick={() => handleChatInterface(item?.id)} className='text-white' key={item?.id}>
-                                    <UserInfoBox user={item} size={45} />
-                                </div>
+                                <ChatListItem data={item} key={item?.id} />
                             )
                         })
                     }

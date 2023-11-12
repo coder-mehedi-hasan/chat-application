@@ -6,7 +6,7 @@ import user from '../../fake_data/user.json';
 import { BsArrowRight } from 'react-icons/bs';
 import UserInfoBox from '../common/UserInfoBox';
 
-export default function PeopleHistory({ handleChatInterface }) {
+export default function PeopleHistory() {
     return (
         <>
             <TopNavBar type={"people"} />
@@ -16,7 +16,8 @@ export default function PeopleHistory({ handleChatInterface }) {
                         {
                             user?.slice(0, 10)?.map(item => {
                                 return (
-                                    <ActiveUser click={() => handleChatInterface(item?.id)} user={item} key={item?.id} />
+                                    // <ActiveUser click={() => handleChatInterface(item?.id)} user={item} key={item?.id} />
+                                    <></>
                                 )
                             })
                         }

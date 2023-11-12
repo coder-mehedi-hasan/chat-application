@@ -6,7 +6,7 @@ import user from '../../fake_data/user.json';
 import { BsArrowRight } from 'react-icons/bs';
 import UserInfoBox from '../common/UserInfoBox';
 
-export default function CallsHistory({ handleChatInterface }) {
+export default function CallsHistory() {
     return (
         <>
             <div style={{ width: "100%", height: "100%" }}>
@@ -17,7 +17,8 @@ export default function CallsHistory({ handleChatInterface }) {
                             {
                                 user?.slice(0, 10)?.map(item => {
                                     return (
-                                        <ActiveUser click={() => handleChatInterface(item?.id)} user={item} key={item?.id} />
+                                        // <ActiveUser click={() => handleChatInterface(item?.id)} user={item} key={item?.id} />
+                                        <></>
                                     )
                                 })
                             }
