@@ -1,7 +1,7 @@
 import React from 'react'
 import UserInfoBox from '../common/UserInfoBox'
 import { useStateProvider } from '../../context/StateContext'
-import { reduceCases } from '../../context/constant'
+import { reducerCases } from '../../context/constant'
 
 export default function ChatListItem({ data }) {
 
@@ -9,7 +9,7 @@ export default function ChatListItem({ data }) {
 
     const handleClickContact = () => {
         // if (currentChatUser?.id === data?.id) {
-            dispatch({ type: reduceCases.CHANGE_CURRENT_CHAT_USER, user: data })
+        dispatch({ type: reducerCases.CHANGE_CURRENT_CHAT_USER, user: data })
         // }
     }
 

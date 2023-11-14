@@ -1,0 +1,6 @@
+************************************* Invoked: Tue Nov 14 23:11:49 2023
+[0] Arguments: F:\nextjs\chat-application\chat-application\public\msys2-x86_64-20231026.exe
+[74] Operations sanity check succeeded.
+[75] Warning: Cannot create lock file "C:\Users\Md Mehedi Hasan\AppData\Local\Temp\msys2-x86_64-202310261234865.lock": The process cannot access the file because it is being used by another process.
+ (0x00000020)
+[340] UnableToStart : Unable to start installer : Another msys2-x86_64-20231026 instance is already running. Wait until it finishes, close it, or restart your system.

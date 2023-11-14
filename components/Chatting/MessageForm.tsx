@@ -10,6 +10,7 @@ import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 import { io } from "socket.io-client"
 import { useStateProvider } from '../../context/StateContext';
+import { reducerCases } from '../../context/constant';
 
 
 export default function MessageForm() {
@@ -24,11 +25,9 @@ export default function MessageForm() {
     const [message, setMessage] = useState<any>({ messageType: 1, messageFromUserID: "", messageToUserID: '', message: "" })
     // const [inbox, setInbox] = useState<any>([])
     const [send, setSend] = useState<any>([])
-    const [lon, setLon] = useState<any>()
-    const [lat, setLat] = useState<any>()
     const [inbox, setInbox] = useState<any>([])
-    const [{ currentChatUser }] = useStateProvider()
-
+    // const [{ currentChatUser, userInfo, current_location, messages }, dispatch] = useStateProvider()
+    const [{ currentChatUser, userInfo, current_location, messages }, dispatch] = useStateProvider()
 
     const handleImage = (e) => {
         const selectedFIles = [];
@@ -63,8 +62,13 @@ export default function MessageForm() {
         // messageContext.addMessage(msg_arr)
         // props.send()
         socket.emit('messageFromClient', message, (response) => {
-            setInbox((inbox: any) => [...inbox, response.sMessageObj])
+            // console.log({ response }, "send")
+            // setInbox((inbox: any) => [...inbox, response.sMessageObj])
+            // dispatch({ type: reducerCases.SET_MESSAGES, messages: response.sMessageObj })
+            // dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
+            // newMessage
         })
+
         setMessage({ ...message, message: "" })
     }
 
@@ -88,43 +92,28 @@ export default function MessageForm() {
         }
     };
 
-    const getLocation = () => {
-        if ('geolocation' in navigator) {
-            navigator.geolocation.getCurrentPosition((position) => {
-                const { longitude, latitude } = position.coords
-                setLon(longitude)
-                setLat(latitude)
-            })
-        }
-    }
 
-    const getActiveList = () => {
-        socket?.on("onlineClientList", (response) => {
-        })
-    }
 
     useEffect(() => {
-        getLocation()
-        const userId = window.localStorage.getItem("userId")
-        setMessage({ ...message, messageFromUserID: userId, })
-        const token = window.localStorage.getItem("token")
-        const userName = window.localStorage.getItem("userName")
-        const connectionKey = `${process.env.NEXT_PUBLIC_SOCKET_URL}?userId=${userId}&name=${userName}&lastSocketId=${"LAST_CONNECTED_SOCKETID"}&location={"longitude": ${lon}, "latitude": ${lat}}&token=${token}`
-        // console.log({ connectionKey })
-        const socket = io(connectionKey)
+        setMessage({ ...message, message: "", messageToUserID: currentChatUser.id, messageFromUserID: userInfo?.id })
+    }, [currentChatUser])
 
+    useEffect(() => {
+        const connectionKey = `${process.env.NEXT_PUBLIC_SOCKET_URL}?userId=${userInfo?.id}&name=${userInfo?.name}&lastSocketId=${"LAST_CONNECTED_SOCKETID"}&location={"longitude": ${current_location?.lon}, "latitude": ${current_location?.lat}}&token=${userInfo?.token}`
+        const socket = io(connectionKey)
+        console.log({ socket })
         socket.on('clientToClientMessage', (response) => {
-            setInbox((inbox: any) => [...inbox, response.sMessageObj])
-        })
+            // setInbox((inbox: any) => [...inbox, response.sMessageObj])
+            // dispatch({ type: reducerCases.SET_MESSAGES, messages: [...messages, response.sMessageObj] })
+            // console.log({ response }, "recver")
+            dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
+        });
+
         setSocket(socket)
 
-        getActiveList()
+    }, [])
 
-    }, [lat, lon])
-
-    useEffect(() => {
-        setMessage({ ...message, message: "", messageToUserID: currentChatUser?.id })
-    }, [currentChatUser])
+    console.log({ messages })
 
     return (
         <div className='position-relative'>
