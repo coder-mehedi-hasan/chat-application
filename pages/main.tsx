@@ -2,8 +2,9 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useStateProvider } from '../context/StateContext'
 import { io } from 'socket.io-client';
 import { reducerCases } from '../context/constant';
+import { AppProps } from 'next/app';
 
-export default function Main({ Component, pageProps }) {
+export default function Main({ Component, pageProps }: AppProps) {
     const [lat, setLat] = useState<any>()
     const [lon, setLon] = useState<any>()
     const [{ currentChatUser, userInfo, current_location, messages, }, dispatch] = useStateProvider()

@@ -9,7 +9,7 @@ import { io } from 'socket.io-client';
 import { reducerCases } from '../context/constant';
 import Main from './main';
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App() {
 
 	return (
 		<StateProvider initialState={initialState} reducer={reducer}>
@@ -18,7 +18,7 @@ export default function App({ Component, pageProps }: AppProps) {
 				<link rel='shortcut icon' href='/favicon.png'></link>
 			</Head>
 			{/* <Component {...pageProps} /> */}
-			<Main Component={Component} pageProps={pageProps} ></Main>
+			<Main />
 		</StateProvider>
 	);
 }
