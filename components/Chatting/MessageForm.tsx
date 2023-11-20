@@ -21,13 +21,13 @@ export default function MessageForm() {
     const [showEmoji, setShowEmoji] = useState(false)
     // const messageContext = useContext(MessageConsumer)
     const emoji = useRef(null);
-    const [socket, setSocket] = useState<any>(undefined)
+    // const [socket, setSocket] = useState<any>(undefined)
     const [message, setMessage] = useState<any>({ messageType: 1, messageFromUserID: "", messageToUserID: '', message: "" })
     // const [inbox, setInbox] = useState<any>([])
     const [send, setSend] = useState<any>([])
     const [inbox, setInbox] = useState<any>([])
     // const [{ currentChatUser, userInfo, current_location, messages }, dispatch] = useStateProvider()
-    const [{ currentChatUser, userInfo, current_location, messages }, dispatch] = useStateProvider()
+    const [{ currentChatUser, userInfo, current_location, messages, socket }, dispatch] = useStateProvider()
 
     const handleImage = (e) => {
         const selectedFIles = [];
@@ -61,20 +61,21 @@ export default function MessageForm() {
         // }
         // messageContext.addMessage(msg_arr)
         // props.send()
-        socket.emit('messageFromClient', message, (response) => {
-            // console.log({ response }, "send")
-            // setInbox((inbox: any) => [...inbox, response.sMessageObj])
-            // dispatch({ type: reducerCases.SET_MESSAGES, messages: response.sMessageObj })
-            // dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
-            // newMessage
+        socket.current.emit('messageFromClient', message, (response) => {
+            // const find = messages?.find(item => item?._id === response?.sMessageObj?._id)
+            // console.log("find from sender : ", find)
+
+            // if (!find) {
+                console.log("response from client :", response)
+                dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
+            // }
         })
 
         setMessage({ ...message, message: "" })
     }
 
     const addEmoji = (emoji) => {
-        const mess = message + emoji
-        setMessage(mess)
+        // setMessage({ ...message, message: emoji })
     }
 
     const handleKeyPress = (event) => {
@@ -92,28 +93,10 @@ export default function MessageForm() {
         }
     };
 
-
-
     useEffect(() => {
         setMessage({ ...message, message: "", messageToUserID: currentChatUser.id, messageFromUserID: userInfo?.id })
     }, [currentChatUser])
 
-    useEffect(() => {
-        const connectionKey = `${process.env.NEXT_PUBLIC_SOCKET_URL}?userId=${userInfo?.id}&name=${userInfo?.name}&lastSocketId=${"LAST_CONNECTED_SOCKETID"}&location={"longitude": ${current_location?.lon}, "latitude": ${current_location?.lat}}&token=${userInfo?.token}`
-        const socket = io(connectionKey)
-        console.log({ socket })
-        socket.on('clientToClientMessage', (response) => {
-            // setInbox((inbox: any) => [...inbox, response.sMessageObj])
-            // dispatch({ type: reducerCases.SET_MESSAGES, messages: [...messages, response.sMessageObj] })
-            // console.log({ response }, "recver")
-            dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
-        });
-
-        setSocket(socket)
-
-    }, [])
-
-    console.log({ messages })
 
     return (
         <div className='position-relative'>

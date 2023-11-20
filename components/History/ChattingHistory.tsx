@@ -5,9 +5,12 @@ import ActiveUser from '../ActiveUser';
 import { BsArrowRight, BsFillXCircleFill, BsPencilFill } from 'react-icons/bs';
 import TopNavBar from '../common/TopNavBar';
 import ChatListItem from './ChatListItem';
+import { useStateProvider } from '../../context/StateContext';
 
 
 export default function ChattingHistory() {
+
+    const [{ userInfo }, dispatch] = useStateProvider()
 
 
     return (
@@ -22,7 +25,12 @@ export default function ChattingHistory() {
                         {
                             user?.slice(0, 10)?.map(item => {
                                 return (
-                                    <ActiveUser user={item} key={item?.id} />
+                                    <>
+                                        {
+                                            userInfo?.id !== item?.id ?
+                                                <ActiveUser user={item} key={item?.id} /> : ""
+                                        }
+                                    </>
                                 )
                             })
                         }
@@ -42,7 +50,13 @@ export default function ChattingHistory() {
                     {
                         user?.map(item => {
                             return (
-                                <ChatListItem data={item} key={item?.id} />
+                                <>
+                                    {
+                                        userInfo?.id !== item?.id ?
+                                            <ChatListItem data={item} key={item?.id} /> : ""
+
+                                    }
+                                </>
                             )
                         })
                     }

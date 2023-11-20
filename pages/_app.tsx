@@ -1,19 +1,15 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import type { AppProps } from 'next/app'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../style/main.css';
-import { MessageProvider } from '../context/messageContext';
-import { useState } from 'react';
-import { StateProvider } from '../context/StateContext';
+import { StateProvider, useStateProvider } from '../context/StateContext';
 import Head from 'next/head';
 import reducer, { initialState } from '../context/StateReducers';
+import { io } from 'socket.io-client';
+import { reducerCases } from '../context/constant';
+import Main from './main';
 
 export default function App({ Component, pageProps }: AppProps) {
-	const [message, setMessage] = useState([])
-
-	const addMessage = (msg) => {
-		setMessage(msg)
-	}
 
 	return (
 		<StateProvider initialState={initialState} reducer={reducer}>
@@ -21,7 +17,8 @@ export default function App({ Component, pageProps }: AppProps) {
 				<title>Kotha App</title>
 				<link rel='shortcut icon' href='/favicon.png'></link>
 			</Head>
-			<Component {...pageProps} />
+			{/* <Component {...pageProps} /> */}
+			<Main Component={Component} pageProps={pageProps} ></Main>
 		</StateProvider>
 	);
 }
