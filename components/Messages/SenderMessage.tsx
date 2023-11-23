@@ -42,16 +42,16 @@ export default function SenderMessages({ data }) {
         <div className="row my-3 w-100 message_content" ref={divRef} >
             <div className="d-flex align-items-center justify-content-end">
                 <MessageSideAction />
-                <div>
-                    <TextContent isSender={true} content={data?.message} />
-                </div>
-                {/* <div>
-                    {
-                        data?.content_img !== null ?
-                            <ImageContet img={data?.content_img} />
-                            : ""
-                    }
-                </div> */}
+                {
+                    data?.cloudfrontUrl && !data?.message ?
+                        <div>
+                            <ImageContet img={data?.cloudfrontUrl} />
+                        </div>
+                        :
+                        <div>
+                            <TextContent isSender={true} content={data?.message} />
+                        </div>
+                }
             </div>
         </div>
     )

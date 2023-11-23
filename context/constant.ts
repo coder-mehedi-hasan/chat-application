@@ -5,4 +5,5 @@ export const reducerCases = {
     SET_LOCATION: "SET_LOCATION",
     ADD_MESSAGE: "ADD_MESSAGE",
     SET_SOCKET: "SET_SOCKET",
+    SOCKET_EVENT: "SOCKET_EVENT"
 }

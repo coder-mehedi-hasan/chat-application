@@ -4,11 +4,10 @@ import { io } from 'socket.io-client';
 import { reducerCases } from '../context/constant';
 import { AppProps } from 'next/app';
 
-export default function Main({ Component, pageProps }: AppProps) {
+export default function Main({ Component, pageProps }) {
     const [lat, setLat] = useState<any>()
     const [lon, setLon] = useState<any>()
-    const [{ currentChatUser, userInfo, current_location, messages, }, dispatch] = useStateProvider()
-    const [socketEvent, setSocketEvent] = useState(false)
+    const [{ currentChatUser, userInfo, current_location, messages, socketEvent }, dispatch] = useStateProvider()
     const socket = useRef()
 
     const getLocation = () => {
@@ -35,7 +34,7 @@ export default function Main({ Component, pageProps }: AppProps) {
                 }
             })
         }
-    },[])
+    }, [])
 
     useEffect(() => {
         dispatch({
@@ -44,7 +43,7 @@ export default function Main({ Component, pageProps }: AppProps) {
                 lon: lon
             }
         })
-    }, [lat,lon])
+    }, [lat, lon])
 
     useEffect(() => {
         // console.log("socket   =>>>:", { userInfo })
@@ -53,31 +52,40 @@ export default function Main({ Component, pageProps }: AppProps) {
             const connectionKey = `${process.env.NEXT_PUBLIC_SOCKET_URL}?userId=${userInfo?.id}&name=${userInfo?.name}&lastSocketId=${"LAST_CONNECTED_SOCKETID"}&location={"longitude": ${current_location?.lon}, "latitude": ${current_location?.lat}}&token=${userInfo?.token}`
             socket.current = io(connectionKey)
             dispatch({ type: reducerCases.SET_SOCKET, socket: socket })
+            socket.current.on('onlineClient', (online) => {
+                console.log({ online })
+            })
         }
-        return () => {
-            if (socket.current) {
-                socket.current.disconnect();
-            }
-        };
-    }, [userInfo, current_location,dispatch]);
+        // return () => {
+        //     if (socket.current) {
+        //         socket.current.disconnect();
+        //     }
+        // };
+    }, [userInfo, current_location, dispatch]);
 
-    
+
     useEffect(() => {
-        if (socket.current && !socketEvent) {
+        if (socket.current && socketEvent) {
             socket.current.on('clientToClientMessage', (response) => {
                 console.log("response from receiver", response)
+                const find = messages?.find(item => console.log(item?._id))
+                console.log({ find })
                 dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
+                dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: false })
             })
-            setSocketEvent(true)
         }
-    
+
+
         return () => {
             // Remove the event listener when the component unmounts if necessary
             if (socket.current) {
                 socket.current.off('clientToClientMessage');
             }
         };
-    }, [socket.current, dispatch]);
+    }, [socket.current, dispatch, socketEvent]);
+
+    console.log({ socketEvent })
+    console.log({messages})
 
     return (
         <Component pageProps={...pageProps} />

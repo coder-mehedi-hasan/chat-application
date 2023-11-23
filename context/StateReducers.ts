@@ -6,6 +6,7 @@ export const initialState = {
     currentChatUser: undefined,
     socket: undefined,
     messages: [],
+    socketEvent: false,
 }
 
 const reducer = (state, action) => {
@@ -39,6 +40,11 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 socket: action.socket
+            }
+        case reducerCases.SOCKET_EVENT:
+            return {
+                ...state,
+                socketEvent: action.socketEvent
             }
         default:
             return state;

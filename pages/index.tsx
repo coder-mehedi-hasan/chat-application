@@ -3,7 +3,7 @@ import { useStateProvider } from '../context/StateContext';
 import { io } from 'socket.io-client';
 import { reducerCases } from '../context/constant';
 import Link from 'next/link';
-import { Button, Card, CardGroup } from 'react-bootstrap';
+import { Button, ButtonGroup, Card, CardGroup } from 'react-bootstrap';
 import user from '../fake_data/user.json'
 import { Router, useRouter } from 'next/router';
 
@@ -42,7 +42,17 @@ export default function Home() {
 									<Card.Text>
 										Id: {item?.id}
 									</Card.Text>
-									<Button variant="primary" onClick={() => login(item)}>LogIn</Button>
+									{
+										userInfo?.id === item?.id ? <>
+											<ButtonGroup>
+												<Button variant="primary" disabled>Logged</Button>
+												<Button variant="primary" onClick={() => router.push('chat')}>Go to chat</Button>
+
+											</ButtonGroup>
+										</>
+											:
+											<Button variant="primary" onClick={() => login(item)}>LogIn</Button>
+									}
 								</Card.Body>
 							</Card>
 						)

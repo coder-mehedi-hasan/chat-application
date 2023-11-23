@@ -16,36 +16,144 @@ import { reducerCases } from '../../context/constant';
 export default function MessageForm() {
     const [showB, setShowB] = useState(false);
     const toggleShowB = () => setShowB(!showB);
-    const [image, setImage] = useState([])
+    const [previewImages, setPreviewImages] = useState([])
     const isMobileWidth = useMediaQuery({ maxWidth: 576 })
     const [showEmoji, setShowEmoji] = useState(false)
-    // const messageContext = useContext(MessageConsumer)
     const emoji = useRef(null);
-    // const [socket, setSocket] = useState<any>(undefined)
     const [message, setMessage] = useState<any>({ messageType: 1, messageFromUserID: "", messageToUserID: '', message: "" })
-    // const [inbox, setInbox] = useState<any>([])
-    const [send, setSend] = useState<any>([])
-    const [inbox, setInbox] = useState<any>([])
-    // const [{ currentChatUser, userInfo, current_location, messages }, dispatch] = useStateProvider()
     const [{ currentChatUser, userInfo, current_location, messages, socket }, dispatch] = useStateProvider()
+    const [selectedFilesUrls, setSelectedFilesUrls] = useState<any>([]);
 
-    const handleImage = (e) => {
-        const selectedFIles = [];
+    //handle onchange image
+    const handleImage = async (e) => {
+
+        /******** show preview image **********/
+        const showSelectedFiles: any = [];
         const targetFiles = e.target.files;
         const targetFilesObject = [...targetFiles]
+
         targetFilesObject.map((file) => {
-            return selectedFIles.push(URL.createObjectURL(file))
+            return showSelectedFiles.push(URL.createObjectURL(file))
         })
-        setImage(selectedFIles);
+        //set preview images base64 url only for preview 
+        setPreviewImages(showSelectedFiles);
+        /******** show preview image **********/
+
+
+
+        const fileList = Array.from(targetFiles).map(file => ({
+            "fileName": file.name,
+            "fileType": file.type,
+            "fileSize": file.size, // Add more properties as needed
+        }));
+
+        //upload image and compress process
+        const selectedFilesJson = fileList?.map(item => JSON.stringify(item))
+        const uploadImage = await fetch(`https://feed.kotha.im/app/feed/getS3FileUploadUrl?files=[${selectedFilesJson}]&folder=messaging&uploaderId=${userInfo?.id}`, {
+            method: "GET"
+        })
+        const images = await uploadImage.json()
+        // add images sending url on state
+        setSelectedFilesUrls(images)
     }
 
+    // resource ***************
+
+    const [selectedFiles, setSelectedFiles] = useState<any>([]);
+
+    const uploadFilesForMessaging = async (urls) => {
+        if (!selectedFiles.length && !urls.length) {
+            console.error('No files selected or no upload URLs available');
+            return;
+        }
+
+        selectedFiles.map(async (file, index) => {
+            const uploadUrl = urls[index];
+            const fileType = file.type;
+            const myHeaders = new Headers({ 'Content-Type': fileType });
+            try {
+                const response = await fetch(uploadUrl?.signed_request, {
+                    method: 'PUT',
+                    headers: myHeaders,
+                    body: file,
+                });
+                // const upload = await response.json()
+                // console.log({response})
+                // Handle the upload response for each file as needed
+                // Check response status, etc.
+
+                socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: uploadUrl?.cloudfrontUrl}, (response) => {
+                    console.log("response from share file :", response)
+                    dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
+                    // dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
+                })
+
+            } catch (error) {
+                console.error(`Error uploading file ${file.name} for messaging:`, error);
+                // Handle errors appropriately
+            }
+        });
+    };
+
+    //fetch file and sending
+    const fetchSignedUrlsForMessaging = async () => {
+        try {
+
+            const filesData = selectedFiles.map((file) => ({
+                "fileName": file.name,
+                "fileType": file.type,
+            }));
+
+            const jsonFiles = filesData?.map(item => JSON.stringify(item))
+            const response = await fetch(`https://feed.kotha.im/app/feed/getS3FileUploadUrl?files=[${jsonFiles}]&folder=messaging&uploaderId=${userInfo?.id}`, { method: 'GET' });
+            const data = await response.json();
+            // setUploadUrls(data.map((item) => item.signed_request));
+            // setUploadUrls(data);
+            uploadFilesForMessaging(data)
+        } catch (error) {
+            console.error('Error fetching signed URLs for messaging:', error);
+            // Handle errors appropriately
+        }
+    };
+
+
+    const handleFileChange = (event) => {
+
+        const files = Array.from(event.target.files);
+        setSelectedFiles(files);
+
+        /******** show preview image **********/
+        const showSelectedFiles: any = [];
+        const targetFiles = event.target.files;
+        const targetFilesObject = [...targetFiles]
+
+        targetFilesObject.map((file) => {
+            return showSelectedFiles.push(URL.createObjectURL(file))
+        })
+        //set preview images base64 url only for preview 
+        setPreviewImages(showSelectedFiles);
+        /******** show preview image **********/
+    };
+
+    // resource ***************
+
+
+    //delete preview image  
     const deletePreviewImage = (index) => {
-        const img = image.splice(index, 1)
-        const newArray = image.filter((element) => element !== img[0]);
-        setImage(newArray)
+        const files = selectedFiles.splice(index, 1)
+        const newFilesArr = selectedFiles.filter((element) => element !== files[0]);
+        setSelectedFiles(newFilesArr)
+
+        //delete preview files
+        const img = previewImages.splice(index, 1)
+        const newArray = previewImages.filter((element) => element !== img[0]);
+        setPreviewImages(newArray)
+
+
     }
 
-    const handleSubmitMessage = (e) => {
+    //handle submit message
+    const handleSubmitMessage = async (e) => {
         e.preventDefault()
         // const msg_arr = messageContext.message || []
         // // if(image?.length)
@@ -61,23 +169,22 @@ export default function MessageForm() {
         // }
         // messageContext.addMessage(msg_arr)
         // props.send()
-        socket.current.emit('messageFromClient', message, (response) => {
-            // const find = messages?.find(item => item?._id === response?.sMessageObj?._id)
-            // console.log("find from sender : ", find)
 
-            // if (!find) {
-                console.log("response from client :", response)
-                dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
-            // }
-        })
-
-        setMessage({ ...message, message: "" })
+        // socket.current.emit('messageFromClient', message, (response) => {
+        //     console.log("response from client :", response)
+        //     dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
+        //     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
+        // })
+        fetchSignedUrlsForMessaging()
     }
 
+    //add emoji in message
     const addEmoji = (emoji) => {
-        // setMessage({ ...message, message: emoji })
+        const msg = message?.message + emoji
+        setMessage({ ...message, message: msg });
     }
 
+    //handle key press send message and line break
     const handleKeyPress = (event) => {
         if (event.ctrlKey && event.key === 'Enter') {
             const msg = message?.message + '\n'
@@ -93,10 +200,10 @@ export default function MessageForm() {
         }
     };
 
+    //take current user than update message list
     useEffect(() => {
         setMessage({ ...message, message: "", messageToUserID: currentChatUser.id, messageFromUserID: userInfo?.id })
     }, [currentChatUser])
-
 
     return (
         <div className='position-relative'>
@@ -114,15 +221,15 @@ export default function MessageForm() {
                     </Button>
                 </div>
                 <div>
-                    <input multiple onChange={handleImage} type="file" className='d-none' id="share_gallery" onKeyDown={handleKeyPress} />
+                    <input multiple onChange={handleFileChange} type="file" className='d-none' id="share_gallery" onKeyDown={handleKeyPress} />
                 </div>
                 <div size='sm' className="px-1 py-1 rounded d-flex w-100 position-relative bg_gray" >
                     {
-                        image.length ?
+                        previewImages.length ?
 
                             <div className="w-100 d-flex rounded-top bg_gray scrollbar_visible_x" style={{ position: "absolute", top: isMobileWidth ? "-94px" : "-113px", left: "0", overflowX: "scroll", scrollBehavior: "smooth" }}>
                                 {
-                                    image?.map((item, index) => {
+                                    previewImages?.map((item, index) => {
                                         return (
                                             <div key={index} className='mx-2 my-3 position-relative'>
                                                 <div style={{ height: isMobileWidth ? "16px" : "20px", width: isMobileWidth ? "16px" : "20px", borderRadius: "50%", position: "absolute", top: "-5px", right: "-5px", cursor: "pointer", fontSize: isMobileWidth ? "14px" : "18px" }} className='text-dark bg-white d-flex justify-content-center align-items-center' onClick={() => deletePreviewImage(index)}><BsX /></div>
@@ -137,9 +244,26 @@ export default function MessageForm() {
                             : ""
 
                     }
-                    {/* <Button variant='' className='p-1' ref={emoji} onClick={() => setShowEmoji(!showEmoji)}>
-                        <BsEmojiSmile />
-                    </Button> */}
+                    {/* {
+                        selectedFiles.length ?
+
+                            <div className="w-100 d-flex rounded-top bg_gray scrollbar_visible_x" style={{ position: "absolute", top: isMobileWidth ? "-94px" : "-113px", left: "0", overflowX: "scroll", scrollBehavior: "smooth" }}>
+                                {
+                                    image?.map((item, index) => {
+                                        return (
+                                            <div key={index} className='mx-2 my-3 position-relative'>
+                                                <div style={{ height: isMobileWidth ? "16px" : "20px", width: isMobileWidth ? "16px" : "20px", borderRadius: "50%", position: "absolute", top: "-5px", right: "-5px", cursor: "pointer", fontSize: isMobileWidth ? "14px" : "18px" }} className='text-dark bg-white d-flex justify-content-center align-items-center' onClick={() => deletePreviewImage(index)}><BsX /></div>
+                                                <div style={{ height: isMobileWidth ? 65 : 80, width: isMobileWidth ? 65 : 80, overflow: "hidden" }} className='rounded'>
+                                                    <img src={item?.signed_request} className='img-fluid' />
+                                                </div>
+                                            </div>
+                                        )
+                                    })
+                                }
+                            </div>
+                            : ""
+
+                    } */}
                     <div className='cursor-pointer p-1 text-dark' style={{ fontSize: "16px" }} ref={emoji} onClick={() => setShowEmoji(!showEmoji)}>
                         <BsEmojiSmile />
                     </div>
@@ -155,36 +279,6 @@ export default function MessageForm() {
                             onChange={(e) => setMessage({ ...message, [e.target.name]: e.target.value })}
                         />
                     </Form>
-                    {/* <div className="d-flex align-items-center text-dark" style={{width:"100%"}} >
-                        <div className="" onChange={(e) => setMessage(e.target)}  contentEditable="true" role="textbox" spellCheck="true" title="Type a message" tabIndex="10" data-tab="10" data-lexical-editor="true" style={{ minHeight: "15px", userSelect: "text", whiteSpace: "pre-wrap", wordBreak: "break-word", width: "100%" }}>
-                            
-                        </div>
-                    </div> */}
-
-                    {/* <form onSubmit={handleSubmitMessage} className='w-100' >
-                        {/* <input type="text"
-                            autoFocus
-                            className='py-1 scrollbar_visible_x w-100'
-                            style={{ background: "none", border: "none", color: "#000", outline: "none" }}
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-
-                        /> */}
-                    {/* <textarea name="" id="" >
-
-                        </textarea>
-                    </form> */}
-                    {/* <Form onSubmit={handleSubmitMessage} className='w-100 d-flex align-items-center'>
-                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Control type="text"
-                                autoFocus
-                                style={{ background: "none", border: "none !important", color: "#000", overflowY: "scroll", scrollBehavior: "smooth", resize: "none" }}
-                                className='py-1 scrollbar_visible_x d-block w-100'
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
-                            />
-                        </Form.Group>
-                    </Form> */}
                     <div className='cursor-pointer p-1 text-dark' style={{ fontSize: "16px" }} ref={emoji} onClick={() => setShowEmoji(!showEmoji)}>
                         <BsMicFill />
                     </div>
