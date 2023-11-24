@@ -7,7 +7,7 @@ import Head from 'next/head';
 import reducer, { initialState } from '../context/StateReducers';
 import { io } from 'socket.io-client';
 import { reducerCases } from '../context/constant';
-import Main from './main';
+import Main from './_main';
 
 export default function App({ Component, pageProps }: AppProps) {
 

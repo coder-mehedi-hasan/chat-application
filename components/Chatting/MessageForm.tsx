@@ -258,29 +258,9 @@ export default function MessageForm() {
                                     })
                                 }
                             </div>
-                            : ""
-
+                            : 
+                            ""
                     }
-                    {/* {
-                        selectedFiles.length ?
-
-                            <div className="w-100 d-flex rounded-top bg_gray scrollbar_visible_x" style={{ position: "absolute", top: isMobileWidth ? "-94px" : "-113px", left: "0", overflowX: "scroll", scrollBehavior: "smooth" }}>
-                                {
-                                    image?.map((item, index) => {
-                                        return (
-                                            <div key={index} className='mx-2 my-3 position-relative'>
-                                                <div style={{ height: isMobileWidth ? "16px" : "20px", width: isMobileWidth ? "16px" : "20px", borderRadius: "50%", position: "absolute", top: "-5px", right: "-5px", cursor: "pointer", fontSize: isMobileWidth ? "14px" : "18px" }} className='text-dark bg-white d-flex justify-content-center align-items-center' onClick={() => deletePreviewImage(index)}><BsX /></div>
-                                                <div style={{ height: isMobileWidth ? 65 : 80, width: isMobileWidth ? 65 : 80, overflow: "hidden" }} className='rounded'>
-                                                    <img src={item?.signed_request} className='img-fluid' />
-                                                </div>
-                                            </div>
-                                        )
-                                    })
-                                }
-                            </div>
-                            : ""
-
-                    } */}
                     <div className='cursor-pointer p-1 text-dark' style={{ fontSize: "16px" }} ref={emoji} onClick={() => setShowEmoji(!showEmoji)}>
                         <BsEmojiSmile />
                     </div>
@@ -296,9 +276,7 @@ export default function MessageForm() {
                             onChange={(e) => setMessage({ ...message, [e.target.name]: e.target.value })}
                         />
                     </Form>
-                    <div className='cursor-pointer p-1 text-dark' style={{ fontSize: "16px" }} ref={emoji} onClick={() => setShowEmoji(!showEmoji)}>
-                        <BsMicFill />
-                    </div>
+                    
                 </div >
                 <Button variant='' onClick={handleSubmitMessage} >
                     <Image className='img-fluid' src="https://i.ibb.co/QdZ8jVf/send-10109845.png" alt="" height={25} width={25} />
