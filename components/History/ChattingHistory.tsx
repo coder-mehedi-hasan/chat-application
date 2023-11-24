@@ -53,7 +53,7 @@ export default function ChattingHistory() {
                                 <>
                                     {
                                         userInfo?.id !== item?.id ?
-                                            <ChatListItem data={item} key={item?.id} /> : ""
+                                            <ChatListItem user={item} key={item?.id} /> : ""
 
                                     }
                                 </>

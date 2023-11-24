@@ -195,3 +195,7 @@
 #chat_bar .active{
     color: #3cb29d !important;
 }
+
+.current_user_active{
+    background-color: #e8e2e2;
+}

@@ -1,35 +1,28 @@
 import React, { useState, useEffect, useRef, useContext } from 'react'
-import UserInfoBox from '../common/UserInfoBox'
-import user from '../../fake_data/user.json';
 import { Button, Modal } from 'react-bootstrap';
-import Image from 'react-bootstrap/Image';
 import MessageForm from './MessageForm';
 import { useMediaQuery } from 'react-responsive'
-import { BsArrowLeft } from "react-icons/bs";
-// import { MessageConsumer } from '../../context/messageContext';
-import SenderMessages from '../Messages/SenderMessage';
-import ReceiverMessages from '../Messages/ReceiverMessage';
 import ChatHeader from './ChatHeader';
 import ChattingContainer from './ChattingContainer';
+import { useStateProvider } from '../../context/StateContext';
+import { reducerCases } from '../../context/constant';
 
 export default function ChattingInterFace() {
     const isMobileWidth = useMediaQuery({ maxWidth: 576 })
-    const userArr = user
-    const divRef = useRef();
-    const [messages, setMessages] = useState([])
-    const [eff, useEff] = useState(false)
-    const [inbox, setInbox] = useState<any>([])
-    const [userId, setUserId] = useState<any>("")
     const [show, setShow] = useState(false);
-
-    useEffect(() => {
-        setUserId(window.localStorage.getItem("userId"))
-
-    }, [userId])
+    const [{ currentChatUser }, dispatch] = useStateProvider()
 
     const handleShow = () => {
         setShow(!show);
+        if (show) {
+            dispatch({ type: reducerCases.CHANGE_CURRENT_CHAT_USER,currentChatUser:undefined })
+        }
     }
+    useEffect(() => {
+        if (isMobileWidth) {
+            handleShow()
+        }
+    }, [currentChatUser])
 
     return (
         <>

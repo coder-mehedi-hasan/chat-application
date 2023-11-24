@@ -52,9 +52,7 @@ export default function Main({ Component, pageProps }) {
             const connectionKey = `${process.env.NEXT_PUBLIC_SOCKET_URL}?userId=${userInfo?.id}&name=${userInfo?.name}&lastSocketId=${"LAST_CONNECTED_SOCKETID"}&location={"longitude": ${current_location?.lon}, "latitude": ${current_location?.lat}}&token=${userInfo?.token}`
             socket.current = io(connectionKey)
             dispatch({ type: reducerCases.SET_SOCKET, socket: socket })
-            socket.current.on('onlineClient', (online) => {
-                console.log({ online })
-            })
+            socket.current.on('onlineClient', (online) => {})
         }
         // return () => {
         //     if (socket.current) {
@@ -67,9 +65,6 @@ export default function Main({ Component, pageProps }) {
     useEffect(() => {
         if (socket.current && socketEvent) {
             socket.current.on('clientToClientMessage', (response) => {
-                console.log("response from receiver", response)
-                const find = messages?.find(item => console.log(item?._id))
-                console.log({ find })
                 dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
                 dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: false })
             })
@@ -83,10 +78,6 @@ export default function Main({ Component, pageProps }) {
             }
         };
     }, [socket.current, dispatch, socketEvent]);
-
-    console.log({ socketEvent })
-    console.log({messages})
-
     return (
         <Component pageProps={...pageProps} />
     )

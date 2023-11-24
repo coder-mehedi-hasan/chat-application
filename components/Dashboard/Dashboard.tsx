@@ -43,7 +43,7 @@ export default function Dashboard() {
     return (
         <div className='w-100 p-0 container-fluid' id='chat_bar' >
             <div className="d-flex">
-                <div id='side-bar' style={{ height: "100vh", display: "flex", flexDirection: "column", paddingLeft: "0.5px", width: isMobileWidth ? "100%" : isMediumWidth ? "255px" : "320px" }}>
+                <div id='side-bar' style={{ height: "100vh", display: "flex", flexDirection: "column", paddingLeft: "0.5px", width: isMobileWidth ? "100%" : isMediumWidth ? "255px" : "320px", borderRight: "1px ridge",backgroundColor:"#f5f5f5" }}>
                     <div style={{ width: "100%", height: "100%", overflow: "scroll" }}>
                         {tab === "chats" && <ChattingHistory />}
                         {tab === "calls" && <CallsHistory />}
@@ -88,7 +88,7 @@ export default function Dashboard() {
                     </div>
                 </div>
                 {
-                    currentChatUser ? <ChattingInterFace /> : isMobileWidth ? <HomeChat /> : ""
+                    currentChatUser ? <ChattingInterFace /> : <HomeChat />
                 }
             </div>
         </div >

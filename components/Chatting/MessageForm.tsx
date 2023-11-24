@@ -16,89 +16,90 @@ import { reducerCases } from '../../context/constant';
 export default function MessageForm() {
     const [showB, setShowB] = useState(false);
     const toggleShowB = () => setShowB(!showB);
-    const [previewImages, setPreviewImages] = useState([])
     const isMobileWidth = useMediaQuery({ maxWidth: 576 })
     const [showEmoji, setShowEmoji] = useState(false)
     const emoji = useRef(null);
-    const [message, setMessage] = useState<any>({ messageType: 1, messageFromUserID: "", messageToUserID: '', message: "" })
+    const [message, setMessage] = useState<any>({ messageType: 1, messageFromUserID: "", messageToUserID: '', message: null })
     const [{ currentChatUser, userInfo, current_location, messages, socket }, dispatch] = useStateProvider()
-    const [selectedFilesUrls, setSelectedFilesUrls] = useState<any>([]);
 
-    //handle onchange image
-    const handleImage = async (e) => {
+    //preview files
+    const [previewFiles, setPreviewFiles] = useState([])
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    //
+    const [uploadUrls, setUploadUrls] = useState<any>([]);
 
-        /******** show preview image **********/
-        const showSelectedFiles: any = [];
-        const targetFiles = e.target.files;
-        const targetFilesObject = [...targetFiles]
-
-        targetFilesObject.map((file) => {
-            return showSelectedFiles.push(URL.createObjectURL(file))
-        })
-        //set preview images base64 url only for preview 
-        setPreviewImages(showSelectedFiles);
-        /******** show preview image **********/
-
-
-
-        const fileList = Array.from(targetFiles).map(file => ({
-            "fileName": file.name,
-            "fileType": file.type,
-            "fileSize": file.size, // Add more properties as needed
-        }));
-
-        //upload image and compress process
-        const selectedFilesJson = fileList?.map(item => JSON.stringify(item))
-        const uploadImage = await fetch(`https://feed.kotha.im/app/feed/getS3FileUploadUrl?files=[${selectedFilesJson}]&folder=messaging&uploaderId=${userInfo?.id}`, {
-            method: "GET"
-        })
-        const images = await uploadImage.json()
-        // add images sending url on state
-        setSelectedFilesUrls(images)
-    }
-
-    // resource ***************
-
-    const [selectedFiles, setSelectedFiles] = useState<any>([]);
-
-    const uploadFilesForMessaging = async (urls) => {
-        if (!selectedFiles.length && !urls.length) {
-            console.error('No files selected or no upload URLs available');
+    //upload file in database
+    const uploadFilesForMessaging = async (url, index) => {
+        if (!selectedFiles?.length && url && length) {
+            console.error('No files selected or no upload URLs available', uploadUrls);
             return;
         }
 
-        selectedFiles.map(async (file, index) => {
-            const uploadUrl = urls[index];
-            const fileType = file.type;
-            const myHeaders = new Headers({ 'Content-Type': fileType });
-            try {
-                const response = await fetch(uploadUrl?.signed_request, {
-                    method: 'PUT',
-                    headers: myHeaders,
-                    body: file,
-                });
-                // const upload = await response.json()
-                // console.log({response})
-                // Handle the upload response for each file as needed
-                // Check response status, etc.
+        const file = selectedFiles[index]
+        const fileType = file?.type
+        const myHeaders = new Headers({ 'Content-Type': fileType });
 
-                socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: uploadUrl?.cloudfrontUrl}, (response) => {
+
+        try {
+            const response = await fetch(url?.signed_request, {
+                method: 'PUT',
+                headers: myHeaders,
+                body: file,
+            });
+            // const upload = await response.json()
+            console.log({ response })
+            // Handle the upload response for each file as needed
+            // Check response status, etc.
+            if (response) {
+                socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response) => {
                     console.log("response from share file :", response)
                     dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
-                    // dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
+                    dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
                 })
-
-            } catch (error) {
-                console.error(`Error uploading file ${file.name} for messaging:`, error);
-                // Handle errors appropriately
             }
-        });
+
+        } catch (err) {
+
+        }
+
+        // console.log("upload urls from after submit file", uploadUrls)
+        // console.log("selected from after submit file", selectedFiles)
+        // return
+        // selectedFiles.map(async (file, index) => {
+        //     const uploadUrl = uploadUrls[index];
+        //     const url = uploadUrl.signed_request
+        //     // console.log(uploadUrl)
+        //     console.log("upload url : =>>", url)
+        //     // return
+        //     const fileType = file.type;
+        //     const myHeaders = new Headers({ 'Content-Type': fileType });
+        //     try {
+        //         const response = await fetch(url, {
+        //             method: 'PUT',
+        //             headers: myHeaders,
+        //             body: file,
+        //         });
+        //         // const upload = await response.json()
+        //         console.log({ response })
+        //         // Handle the upload response for each file as needed
+        //         // Check response status, etc.
+
+        //         socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: uploadUrl?.cloudfrontUrl, message: "" }, (response) => {
+        //             console.log("response from share file :", response)
+        //             dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
+        //             dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
+        //         })
+
+        //     } catch (error) {
+        //         console.error(`Error uploading file ${file.name} for messaging:`, error);
+        //         // Handle errors appropriately
+        //     }
+        // });
     };
 
     //fetch file and sending
     const fetchSignedUrlsForMessaging = async () => {
         try {
-
             const filesData = selectedFiles.map((file) => ({
                 "fileName": file.name,
                 "fileType": file.type,
@@ -107,15 +108,21 @@ export default function MessageForm() {
             const jsonFiles = filesData?.map(item => JSON.stringify(item))
             const response = await fetch(`https://feed.kotha.im/app/feed/getS3FileUploadUrl?files=[${jsonFiles}]&folder=messaging&uploaderId=${userInfo?.id}`, { method: 'GET' });
             const data = await response.json();
-            // setUploadUrls(data.map((item) => item.signed_request));
-            // setUploadUrls(data);
-            uploadFilesForMessaging(data)
+            // setUploadUrls(data)
+            // return data
+            // uploadFilesForMessaging()
+            // 
+            // 
+            // setPreviewFiles([])
+            data?.map((url, index) => {
+                // handleSendFileMessage(url, index)
+                uploadFilesForMessaging(url, index)
+                setPreviewFiles([])
+            })
         } catch (error) {
             console.error('Error fetching signed URLs for messaging:', error);
-            // Handle errors appropriately
         }
     };
-
 
     const handleFileChange = (event) => {
 
@@ -131,12 +138,9 @@ export default function MessageForm() {
             return showSelectedFiles.push(URL.createObjectURL(file))
         })
         //set preview images base64 url only for preview 
-        setPreviewImages(showSelectedFiles);
+        setPreviewFiles(showSelectedFiles);
         /******** show preview image **********/
     };
-
-    // resource ***************
-
 
     //delete preview image  
     const deletePreviewImage = (index) => {
@@ -145,37 +149,50 @@ export default function MessageForm() {
         setSelectedFiles(newFilesArr)
 
         //delete preview files
-        const img = previewImages.splice(index, 1)
-        const newArray = previewImages.filter((element) => element !== img[0]);
-        setPreviewImages(newArray)
-
-
+        const img = previewFiles.splice(index, 1)
+        const newArray = previewFiles.filter((element) => element !== img[0]);
+        setPreviewFiles(newArray)
     }
 
     //handle submit message
     const handleSubmitMessage = async (e) => {
         e.preventDefault()
-        // const msg_arr = messageContext.message || []
-        // // if(image?.length)
-        // if (image?.length) {
-        //     image.map(item => {
-        //         msg_arr.push({ content: null, content_img: item })
-        //     })
-        //     setImage([])
-        // }
-        // if (message !== "") {
-        //     msg_arr.push({ content: message, content_img: null })
-        //     setMessage("")
-        // }
-        // messageContext.addMessage(msg_arr)
-        // props.send()
 
-        // socket.current.emit('messageFromClient', message, (response) => {
+        if (selectedFiles?.length && previewFiles?.length) {
+            fetchSignedUrlsForMessaging()
+
+        }
+
+        if (message?.message !== "" && message?.message !== null) {
+            socket.current.emit('messageFromClient', message, (response) => {
+                // console.log("response from client :", response)
+                dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
+                dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
+                setMessage({ ...message, message: "" })
+            })
+        }
+        // if (selectedFiles?.length) {
+        //     uploadFilesForMessaging()
+        // }
+    }
+
+    //handle send file message
+    const handleSendFileMessage = (url, index) => {
+        // console.log("url from submit file mesage ==>>", url)
+        // socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response) => {
         //     console.log("response from client :", response)
         //     dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
         //     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
+        //     const uploadUrl = uploadUrls
+        //     uploadUrl.push({ ...url, messageId: response?.sMessageObj?._id })
+        //     setUploadUrls(uploadUrl)
         // })
-        fetchSignedUrlsForMessaging()
+        const tempUrl = previewFiles[index]
+        socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response) => {
+            console.log("response from share file :", response)
+            dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: { ...response.sMessageObj, cloudfrontUrl: tempUrl } })
+            dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
+        })
     }
 
     //add emoji in message
@@ -225,11 +242,11 @@ export default function MessageForm() {
                 </div>
                 <div size='sm' className="px-1 py-1 rounded d-flex w-100 position-relative bg_gray" >
                     {
-                        previewImages.length ?
+                        previewFiles?.length ?
 
                             <div className="w-100 d-flex rounded-top bg_gray scrollbar_visible_x" style={{ position: "absolute", top: isMobileWidth ? "-94px" : "-113px", left: "0", overflowX: "scroll", scrollBehavior: "smooth" }}>
                                 {
-                                    previewImages?.map((item, index) => {
+                                    previewFiles?.map((item, index) => {
                                         return (
                                             <div key={index} className='mx-2 my-3 position-relative'>
                                                 <div style={{ height: isMobileWidth ? "16px" : "20px", width: isMobileWidth ? "16px" : "20px", borderRadius: "50%", position: "absolute", top: "-5px", right: "-5px", cursor: "pointer", fontSize: isMobileWidth ? "14px" : "18px" }} className='text-dark bg-white d-flex justify-content-center align-items-center' onClick={() => deletePreviewImage(index)}><BsX /></div>

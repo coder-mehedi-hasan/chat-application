@@ -8,6 +8,7 @@ import { useContext } from 'react';
 import { MessageConsumer } from '../../context/messageContext';
 import MessageSideAction from '../common/MessageSideAction';
 import TextContent from './TextContent';
+import ImageContet from './ImageContet';
 
 export default function ReceiverMessages({ data }) {
     const isMediumWidth = useMediaQuery({ maxWidth: 768 })
@@ -51,17 +52,17 @@ export default function ReceiverMessages({ data }) {
     return (
         <div className="row my-3 w-100 message_content" ref={divRef} >
             <div className="d-flex align-items-center justify-content-start">
-                <div>
-                    <TextContent isSender={false} content={data?.message} />
-                </div>
+                {
+                    data?.cloudfrontUrl && !data?.message ?
+                        <div>
+                            <ImageContet img={data?.cloudfrontUrl} />
+                        </div>
+                        :
+                        <div>
+                            <TextContent isSender={false} content={data?.message} />
+                        </div>
+                }
                 <MessageSideAction />
-                {/* <div>
-                    {
-                        data?.content_img !== null ?
-                            <ImageContet img={data?.content_img} />
-                            : ""
-                    }
-                </div> */}
             </div>
         </div>
     )
