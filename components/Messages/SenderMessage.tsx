@@ -9,11 +9,13 @@ import { MessageConsumer } from '../../context/messageContext';
 import TextContent from './TextContent';
 import MessageSideAction from '../common/MessageSideAction';
 import ImageContet from './ImageContet';
+import { useStateProvider } from '../../context/StateContext';
 
 export default function SenderMessages({ data }) {
     const isMediumWidth = useMediaQuery({ maxWidth: 768 })
     const isLargeWidth = useMediaQuery({ maxWidth: 992 })
-    // const messageContext = useContext(MessageConsumer)
+    const [{ currentChatUser, userInfo, current_location, messages }, dispatch] = useStateProvider()
+
     const [del, setDel] = useState(false)
     const divRef = useRef()
 
@@ -51,6 +53,11 @@ export default function SenderMessages({ data }) {
                         <div>
                             <TextContent isSender={true} content={data?.message} />
                         </div>
+                }
+                {userInfo?.image &&
+                    <div style={{ height: "30px", width: "30px", borderRadius: "50%", overflow: "hidden", marginRight: "5px" }}>
+                        <img src={userInfo?.image} alt={userInfo?.name} className='w-100 h-100' />
+                    </div>
                 }
             </div>
         </div>
