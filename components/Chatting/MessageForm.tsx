@@ -19,7 +19,7 @@ export default function MessageForm() {
     const isMobileWidth = useMediaQuery({ maxWidth: 576 })
     const [showEmoji, setShowEmoji] = useState(false)
     const emoji = useRef(null);
-    const [message, setMessage] = useState<any>({ messageType: 1, messageFromUserID: "", messageToUserID: '', message: null })
+    const [message, setMessage] = useState<any>({ messageType: 1, messageFromUserID: "", messageToUserID: '', message: "" })
     const [{ currentChatUser, userInfo, current_location, messages, socket }, dispatch] = useStateProvider()
 
     //preview files
@@ -240,7 +240,7 @@ export default function MessageForm() {
                 <div>
                     <input multiple onChange={handleFileChange} type="file" className='d-none' id="share_gallery" onKeyDown={handleKeyPress} />
                 </div>
-                <div size='sm' className="px-1 py-1 rounded d-flex w-100 position-relative bg_gray" >
+                <div size='sm' className="rounded d-flex w-100 position-relative bg_gray" >
                     {
                         previewFiles?.length ?
 
@@ -267,7 +267,7 @@ export default function MessageForm() {
                     <Form className='w-100'>
                         <Form.Control
                             autoFocus
-                            style={{ textAlign: "start", background: "none", border: "none", color: "#000", overflowY: "scroll", scrollBehavior: "smooth", resize: "none", height: "15px", fontSize: "15px" }}
+                            style={{paddingLeft:"2px",paddingRight:"2px",textAlign: "start", background: "none", border: "none", color: "#000", overflowY: "scroll", scrollBehavior: "smooth", resize: "none", height: "15px", fontSize: "15px" }}
                             className='scrollbar_visible_x'
                             as="textarea"
                             value={message?.message}

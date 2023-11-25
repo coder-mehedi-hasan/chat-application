@@ -36,10 +36,7 @@ export default function Dashboard() {
     const handleBottomTab = (t) => {
         setTab(t)
     }
-    useEffect(() => {
-
-    }, [contactId])
-
+    
     return (
         <div className='w-100 p-0 container-fluid' id='chat_bar' >
             <div className="d-flex">

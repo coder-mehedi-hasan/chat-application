@@ -85,17 +85,16 @@ export function Main({ Component, pageProps }) {
 		if (socket.current && socketEvent) {
 			socket.current.on('clientToClientMessage', (response) => {
 				dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
-				dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: false })
 			})
+
+			return () => {
+				// Remove the event listener when the component unmounts if necessary
+				if (socket.current) {
+					socket.current.off('clientToClientMessage');
+					dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: false })
+				}
+			};
 		}
-
-
-		return () => {
-			// Remove the event listener when the component unmounts if necessary
-			if (socket.current) {
-				socket.current.off('clientToClientMessage');
-			}
-		};
 	}, [socket.current, dispatch, socketEvent]);
 	return (
 		<Component pageProps={...pageProps} />

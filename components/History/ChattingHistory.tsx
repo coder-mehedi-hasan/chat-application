@@ -23,14 +23,14 @@ export default function ChattingHistory() {
                 <div className='my-2'>
                     <div className='h-100 d-flex align-items-start' style={{ overflow: "scroll" }}>
                         {
-                            user?.slice(0, 10)?.map(item => {
+                            user?.slice(0, 10)?.map((item, index) => {
                                 return (
-                                    <>
+                                    <div key={index}>
                                         {
                                             userInfo?.id !== item?.id ?
-                                                <ActiveUser user={item} key={item?.id} /> : ""
+                                                <ActiveUser user={item} /> : ""
                                         }
-                                    </>
+                                    </div>
                                 )
                             })
                         }

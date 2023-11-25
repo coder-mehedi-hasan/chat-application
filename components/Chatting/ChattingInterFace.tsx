@@ -15,14 +15,16 @@ export default function ChattingInterFace() {
     const handleShow = () => {
         setShow(!show);
         if (show) {
-            dispatch({ type: reducerCases.CHANGE_CURRENT_CHAT_USER,currentChatUser:undefined })
+            dispatch({ type: reducerCases.CHANGE_CURRENT_CHAT_USER, currentChatUser: undefined })
         }
     }
     useEffect(() => {
         if (isMobileWidth) {
             handleShow()
         }
-    }, [currentChatUser])
+    }, [currentChatUser, isMobileWidth])
+
+    console.log("current user from chat interface: ==>>", currentChatUser)
 
     return (
         <>

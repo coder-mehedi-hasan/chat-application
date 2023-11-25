@@ -10,7 +10,7 @@ export default function ChatHeader({ modal }) {
 
 
     return (
-        <div style={{ height: "80px", background: "white" }} className='text-white d-flex align-items-center justify-content-between px-3'>
+        <div style={{ height: "80px", background: "white" }} className='text-white d-flex align-items-center justify-content-between px-3 border-bottom'>
             {
                 isMobileWidth ?
                     <div onClick={modal} className='me-2 p-1 rounded-circle text-dark' style={{ cursor: 'pointer', }}>
