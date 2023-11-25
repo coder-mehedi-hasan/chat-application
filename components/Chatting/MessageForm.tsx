@@ -157,7 +157,9 @@ export default function MessageForm() {
     //handle submit message
     const handleSubmitMessage = async (e) => {
         e.preventDefault()
-
+        if(showEmoji){
+            setShowEmoji(!showEmoji)
+        }
         if (selectedFiles?.length && previewFiles?.length) {
             fetchSignedUrlsForMessaging()
 
