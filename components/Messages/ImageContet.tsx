@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Spinner } from 'react-bootstrap'
+import { Modal, Spinner } from 'react-bootstrap'
 import { BsCheckAll, BsCheckLg } from 'react-icons/bs'
 
 export default function ImageContet({ img }) {
     const [sent, setSent] = useState(false)
+    const [gallery, setGallery] = useState(false)
 
     useEffect(() => {
         setTimeout(() => {
@@ -12,20 +13,26 @@ export default function ImageContet({ img }) {
     }, [])
 
     return (
-        <div>
-            <div style={{ maxWidth: "480px", borderRadius: "18px", height: "auto", overflow: "hidden" }}>
-                <img src={img} alt="img" style={{ maxWidth: "100%", maxHeight:"220px"}} />
-            </div>
+        <>
             <div>
-                <p className='p-0 text-end text-dark' style={{ fontSize: "15px" }}>
-                    {sent ?
-                        <BsCheckAll />
-                        : <>
-                            <Spinner animation="border" size="sm" />
-                            <BsCheckLg />
-                        </>
-                    }</p>
+                <div style={{ maxWidth: "480px", borderRadius: "18px", height: "auto", overflow: "hidden", position: "relative" }}>
+                    <div style={{ position: "absolute", top: "0", left: "0", height: "100%", width: "100%", cursor: "pointer", zIndex: 1, background: "none" }} onClick={() => setGallery(!gallery)}></div>
+                    <img src={img} alt="img" style={{ maxWidth: "100%", maxHeight: "220px" }} />
+                </div>
+                <div>
+                    <p className='p-0 text-end text-dark' style={{ fontSize: "15px" }}>
+                        {sent ?
+                            <BsCheckAll />
+                            : <>
+                                <Spinner animation="border" size="sm" />
+                                <BsCheckLg />
+                            </>
+                        }</p>
+                </div>
             </div>
-        </div>
+            <Modal show={gallery} size="xl">
+
+            </Modal>
+        </>
     )
 }
