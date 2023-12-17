@@ -69,7 +69,7 @@ export default function ReceiverMessages({ data }) {
                             <TextContent isSender={false} content={data?.message} />
                         </div>
                 }
-                <MessageSideAction />
+                <MessageSideAction message={data} />
             </div>
         </div>
     )

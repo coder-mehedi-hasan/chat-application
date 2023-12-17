@@ -21,7 +21,7 @@ export default function MessageForm() {
     const emoji = useRef(null);
     const inputReference = useRef();
     const [message, setMessage] = useState<any>({ messageType: 1, messageFromUserID: "", messageToUserID: '', message: "" })
-    const [{ currentChatUser, userInfo, current_location, messages, socket }, dispatch] = useStateProvider()
+    const [{ currentChatUser, userInfo, socket }, dispatch] = useStateProvider()
 
     //preview files
     const [previewFiles, setPreviewFiles] = useState([])

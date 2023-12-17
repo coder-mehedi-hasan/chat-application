@@ -43,7 +43,7 @@ export default function SenderMessages({ data }) {
     return (
         <div className="row my-3 w-100 message_content" ref={divRef} >
             <div className="d-flex align-items-center justify-content-end">
-                <MessageSideAction />
+                <MessageSideAction message={data} />
                 {
                     data?.cloudfrontUrl && !data?.message ?
                         <div>

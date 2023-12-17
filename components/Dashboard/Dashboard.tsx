@@ -20,7 +20,6 @@ export default function Dashboard() {
     const handleBottomTab = (t) => {
         setTab(t)
     }
-    console.log({ messages })
 
     return (
         <div className='w-100 p-0 container-fluid' id='chat_bar' >

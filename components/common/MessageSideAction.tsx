@@ -1,12 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Badge, Button, Image, Overlay, OverlayTrigger, Popover, Tooltip } from 'react-bootstrap'
 import { BsEmojiSmile, BsFillReplyFill, BsPlus, BsThreeDotsVertical } from 'react-icons/bs'
+import { useStateProvider } from '../../context/StateContext';
 
-export default function MessageSideAction() {
+export default function MessageSideAction({ message }) {
     const [showMore, setShowMore] = useState(false);
     const [showEmoji, setShowEmoji] = useState(false)
     const more = useRef(null);
     const emoji = useRef(null);
+    const [{ currentChatUser, socket, userInfo }] = useStateProvider()
 
     const innerActions = (ac) => {
         if (ac === "more") {
@@ -22,6 +24,22 @@ export default function MessageSideAction() {
         // setShowEmoji(false)
         // setShowMore(false)
     }
+    // console.log( userInfo   )
+
+    const handleReactions = (react) => {
+        // console.log(socket.current)
+        // return
+        // try {
+            socket.current.on("onlineClientList",
+                (response) => {
+                    console.log({ response })
+                })
+        // } catch (err) {
+
+        // }
+
+    }
+
 
     return (
         <>
@@ -105,10 +123,10 @@ export default function MessageSideAction() {
                 {(props) => (
                     <Tooltip id="overlay-example" className='inner_action_tooltip inner_action_tooltip_emoji' {...props}>
                         <div className='d-flex justify-content-center align-items-center' style={{ padding: "5px" }}>
-                            <div style={{ margin: "0 2px", cursor: "pointer" }}>
+                            <div style={{ margin: "0 2px", cursor: "pointer" }} onClick={() => handleReactions("love")}>
                                 <img src="https://z-p3-static.xx.fbcdn.net/images/emoji.php/v9/tf9/1.5/32/2764.png" height={32} width={32} alt="" />
                             </div>
-                            <div style={{ margin: "0 2px", cursor: "pointer" }}>
+                            {/* <div style={{ margin: "0 2px", cursor: "pointer" }}>
                                 <img src="https://z-p3-static.xx.fbcdn.net/images/emoji.php/v9/te7/1.5/32/1f606.png" height={32} width={32} alt="" />
                             </div>
                             <div style={{ margin: "0 2px", cursor: "pointer" }}>
@@ -122,7 +140,7 @@ export default function MessageSideAction() {
                             </div>
                             <div style={{ margin: "0 2px", cursor: "pointer" }}>
                                 <img src="https://z-p3-static.xx.fbcdn.net/images/emoji.php/v9/tf/1.5/32/1f44d.png" height={32} width={32} alt="" />
-                            </div>
+                            </div> */}
                             <div style={{ margin: "0 2px", cursor: "pointer", height: "32px", width: "32px", borderRadius: "50%", background: "#c4c4c7", display: "flex", justifyContent: "center", alignItems: "center" }} >
                                 <BsPlus style={{ fontSize: "15px" }} />
                             </div>
