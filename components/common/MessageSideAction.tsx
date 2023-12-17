@@ -19,8 +19,8 @@ export default function MessageSideAction() {
     }
 
     const onMouse = () => {
-        setShowEmoji(false)
-        setShowMore(false)
+        // setShowEmoji(false)
+        // setShowMore(false)
     }
 
     return (

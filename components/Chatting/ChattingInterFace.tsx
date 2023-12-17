@@ -24,7 +24,7 @@ export default function ChattingInterFace() {
         }
     }, [currentChatUser, isMobileWidth])
 
-    console.log("current user from chat interface: ==>>", currentChatUser)
+    // console.log("current user from chat interface: ==>>", currentChatUser)
 
     return (
         <>

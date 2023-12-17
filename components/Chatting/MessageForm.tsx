@@ -19,6 +19,7 @@ export default function MessageForm() {
     const isMobileWidth = useMediaQuery({ maxWidth: 576 })
     const [showEmoji, setShowEmoji] = useState(false)
     const emoji = useRef(null);
+    const inputReference = useRef();
     const [message, setMessage] = useState<any>({ messageType: 1, messageFromUserID: "", messageToUserID: '', message: "" })
     const [{ currentChatUser, userInfo, current_location, messages, socket }, dispatch] = useStateProvider()
 
@@ -47,12 +48,12 @@ export default function MessageForm() {
                 body: file,
             });
             // const upload = await response.json()
-            console.log({ response })
+            // console.log({ response })
             // Handle the upload response for each file as needed
             // Check response status, etc.
             if (response) {
                 socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response) => {
-                    console.log("response from share file :", response)
+                    // console.log("response from share file :", response)
                     dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
                     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
                 })
@@ -140,6 +141,8 @@ export default function MessageForm() {
         //set preview images base64 url only for preview 
         setPreviewFiles(showSelectedFiles);
         /******** show preview image **********/
+        // inputReference.current.value="sdkfjs"
+        // console.log(inputReference)
     };
 
     //delete preview image  
@@ -224,6 +227,7 @@ export default function MessageForm() {
         setMessage({ ...message, message: "", messageToUserID: currentChatUser.id, messageFromUserID: userInfo?.id })
     }, [currentChatUser])
 
+
     return (
         <div className='position-relative'>
             <div style={{ flex: 1, background: "#fff", height: "80px" }} className='position-relative w-100 h-100 text-white d-flex align-items-center justify-content-between px-lg-3 px-md-2 px-sm-1 px-xs-1'>
@@ -268,7 +272,8 @@ export default function MessageForm() {
                     </div>
                     <Form className='w-100'>
                         <Form.Control
-                            autoFocus
+                            ref={inputReference}
+                            autoFocus={true}
                             style={{paddingLeft:"2px",paddingRight:"2px",textAlign: "start", background: "none", border: "none", color: "#000", overflowY: "scroll", scrollBehavior: "smooth", resize: "none", height: "15px", fontSize: "15px" }}
                             className='scrollbar_visible_x'
                             as="textarea"

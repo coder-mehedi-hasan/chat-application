@@ -1,22 +1,10 @@
-import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import React, { useEffect, useState, useRef } from 'react'
-import SideBarItemAfter from './SideBar/SideBarItemAfter';
-import user from '../../fake_data/user.json';
-import SideBarItemBefore from './SideBar/SideBarItemBefore';
-import Image from 'react-bootstrap/Image';
-import Image50X50 from '../common/Image50X50';
-import UserHead from '../common/UserHead';
-import SearchBox from './SearchBox';
 import HomeChat from '../common/HomeChat';
 import ChattingInterFace from '../Chatting/ChattingInterFace';
 import UserInfoBox from '../common/UserInfoBox';
 import { useMediaQuery } from 'react-responsive'
-import { FaBeer, FaAlignLeft, FaPencilAlt, FaBars, FaVideo } from 'react-icons/fa';
-import { CgMenu } from "react-icons/cg";
-import { BsFillChatFill, BsFillCameraVideoFill, BsPeopleFill, BsFillGeoFill, BsPencilFill, BsArrowRight, BsArrowRightShort } from "react-icons/bs";
-import ActiveUser from '../ActiveUser';
-import { Button, Modal, Nav, Offcanvas } from 'react-bootstrap';
-import { BsArrowLeftShort, BsArrowLeft, BsFillXCircleFill } from "react-icons/bs";
+import { FaVideo } from 'react-icons/fa';
+import { BsFillChatFill, BsPeopleFill, BsFillGeoFill } from "react-icons/bs";
 import ChattingHistory from '../History/ChattingHistory';
 import CallsHistory from '../History/CallsHistory';
 import PeopleHistory from '../History/PeopleHistory';
@@ -24,23 +12,20 @@ import StoriesHistory from '../History/StoriesHistory';
 import { useStateProvider } from '../../context/StateContext';
 
 export default function Dashboard() {
-    const [contactId, setContactId] = useState(null)
-    const [showChat, setShowChat] = useState(false)
-    const [active, setActive] = useState(true)
     const isMobileWidth = useMediaQuery({ maxWidth: 576 })
     const isMediumWidth = useMediaQuery({ maxWidth: 768 })
-    const [fullscreen, setFullscreen] = useState(true);
     const [tab, setTab] = useState("chats")
-    const [{ currentChatUser }] = useStateProvider()
+    const [{ currentChatUser, messages }] = useStateProvider()
 
     const handleBottomTab = (t) => {
         setTab(t)
     }
-    
+    console.log({ messages })
+
     return (
         <div className='w-100 p-0 container-fluid' id='chat_bar' >
             <div className="d-flex">
-                <div id='side-bar' style={{ height: "100vh", display: "flex", flexDirection: "column", paddingLeft: "0.5px", width: isMobileWidth ? "100%" : isMediumWidth ? "255px" : "320px", borderRight: "1px ridge"}}>
+                <div id='side-bar' style={{ height: "100vh", display: "flex", flexDirection: "column", paddingLeft: "0.5px", width: isMobileWidth ? "100%" : isMediumWidth ? "255px" : "320px", borderRight: "1px ridge" }}>
                     <div style={{ width: "100%", height: "100%", overflow: "scroll" }}>
                         {tab === "chats" && <ChattingHistory />}
                         {tab === "calls" && <CallsHistory />}

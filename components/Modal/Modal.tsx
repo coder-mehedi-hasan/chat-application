@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./Modal.module.css";
 import { RiCloseLine } from "react-icons/ri";
 
-const Modal = ({ setIsOpen }) => {
+const Modal = ({ setIsOpen, children }) => {
     return (
         <>
             <div className={styles.darkBG} onClick={() => setIsOpen(false)} />
@@ -29,6 +29,7 @@ const Modal = ({ setIsOpen }) => {
                                 Cancel
                             </button>
                         </div>
+                        {children}
                     </div>
                 </div>
             </div>

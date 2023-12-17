@@ -188,14 +188,107 @@
     background-color: #fff !important;
     padding: 0;
 }
+
 .inner_action_tooltip_emoji_picker .tooltip-arrow::before {
     border-top-color: #fff;
 }
 
-#chat_bar .active{
+#chat_bar .active {
     color: #3cb29d !important;
 }
 
-.current_user_active{
+.current_user_active {
     background-color: #e8e2e2;
+}
+
+.image-content .modal-dialog {
+    max-width: 100% !important;
+    margin: 0 !important;
+    height: 100% !important;
+    overflow: hidden;
+}
+
+.image-gallery {
+    height: 100%;
+}
+
+.image-content .modal-content {
+    height: 100% !important;
+    border-radius: 0 !important;
+}
+
+.image-content.style {
+    height: 100%;
+}
+
+.image-content .image-gallery-content {
+    height: 100% !important;
+    /* overflow: hidden;  */
+}
+
+.image-content .image-gallery-thumbnails-wrapper {
+    height: 100% !important;
+}
+
+.image-content .image-gallery-image {
+    width: auto !important;
+}
+
+.image-content .image-gallery-slide-wrapper {
+    height: 75%;
+}
+
+.image-content .image-gallery-swipe {
+    height: 100% !important;
+}
+
+.image-content .image-gallery-slides {
+    height: 100% !important;
+}
+
+.image-content .image-gallery-center {
+    height: 100% !important;
+}
+
+.image-content .image-gallery-center img {
+    height: 100% !important;
+}
+
+.image-content .image-gallery-icon {
+    color: #3cb29d !important;
+    height: 60px;
+    width: 60px;
+    background-color: rgb(214, 213, 213);
+    border-radius: 50%;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.image-content .image-gallery-svg {
+    height: 60px !important;
+    filter: none !important;
+}
+
+.image-content .image-gallery-thumbnail.active {
+    border-color: #3cb29d !important;
+}
+
+.image-content .cancel-btn {
+    cursor: pointer;
+    font-weight: 500;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    border: 1px ridge;
+    color: #3cb29d;
+    transition: all 0.25s ease;
+    font-size: large;
+    background: rgb(214, 213, 213);
+}
+
+.image-content .cancel-btn:hover {
+    box-shadow: none;
+    transform: none;
+    background: rgb(196, 194, 194);
+    background: #fcfcfc;
 }

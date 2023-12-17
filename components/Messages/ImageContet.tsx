@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Spinner } from 'react-bootstrap'
+import { Spinner, Modal } from 'react-bootstrap'
 import { BsCheckAll, BsCheckLg } from 'react-icons/bs'
-import Modal from '../Modal/Modal'
+import CustomImageGallery from '../Modal/CustomImageGallery';
 
 export default function ImageContet({ img }) {
     const [sent, setSent] = useState(false)
@@ -31,10 +31,9 @@ export default function ImageContet({ img }) {
                         }</p>
                 </div>
             </div>
-            {/* <Modal show={gallery} size="xl">
-                <button onClick={() => setGallery(!gallery)}>close</button>
-            </Modal> */}
-            {gallery && <Modal setIsOpen={setGallery}></Modal>}
+            <Modal show={gallery} className='image-content'>
+                <CustomImageGallery onClick={setGallery} image={img} />
+            </Modal>
         </>
     )
 }

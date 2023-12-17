@@ -48,8 +48,8 @@ const MessagingComponent = () => {
 
       const fileType = file.type;
       const myHeaders = new Headers({ 'Content-Type': fileType });
-      console.log("file : ", index, " ", file)
-      console.log("url : ", index, " ", uploadUrl)
+      // console.log("file : ", index, " ", file)
+      // console.log("url : ", index, " ", uploadUrl)
       try {
         const response = await fetch(uploadUrl, {
           method: 'PUT',
@@ -65,7 +65,7 @@ const MessagingComponent = () => {
         // Handle errors appropriately
       }
     });
-    console.log({uploadPromises})
+    // console.log({uploadPromises})
     await Promise.all(uploadPromises);
   };
 
