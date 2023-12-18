@@ -51,7 +51,7 @@ export default function SenderMessages({ data }) {
                         </div>
                         :
                         <div>
-                            <TextContent isSender={true} content={data?.message} />
+                            <TextContent isSender={true} content={data?.message} message={data} />
                         </div>
                 }
                 {userInfo?.image &&

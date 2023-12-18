@@ -1,8 +1,23 @@
 import { RxCross1 } from "react-icons/rx";
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
+import { useStateProvider } from "../../context/StateContext";
+import { useEffect, useState } from "react";
 
 const CustomImageGallery = ({ onClick, image }) => {
+    const [galleryImages, setGalleryImages] = useState([])
+    const [{ messages }] = useStateProvider()
+
+    useEffect(() => {
+        messages && setGalleryImages(messages?.map(item => {
+            if (item?.cloudfrontUrl) {
+                return {
+                    original: item?.cloudfrontUrl,
+                    thumbnail: item?.cloudfrontUrl,
+                }
+            }
+        }))
+    }, [messages])
     return (
         <div style={{ width: "100%", height: "100%", }}>
             <div style={{ padding: "10px 20px" }}>
@@ -10,14 +25,7 @@ const CustomImageGallery = ({ onClick, image }) => {
             </div>
             <div style={{ height: "100%" }}>
                 <ImageGallery
-                    items={
-                        [
-                            {
-                                original: image,
-                                thumbnail: image,
-                            },
-                        ]
-                    }
+                    items={galleryImages}
                     showBullets={false}
                     showPlayButton={false}
                     useBrowserFullscreen={true}
