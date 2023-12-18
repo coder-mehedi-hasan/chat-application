@@ -299,3 +299,12 @@
 .image-content .image-gallery-thumbnail img{
     max-height: 60px !important;
 }
+.send-voice-clip-btn{
+    transition: .4s;
+}
+.send-voice-clip-btn:hover{
+    background-color: #f3f3f3;
+}
+.brand-color{
+    color: #3cb29d !important;
+}

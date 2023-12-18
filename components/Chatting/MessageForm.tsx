@@ -160,7 +160,7 @@ export default function MessageForm() {
     //handle submit message
     const handleSubmitMessage = async (e) => {
         e.preventDefault()
-        if(showEmoji){
+        if (showEmoji) {
             setShowEmoji(!showEmoji)
         }
         if (selectedFiles?.length && previewFiles?.length) {
@@ -222,6 +222,10 @@ export default function MessageForm() {
         }
     };
 
+    const handleVoiceMessage = () => {
+        
+    }
+
     //take current user than update message list
     useEffect(() => {
         setMessage({ ...message, message: "", messageToUserID: currentChatUser.id, messageFromUserID: userInfo?.id })
@@ -264,7 +268,7 @@ export default function MessageForm() {
                                     })
                                 }
                             </div>
-                            : 
+                            :
                             ""
                     }
                     <div className='cursor-pointer p-1 text-dark' style={{ fontSize: "16px" }} ref={emoji} onClick={() => setShowEmoji(!showEmoji)}>
@@ -274,7 +278,7 @@ export default function MessageForm() {
                         <Form.Control
                             ref={inputReference}
                             autoFocus={true}
-                            style={{paddingLeft:"2px",paddingRight:"2px",textAlign: "start", background: "none", border: "none", color: "#000", overflowY: "scroll", scrollBehavior: "smooth", resize: "none", height: "15px", fontSize: "15px" }}
+                            style={{ paddingLeft: "2px", paddingRight: "2px", textAlign: "start", background: "none", border: "none", color: "#000", overflowY: "scroll", scrollBehavior: "smooth", resize: "none", height: "15px", fontSize: "15px" }}
                             className='scrollbar_visible_x'
                             as="textarea"
                             value={message?.message}
@@ -283,22 +287,29 @@ export default function MessageForm() {
                             onChange={(e) => setMessage({ ...message, [e.target.name]: e.target.value })}
                         />
                     </Form>
-                    
+
                 </div >
                 <Button variant='' onClick={handleSubmitMessage} >
                     <Image className='img-fluid' src="https://i.ibb.co/QdZ8jVf/send-10109845.png" alt="" height={25} width={25} />
                 </Button>
             </div >
-            <div className='position-absolute py-2' style={{ top: "-35px", left: 0, width: "100%", }}>
-                <Toast show={showB} animation={false} className='w-100 rounded-0' style={{ background: "rgba(33, 37, 41, 0.95)" }}>
-                    <div className="d-flex align-items-center justify-content-center">
-                        <div>
+            {/* <div className='' style={{ top: "-44px", left: 0,width:"100%" }}> */}
+            <Toast show={showB} animation={true} className='position-absolute rounded' style={{ top: "-46px", left: 0, border: 'none', width: "220px", height: "44px", padding: "4px", transition: ".2s", display: showB ? 'block' : "none" }}>
+                <div className="w-100 h-100 d-flex justify-content-center align-items-center send-voice-clip-btn rounded" style={{ padding: "0 8px", }} onClick={handleVoiceMessage}>
+                    {/* <div>
                             <label htmlFor="share_gallery"><Image className='cursor-pointer' width={22} src="https://i.ibb.co/YXhV2hc/gallery.png" alt="gallery" /></label>
                             <input type="file" className='d-none' id="share_gallery" />
-                        </div>
+                        </div> */}
+                    {/* <div > */}
+                    <div style={{ paddingRight: "8px" }}>
+                        <BsMicFill style={{ height: "20px", width: "20px" }} className="brand-color" />
                     </div>
-                </Toast>
-            </div>
+                    <div style={{ width: "100%" }} className='cursor-pointer rounded fw-semibold'>
+                        Send voice clip
+                    </div>
+                </div>
+            </Toast>
+            {/* </div> */}
             <Overlay target={emoji.current} show={showEmoji} placement="top">
                 {(props) => (
                     <Tooltip id="overlay-example" {...props} className='inner_action_tooltip_emoji_picker' >
