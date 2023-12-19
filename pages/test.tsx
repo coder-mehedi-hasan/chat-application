@@ -6,6 +6,7 @@ const Test = () => {
     <div>
       <h1>Audio Recorder Example</h1>
       <AudioRecorder />
+      {/* <input type="file" name="" id="" onChange={(e)=> console.log(e?.target?.files)} /> */}
     </div>
   );
 };

@@ -24,10 +24,11 @@ export default function MessageForm() {
     const [message, setMessage] = useState<any>({ messageType: 1, messageFromUserID: "", messageToUserID: '', message: "" })
     const [{ currentChatUser, userInfo, socket }, dispatch] = useStateProvider()
     const recorderControls = useAudioRecorder()
+    const [sendEvent, setSendEvent] = useState<any>(null)
 
     //preview files
     const [previewFiles, setPreviewFiles] = useState([])
-    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [selectedFiles, setSelectedFiles] = useState<any>([]);
     //
     const [uploadUrls, setUploadUrls] = useState<any>([]);
 
@@ -127,6 +128,7 @@ export default function MessageForm() {
         }
     };
 
+    //handle file change
     const handleFileChange = (event) => {
 
         const files = Array.from(event.target.files);
@@ -159,15 +161,16 @@ export default function MessageForm() {
         setPreviewFiles(newArray)
     }
 
+    
+
     //handle submit message
-    const handleSubmitMessage = async (e) => {
+    const handleSubmitMessage = (e) => {
         e.preventDefault()
         if (showEmoji) {
             setShowEmoji(!showEmoji)
         }
-        if (selectedFiles?.length && previewFiles?.length) {
+        if (selectedFiles?.length) {
             fetchSignedUrlsForMessaging()
-
         }
 
         if (message?.message !== "" && message?.message !== null) {
@@ -230,20 +233,68 @@ export default function MessageForm() {
         recorderControls.startRecording()
     }
 
-    const handleSendVoiceMessage = () => {
-        recorderControls?.stopRecording()
-        console.log(recorderControls.recordingBlob)
-
-    }
-
-    const addAudioElement = (blob) => {
-        const url = URL.createObjectURL(blob);
-        console.log({ blob, url })
+    const blobToFile = (blob, fileName) => {
+        const file = new File([blob], fileName, { type: blob.type });
+        return file;
     };
 
+    const handleSendVoiceMessage = (event) => {
+        recorderControls.stopRecording()
+        setSendEvent({ event, sending: true })
+    }
+
+    // console.log({selectedFiles})
+    const addAudioElement = async (blob) => {
+        if (sendEvent) {
+            const file = await blobToFile(blob, `${new Date().toString()}_voice.webm`)
+            const url = await URL.createObjectURL(file)
+            console.log({file})
+            console.log({url})
+            return
+            const filesData = [{
+                "fileName": file.name,
+                "fileType": file.type,
+            }]
+
+            const jsonFiles = filesData?.map(item => JSON.stringify(item))
+            const response = await fetch(`https://feed.kotha.im/app/feed/getS3FileUploadUrl?files=[${jsonFiles}]
+            &folder=messaging&uploaderId=${userInfo?.id}`, { method: 'GET' });
+            const data = await response.json();
+            // console.log({data})
+            // return
+            if (response) {
+                data?.map(async (url) => {
+                    const myHeaders = new Headers({ 'Content-Type': file?.type });
+                    const response = await fetch(url?.signed_request, {
+                        method: 'PUT',
+                        headers: myHeaders,
+                        body: file,
+                    });
+                    if (response) {
+                        console.log(await response)
+                        return
+                        socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response) => {
+                            // console.log("response from share file :", response)
+                            dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
+                            dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
+                        })
+                    }
+                })
+            }
+            // } catch (error) {
+            //     console.error('Error fetching signed URLs for messaging:', error);
+            // }
+        }
+
+        // handleSubmitMessage(e)
+    };
+
+    // console.log({ selectedFiles })
     useEffect(() => {
         setMessage({ ...message, message: "", messageToUserID: currentChatUser.id, messageFromUserID: userInfo?.id })
     }, [currentChatUser])
+
+
 
     return (
         <div className='position-relative'>
@@ -269,6 +320,7 @@ export default function MessageForm() {
                                         <div className='recorder-timer p-1 rounded-pill d-flex align-items-center'>
                                             <div>
                                                 <AudioRecorder
+                                                    onRecordingComplete={addAudioElement}
                                                     recorderControls={recorderControls}
                                                 />
                                             </div>

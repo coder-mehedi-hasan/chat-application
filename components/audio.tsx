@@ -4,6 +4,7 @@ import React, { useState, useRef } from 'react';
 const AudioRecorder = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState(null);
+  const [recordingTime, setRecordingTime] = useState(0);
   const mediaRecorderRef = useRef(null);
 
   const handleStartRecording = async () => {
@@ -12,7 +13,9 @@ const AudioRecorder = () => {
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
 
-      const chunks = [];
+      let chunks = [];
+      let startTime = Date.now();
+
       mediaRecorder.ondataavailable = e => {
         if (e.data.size > 0) {
           chunks.push(e.data);
@@ -26,6 +29,14 @@ const AudioRecorder = () => {
 
       mediaRecorder.start();
       setIsRecording(true);
+
+      const timer = setInterval(() => {
+        setRecordingTime(Math.floor((Date.now() - startTime) / 1000));
+      }, 1000);
+
+      mediaRecorderRef.current.onstop = () => {
+        clearInterval(timer);
+      };
     } catch (error) {
       console.error('Error accessing microphone:', error);
     }
@@ -40,9 +51,24 @@ const AudioRecorder = () => {
 
   const handleReset = () => {
     setAudioBlob(null);
+    setRecordingTime(0);
   };
 
-  console.log(audioBlob)
+  const handleSend = () => {
+    // Implement sending logic here (e.g., send audioBlob to a server, etc.)
+    console.log(audioBlob)
+    if (audioBlob) {
+      // Example: Sending audioBlob to a hypothetical function sendAudioToServer
+      sendAudioToServer(audioBlob);
+    }
+  };
+
+  const sendAudioToServer = audioBlob => {
+    // Placeholder function for sending audio data to the server
+    console.log('Sending audio to server:', audioBlob);
+    // Include your code here to send the audioBlob to your server or perform further actions
+  };
+
 
   return (
     <div>
@@ -55,6 +81,8 @@ const AudioRecorder = () => {
       <button onClick={handleReset} disabled={!audioBlob}>
         Reset
       </button>
+      <p>Recording Time: {recordingTime} seconds</p>
+      <button onClick={handleSend}>Send</button>
       {audioBlob && (
         <div>
           <p>Recorded Audio:</p>
@@ -62,6 +90,7 @@ const AudioRecorder = () => {
             <source src={URL.createObjectURL(audioBlob)} type="audio/wav" />
             Your browser does not support the audio element.
           </audio>
+          <button onClick={handleSend}>Send</button>
         </div>
       )}
     </div>
