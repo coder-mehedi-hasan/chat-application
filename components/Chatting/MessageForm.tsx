@@ -1,17 +1,17 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Button, Form, Image, InputGroup, Overlay, Tooltip } from 'react-bootstrap'
-import { BsX, BsPlusLg, BsImage, BsEmojiSmile, BsMicFill } from "react-icons/bs";
+import { BsX, BsPlusLg, BsImage, BsEmojiSmile, BsMicFill, BsFillPlayFill, BsPauseFill } from "react-icons/bs";
 import Toast from 'react-bootstrap/Toast';
 import { useMediaQuery } from 'react-responsive';
-// import { useContext } from 'react';
-// import { MessageConsumer } from '../context/messageContext';
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 import { io } from "socket.io-client"
 import { useStateProvider } from '../../context/StateContext';
 import { reducerCases } from '../../context/constant';
 import { BsFillXCircleFill } from "react-icons/bs";
+import { AudioRecorder, useAudioRecorder } from 'react-audio-voice-recorder';
+
 
 
 export default function MessageForm() {
@@ -23,6 +23,7 @@ export default function MessageForm() {
     const inputReference = useRef();
     const [message, setMessage] = useState<any>({ messageType: 1, messageFromUserID: "", messageToUserID: '', message: "" })
     const [{ currentChatUser, userInfo, socket }, dispatch] = useStateProvider()
+    const recorderControls = useAudioRecorder()
 
     //preview files
     const [previewFiles, setPreviewFiles] = useState([])
@@ -226,29 +227,60 @@ export default function MessageForm() {
     const handleVoiceMessage = () => {
         setShowVoiceToast(!showVoiceToast)
         setShowVoiceForm(!showVoiceForm)
+        recorderControls.startRecording()
     }
 
-    //take current user than update message list
+    const handleSendVoiceMessage = () => {
+        recorderControls?.stopRecording()
+        console.log(recorderControls.recordingBlob)
+
+    }
+
+    const addAudioElement = (blob) => {
+        const url = URL.createObjectURL(blob);
+        console.log({ blob, url })
+    };
+
     useEffect(() => {
         setMessage({ ...message, message: "", messageToUserID: currentChatUser.id, messageFromUserID: userInfo?.id })
     }, [currentChatUser])
-
 
     return (
         <div className='position-relative'>
             <div style={{ flex: 1, background: "#fff", height: "80px" }} className='position-relative w-100 h-100 text-white d-flex align-items-center justify-content-between px-lg-3 px-md-2 px-sm-1 px-xs-1'>
                 {
                     showVoiceForm ?
-                        <div size='sm' className="rounded d-flex w-100 position-relative bg_gray" style={{transition:".4s", display:showVoiceForm?'block':"none"}} >
-                            <div>
-                                <Button variant='' className='p-1 text-dark'>
-                                    <BsFillXCircleFill className="fs-5 brand-color" onClick={() => {
-                                        setShowVoiceForm(!showVoiceForm)
-                                    }} style={{ transform: showVoiceForm ? "rotate(90deg)" : "", transition: ".4s" }} />
+                        <>
+                            <div size='sm' className="voice-form rounded d-flex w-100 position-relative" style={{ transition: ".4s", display: showVoiceForm ? 'block' : "none" }} >
+                                <div>
+                                    <Button variant='' className='p-1 text-dark'>
+                                        <BsFillXCircleFill className="fs-5 brand-color" onClick={() => {
+                                            setShowVoiceForm(false)
+                                            recorderControls?.stopRecording()
 
-                                </Button>
-                            </div>
-                        </div >
+                                        }} style={{ transform: showVoiceForm ? "rotate(90deg)" : "", transition: ".4s" }} />
+                                    </Button>
+                                </div>
+                                <div style={{ width: "100%", transition: ".4s" }} className='position-relative rounded-pill brand-bg overflow-hidden' >
+                                    <div className='w-100 h-100 px-1 d-flex justify-content-between align-items-center voice-recorder-content'>
+                                        <div>
+                                            <div className='cursor-pointer recorder-controller-pause-resume d-flex justify-content-center align-items-center' onClick={recorderControls.togglePauseResume}> {recorderControls?.isPaused ? <BsFillPlayFill /> : <BsPauseFill />}</div>
+                                        </div>
+                                        <div className='recorder-timer p-1 rounded-pill d-flex align-items-center'>
+                                            <div>
+                                                <AudioRecorder
+                                                    recorderControls={recorderControls}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span className='recorder-wave' style={{ width: `${recorderControls?.recordingTime}%`, transition: "3s" }}></span>
+                                </div>
+                            </div >
+                            <Button variant='' onClick={handleSendVoiceMessage} >
+                                <Image className='img-fluid' src="https://i.ibb.co/QdZ8jVf/send-10109845.png" alt="" height={25} width={25} />
+                            </Button>
+                        </>
                         :
                         <>
                             <div>
@@ -305,20 +337,14 @@ export default function MessageForm() {
                                     />
                                 </Form>
                             </div >
+                            <Button variant='' onClick={handleSubmitMessage} >
+                                <Image className='img-fluid' src="https://i.ibb.co/QdZ8jVf/send-10109845.png" alt="" height={25} width={25} />
+                            </Button>
                         </>
                 }
-                <Button variant='' onClick={handleSubmitMessage} >
-                    <Image className='img-fluid' src="https://i.ibb.co/QdZ8jVf/send-10109845.png" alt="" height={25} width={25} />
-                </Button>
             </div >
-            {/* <div className='' style={{ top: "-44px", left: 0,width:"100%" }}> */}
             <Toast show={showVoiceToast} animation={true} className='position-absolute rounded' style={{ top: "-46px", left: 0, border: 'none', width: "220px", height: "44px", padding: "4px", transition: ".2s", display: showVoiceToast ? 'block' : "none" }}>
                 <div className="w-100 h-100 d-flex justify-content-center align-items-center send-voice-clip-btn rounded" style={{ padding: "0 8px", }} onClick={handleVoiceMessage}>
-                    {/* <div>
-                            <label htmlFor="share_gallery"><Image className='cursor-pointer' width={22} src="https://i.ibb.co/YXhV2hc/gallery.png" alt="gallery" /></label>
-                            <input type="file" className='d-none' id="share_gallery" />
-                        </div> */}
-                    {/* <div > */}
                     <div style={{ paddingRight: "8px" }}>
                         <BsMicFill style={{ height: "20px", width: "20px" }} className="brand-color" />
                     </div>
@@ -327,7 +353,6 @@ export default function MessageForm() {
                     </div>
                 </div>
             </Toast>
-            {/* </div> */}
             <Overlay target={emoji.current} show={showEmoji} placement="top">
                 {(props) => (
                     <Tooltip id="overlay-example" {...props} className='inner_action_tooltip_emoji_picker' >
