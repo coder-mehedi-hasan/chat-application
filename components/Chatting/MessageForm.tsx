@@ -11,11 +11,12 @@ import Picker from '@emoji-mart/react'
 import { io } from "socket.io-client"
 import { useStateProvider } from '../../context/StateContext';
 import { reducerCases } from '../../context/constant';
+import { BsFillXCircleFill } from "react-icons/bs";
 
 
 export default function MessageForm() {
-    const [showB, setShowB] = useState(false);
-    const toggleShowB = () => setShowB(!showB);
+    const [showVoiceToast, setShowVoiceToast] = useState(false);
+    const [showVoiceForm, setShowVoiceForm] = useState(false);
     const isMobileWidth = useMediaQuery({ maxWidth: 576 })
     const [showEmoji, setShowEmoji] = useState(false)
     const emoji = useRef(null);
@@ -223,7 +224,8 @@ export default function MessageForm() {
     };
 
     const handleVoiceMessage = () => {
-        
+        setShowVoiceToast(!showVoiceToast)
+        setShowVoiceForm(!showVoiceForm)
     }
 
     //take current user than update message list
@@ -235,66 +237,82 @@ export default function MessageForm() {
     return (
         <div className='position-relative'>
             <div style={{ flex: 1, background: "#fff", height: "80px" }} className='position-relative w-100 h-100 text-white d-flex align-items-center justify-content-between px-lg-3 px-md-2 px-sm-1 px-xs-1'>
-                <div>
-                    <Button variant='' className='p-1 text-dark'>
-                        <BsPlusLg className="fs-5" onClick={toggleShowB} style={{ transform: showB ? "rotate(45deg)" : "", transition: ".4s" }} />
-                    </Button>
-                </div>
-                <div>
-                    <Button variant='' className='p-1 text-dark' >
-                        <label htmlFor="share_gallery">
-                            <BsImage />
-                        </label>
-                    </Button>
-                </div>
-                <div>
-                    <input multiple onChange={handleFileChange} type="file" className='d-none' id="share_gallery" onKeyDown={handleKeyPress} />
-                </div>
-                <div size='sm' className="rounded d-flex w-100 position-relative bg_gray" >
-                    {
-                        previewFiles?.length ?
+                {
+                    showVoiceForm ?
+                        <div size='sm' className="rounded d-flex w-100 position-relative bg_gray" style={{transition:".4s", display:showVoiceForm?'block':"none"}} >
+                            <div>
+                                <Button variant='' className='p-1 text-dark'>
+                                    <BsFillXCircleFill className="fs-5 brand-color" onClick={() => {
+                                        setShowVoiceForm(!showVoiceForm)
+                                    }} style={{ transform: showVoiceForm ? "rotate(90deg)" : "", transition: ".4s" }} />
 
-                            <div className="w-100 d-flex rounded-top bg_gray scrollbar_visible_x" style={{ position: "absolute", top: isMobileWidth ? "-94px" : "-113px", left: "0", overflowX: "scroll", scrollBehavior: "smooth" }}>
-                                {
-                                    previewFiles?.map((item, index) => {
-                                        return (
-                                            <div key={index} className='mx-2 my-3 position-relative'>
-                                                <div style={{ height: isMobileWidth ? "16px" : "20px", width: isMobileWidth ? "16px" : "20px", borderRadius: "50%", position: "absolute", top: "-5px", right: "-5px", cursor: "pointer", fontSize: isMobileWidth ? "14px" : "18px" }} className='text-dark bg-white d-flex justify-content-center align-items-center' onClick={() => deletePreviewImage(index)}><BsX /></div>
-                                                <div style={{ height: isMobileWidth ? 65 : 80, width: isMobileWidth ? 65 : 80, overflow: "hidden" }} className='rounded'>
-                                                    <Image src={item} className='img-fluid' />
-                                                </div>
-                                            </div>
-                                        )
-                                    })
-                                }
+                                </Button>
                             </div>
-                            :
-                            ""
-                    }
-                    <div className='cursor-pointer p-1 text-dark' style={{ fontSize: "16px" }} ref={emoji} onClick={() => setShowEmoji(!showEmoji)}>
-                        <BsEmojiSmile />
-                    </div>
-                    <Form className='w-100'>
-                        <Form.Control
-                            ref={inputReference}
-                            autoFocus={true}
-                            style={{ paddingLeft: "2px", paddingRight: "2px", textAlign: "start", background: "none", border: "none", color: "#000", overflowY: "scroll", scrollBehavior: "smooth", resize: "none", height: "15px", fontSize: "15px" }}
-                            className='scrollbar_visible_x'
-                            as="textarea"
-                            value={message?.message}
-                            name="message"
-                            onKeyDown={handleKeyPress}
-                            onChange={(e) => setMessage({ ...message, [e.target.name]: e.target.value })}
-                        />
-                    </Form>
+                        </div >
+                        :
+                        <>
+                            <div>
+                                <Button variant='' className='p-1 text-dark'>
+                                    <BsFillXCircleFill className="fs-5 brand-color" onClick={() => setShowVoiceToast(!showVoiceToast)} style={{ transform: showVoiceToast ? "rotate(90deg)" : "rotate(45deg)", transition: ".4s" }} />
+                                </Button>
+                            </div>
+                            <div>
+                                <Button variant='' className='p-1 text-dark brand-color' >
+                                    <label htmlFor="share_gallery">
+                                        <BsImage />
+                                    </label>
+                                </Button>
+                            </div>
+                            <div>
+                                <input multiple onChange={handleFileChange} type="file" className='d-none' id="share_gallery" onKeyDown={handleKeyPress} />
+                            </div>
 
-                </div >
+                            <div size='sm' className="rounded d-flex w-100 position-relative bg_gray" >
+                                {
+                                    previewFiles?.length ?
+
+                                        <div className="w-100 d-flex rounded-top bg_gray scrollbar_visible_x" style={{ position: "absolute", top: isMobileWidth ? "-94px" : "-113px", left: "0", overflowX: "scroll", scrollBehavior: "smooth" }}>
+                                            {
+                                                previewFiles?.map((item, index) => {
+                                                    return (
+                                                        <div key={index} className='mx-2 my-3 position-relative'>
+                                                            <div style={{ height: isMobileWidth ? "16px" : "20px", width: isMobileWidth ? "16px" : "20px", borderRadius: "50%", position: "absolute", top: "-5px", right: "-5px", cursor: "pointer", fontSize: isMobileWidth ? "14px" : "18px" }} className='text-dark bg-white d-flex justify-content-center align-items-center' onClick={() => deletePreviewImage(index)}><BsX /></div>
+                                                            <div style={{ height: isMobileWidth ? 65 : 80, width: isMobileWidth ? 65 : 80, overflow: "hidden" }} className='rounded'>
+                                                                <Image src={item} className='img-fluid' />
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                })
+                                            }
+                                        </div>
+                                        :
+                                        ""
+                                }
+                                <div className='cursor-pointer p-1 text-dark' style={{ fontSize: "16px" }} ref={emoji} onClick={() => setShowEmoji(!showEmoji)}>
+                                    <BsEmojiSmile />
+                                </div>
+                                <Form className='w-100'>
+                                    <Form.Control
+                                        ref={inputReference}
+                                        autoFocus={true}
+                                        style={{ paddingLeft: "2px", paddingRight: "2px", textAlign: "start", background: "none", border: "none", color: "#000", overflowY: "scroll", scrollBehavior: "smooth", resize: "none", height: "15px", fontSize: "15px" }}
+                                        className='scrollbar_visible_x'
+                                        as="textarea"
+                                        value={message?.message}
+                                        name="message"
+                                        onKeyDown={handleKeyPress}
+                                        onChange={(e) => setMessage({ ...message, [e.target.name]: e.target.value })}
+                                    />
+                                </Form>
+                            </div >
+                        </>
+                }
                 <Button variant='' onClick={handleSubmitMessage} >
                     <Image className='img-fluid' src="https://i.ibb.co/QdZ8jVf/send-10109845.png" alt="" height={25} width={25} />
                 </Button>
             </div >
             {/* <div className='' style={{ top: "-44px", left: 0,width:"100%" }}> */}
-            <Toast show={showB} animation={true} className='position-absolute rounded' style={{ top: "-46px", left: 0, border: 'none', width: "220px", height: "44px", padding: "4px", transition: ".2s", display: showB ? 'block' : "none" }}>
+            <Toast show={showVoiceToast} animation={true} className='position-absolute rounded' style={{ top: "-46px", left: 0, border: 'none', width: "220px", height: "44px", padding: "4px", transition: ".2s", display: showVoiceToast ? 'block' : "none" }}>
                 <div className="w-100 h-100 d-flex justify-content-center align-items-center send-voice-clip-btn rounded" style={{ padding: "0 8px", }} onClick={handleVoiceMessage}>
                     {/* <div>
                             <label htmlFor="share_gallery"><Image className='cursor-pointer' width={22} src="https://i.ibb.co/YXhV2hc/gallery.png" alt="gallery" /></label>
