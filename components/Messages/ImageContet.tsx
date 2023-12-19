@@ -2,16 +2,19 @@ import React, { useEffect, useState } from 'react'
 import { Spinner, Modal } from 'react-bootstrap'
 import { BsCheckAll, BsCheckLg } from 'react-icons/bs'
 import CustomImageGallery from '../Modal/CustomImageGallery';
+import { getFileExtensionAndType } from '../../utils/getFileExtensionAndType';
 
 export default function ImageContet({ img }) {
     const [sent, setSent] = useState(false)
     const [gallery, setGallery] = useState(false)
+    const [fileInfo, setFileInfo] = useState(getFileExtensionAndType(img))
 
-    useEffect(() => {
-        setTimeout(() => {
-            setSent(true);
-        }, 1000)
-    }, [])
+        useEffect(() => {
+
+            setTimeout(() => {
+                setSent(true);
+            }, 1000)
+        }, [])
 
     return (
         <>
