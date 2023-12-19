@@ -1,17 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Button, Form, Image, InputGroup, Overlay, Tooltip } from 'react-bootstrap'
-import { BsX, BsPlusLg, BsImage, BsEmojiSmile, BsMicFill, BsFillPlayFill, BsPauseFill } from "react-icons/bs";
+import { Button, Form, Image,  Overlay, Tooltip } from 'react-bootstrap'
+import { BsX, BsImage, BsEmojiSmile, BsMicFill, BsFillPlayFill, BsPauseFill } from "react-icons/bs";
 import Toast from 'react-bootstrap/Toast';
 import { useMediaQuery } from 'react-responsive';
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
-import { io } from "socket.io-client"
 import { useStateProvider } from '../../context/StateContext';
 import { reducerCases } from '../../context/constant';
 import { BsFillXCircleFill } from "react-icons/bs";
 import { AudioRecorder, useAudioRecorder } from 'react-audio-voice-recorder';
-
+import { AiOutlineSend } from "react-icons/ai";
 
 
 export default function MessageForm() {
@@ -38,22 +36,15 @@ export default function MessageForm() {
             console.error('No files selected or no upload URLs available', uploadUrls);
             return;
         }
-
         const file = selectedFiles[index]
         const fileType = file?.type
         const myHeaders = new Headers({ 'Content-Type': fileType });
-
-
         try {
             const response = await fetch(url?.signed_request, {
                 method: 'PUT',
                 headers: myHeaders,
                 body: file,
             });
-            // const upload = await response.json()
-            // console.log({ response })
-            // Handle the upload response for each file as needed
-            // Check response status, etc.
             if (response) {
                 socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response) => {
                     // console.log("response from share file :", response)
@@ -63,42 +54,8 @@ export default function MessageForm() {
             }
 
         } catch (err) {
-
+            console.log(err)
         }
-
-        // console.log("upload urls from after submit file", uploadUrls)
-        // console.log("selected from after submit file", selectedFiles)
-        // return
-        // selectedFiles.map(async (file, index) => {
-        //     const uploadUrl = uploadUrls[index];
-        //     const url = uploadUrl.signed_request
-        //     // console.log(uploadUrl)
-        //     console.log("upload url : =>>", url)
-        //     // return
-        //     const fileType = file.type;
-        //     const myHeaders = new Headers({ 'Content-Type': fileType });
-        //     try {
-        //         const response = await fetch(url, {
-        //             method: 'PUT',
-        //             headers: myHeaders,
-        //             body: file,
-        //         });
-        //         // const upload = await response.json()
-        //         console.log({ response })
-        //         // Handle the upload response for each file as needed
-        //         // Check response status, etc.
-
-        //         socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: uploadUrl?.cloudfrontUrl, message: "" }, (response) => {
-        //             console.log("response from share file :", response)
-        //             dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
-        //             dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
-        //         })
-
-        //     } catch (error) {
-        //         console.error(`Error uploading file ${file.name} for messaging:`, error);
-        //         // Handle errors appropriately
-        //     }
-        // });
     };
 
     //fetch file and sending
@@ -112,14 +69,7 @@ export default function MessageForm() {
             const jsonFiles = filesData?.map(item => JSON.stringify(item))
             const response = await fetch(`https://feed.kotha.im/app/feed/getS3FileUploadUrl?files=[${jsonFiles}]&folder=messaging&uploaderId=${userInfo?.id}`, { method: 'GET' });
             const data = await response.json();
-            // setUploadUrls(data)
-            // return data
-            // uploadFilesForMessaging()
-            // 
-            // 
-            // setPreviewFiles([])
             data?.map((url, index) => {
-                // handleSendFileMessage(url, index)
                 uploadFilesForMessaging(url, index)
                 setPreviewFiles([])
             })
@@ -145,8 +95,6 @@ export default function MessageForm() {
         //set preview images base64 url only for preview 
         setPreviewFiles(showSelectedFiles);
         /******** show preview image **********/
-        // inputReference.current.value="sdkfjs"
-        // console.log(inputReference)
     };
 
     //delete preview image  
@@ -160,8 +108,6 @@ export default function MessageForm() {
         const newArray = previewFiles.filter((element) => element !== img[0]);
         setPreviewFiles(newArray)
     }
-
-    
 
     //handle submit message
     const handleSubmitMessage = (e) => {
@@ -228,6 +174,7 @@ export default function MessageForm() {
     };
 
     const handleVoiceMessage = () => {
+        setSendEvent(null)
         setShowVoiceToast(!showVoiceToast)
         setShowVoiceForm(!showVoiceForm)
         recorderControls.startRecording()
@@ -243,14 +190,10 @@ export default function MessageForm() {
         setSendEvent({ event, sending: true })
     }
 
-    // console.log({selectedFiles})
+    //send voice message
     const addAudioElement = async (blob) => {
         if (sendEvent) {
             const file = await blobToFile(blob, `${new Date().toString()}_voice.webm`)
-            const url = await URL.createObjectURL(file)
-            console.log({file})
-            console.log({url})
-            return
             const filesData = [{
                 "fileName": file.name,
                 "fileType": file.type,
@@ -260,9 +203,8 @@ export default function MessageForm() {
             const response = await fetch(`https://feed.kotha.im/app/feed/getS3FileUploadUrl?files=[${jsonFiles}]
             &folder=messaging&uploaderId=${userInfo?.id}`, { method: 'GET' });
             const data = await response.json();
-            // console.log({data})
-            // return
             if (response) {
+                setShowVoiceForm(false)
                 data?.map(async (url) => {
                     const myHeaders = new Headers({ 'Content-Type': file?.type });
                     const response = await fetch(url?.signed_request, {
@@ -271,25 +213,20 @@ export default function MessageForm() {
                         body: file,
                     });
                     if (response) {
-                        console.log(await response)
-                        return
                         socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response) => {
-                            // console.log("response from share file :", response)
                             dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
                             dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
+                            setSendEvent(null)
                         })
                     }
                 })
             }
-            // } catch (error) {
-            //     console.error('Error fetching signed URLs for messaging:', error);
-            // }
+        } else {
+            console.log("audio missing")
         }
 
-        // handleSubmitMessage(e)
     };
 
-    // console.log({ selectedFiles })
     useEffect(() => {
         setMessage({ ...message, message: "", messageToUserID: currentChatUser.id, messageFromUserID: userInfo?.id })
     }, [currentChatUser])
@@ -317,20 +254,26 @@ export default function MessageForm() {
                                         <div>
                                             <div className='cursor-pointer recorder-controller-pause-resume d-flex justify-content-center align-items-center' onClick={recorderControls.togglePauseResume}> {recorderControls?.isPaused ? <BsFillPlayFill /> : <BsPauseFill />}</div>
                                         </div>
+
                                         <div className='recorder-timer p-1 rounded-pill d-flex align-items-center'>
                                             <div>
                                                 <AudioRecorder
                                                     onRecordingComplete={addAudioElement}
                                                     recorderControls={recorderControls}
+                                                    audioTrackConstraints={{
+                                                        noiseSuppression: true,
+                                                        echoCancellation: true,
+                                                    }}
                                                 />
                                             </div>
                                         </div>
+
                                     </div>
-                                    <span className='recorder-wave' style={{ width: `${recorderControls?.recordingTime}%`, transition: "3s" }}></span>
+                                    <span className='recorder-wave' style={{ width: `${Math.floor(recorderControls?.recordingTime * 4)}px`, transition: "width 1s ease-in-out" }}></span>
                                 </div>
                             </div >
                             <Button variant='' onClick={handleSendVoiceMessage} >
-                                <Image className='img-fluid' src="https://i.ibb.co/QdZ8jVf/send-10109845.png" alt="" height={25} width={25} />
+                                <AiOutlineSend className="brand-color" style={{ height: "30px", width: "30px" }} />
                             </Button>
                         </>
                         :
@@ -390,7 +333,9 @@ export default function MessageForm() {
                                 </Form>
                             </div >
                             <Button variant='' onClick={handleSubmitMessage} >
-                                <Image className='img-fluid' src="https://i.ibb.co/QdZ8jVf/send-10109845.png" alt="" height={25} width={25} />
+                                <AiOutlineSend className="brand-color" style={{ height: "30px", width: "30px" }} />
+
+                                {/* <Image className='img-fluid' src="https://i.ibb.co/QdZ8jVf/send-10109845.png" alt="" height={25} width={25} /> */}
                             </Button>
                         </>
                 }
