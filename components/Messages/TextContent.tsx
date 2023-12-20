@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useStateProvider } from '../../context/StateContext';
+import { identifyTextOrLink } from '../../utils/identifyTextOrLink';
+import Link from 'next/link';
 
 export default function TextContent({ content, isSender, message }) {
     const [reactions, setReactions] = useState([]);
@@ -50,7 +52,7 @@ export default function TextContent({ content, isSender, message }) {
                 <div style={{ boxSizing: "border-box" }}>
                     <div className='m-0 w-100' style={textStyle}>
                         {
-                            content
+                            identifyTextOrLink(content) === 'link' ? <Link target='_blank' href={content} style={{ color: isSender ? "#fff" : "#000" }}>{content}</Link> : content
                         }
                     </div>
                 </div>

@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import HomeChat from '../common/HomeChat';
 import ChattingInterFace from '../Chatting/ChattingInterFace';
-import UserInfoBox from '../common/UserInfoBox';
 import { useMediaQuery } from 'react-responsive'
 import { FaVideo } from 'react-icons/fa';
 import { BsFillChatFill, BsPeopleFill, BsFillGeoFill } from "react-icons/bs";

@@ -8,7 +8,7 @@ import { useContext } from 'react';
 import { MessageConsumer } from '../../context/messageContext';
 import MessageSideAction from '../common/MessageSideAction';
 import TextContent from './TextContent';
-import ImageContet from './ImageContet';
+import FileContent from './FileContet';
 import { useStateProvider } from '../../context/StateContext';
 
 export default function ReceiverMessages({ data }) {
@@ -62,11 +62,11 @@ export default function ReceiverMessages({ data }) {
                 {
                     data?.cloudfrontUrl && !data?.message ?
                         <div>
-                            <ImageContet img={data?.cloudfrontUrl} />
+                            <FileContent img={data?.cloudfrontUrl} />
                         </div>
                         :
                         <div>
-                            <TextContent isSender={false} content={data?.message} />
+                            <TextContent message={data} isSender={false} content={data?.message} />
                         </div>
                 }
                 <MessageSideAction message={data} />
