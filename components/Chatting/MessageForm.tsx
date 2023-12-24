@@ -1,15 +1,16 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Button, Form, Image,  Overlay, Tooltip } from 'react-bootstrap'
-import { BsX, BsImage, BsEmojiSmile, BsMicFill, BsFillPlayFill, BsPauseFill } from "react-icons/bs";
+import { Button, Form, Image, Overlay, Tooltip } from 'react-bootstrap'
+import { BsX, BsImage, BsEmojiSmile, BsMicFill, BsFillPlayFill, BsPauseFill,BsFillXCircleFill } from "react-icons/bs";
 import Toast from 'react-bootstrap/Toast';
 import { useMediaQuery } from 'react-responsive';
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
 import { useStateProvider } from '../../context/StateContext';
 import { reducerCases } from '../../context/constant';
-import { BsFillXCircleFill } from "react-icons/bs";
 import { AudioRecorder, useAudioRecorder } from 'react-audio-voice-recorder';
 import { AiOutlineSend } from "react-icons/ai";
+import { PiStickerFill } from "react-icons/pi";
+import { HiGif } from "react-icons/hi2";
 
 
 export default function MessageForm() {
@@ -18,11 +19,15 @@ export default function MessageForm() {
     const isMobileWidth = useMediaQuery({ maxWidth: 576 })
     const [showEmoji, setShowEmoji] = useState(false)
     const emoji = useRef(null);
+    const stickers = useRef(null);
+    const gifs = useRef(null);
     const inputReference = useRef();
     const [message, setMessage] = useState<any>({ messageType: 1, messageFromUserID: "", messageToUserID: '', message: "" })
     const [{ currentChatUser, userInfo, socket }, dispatch] = useStateProvider()
     const recorderControls = useAudioRecorder()
     const [sendEvent, setSendEvent] = useState<any>(null)
+    const [showStickers, setShowStickers] = useState(false);
+    const [showGifs, setShowGifs] = useState(false);
 
     //preview files
     const [previewFiles, setPreviewFiles] = useState([])
@@ -279,16 +284,26 @@ export default function MessageForm() {
                         :
                         <>
                             <div>
-                                <Button variant='' className='p-1 text-dark'>
-                                    <BsFillXCircleFill className="fs-5 brand-color" onClick={() => setShowVoiceToast(!showVoiceToast)} style={{ transform: showVoiceToast ? "rotate(90deg)" : "rotate(45deg)", transition: ".4s" }} />
-                                </Button>
+                                <div className='text-dark side-action-form' onClick={() => setShowVoiceToast(!showVoiceToast)}>
+                                    <BsFillXCircleFill className="inner-btn brand-color" style={{ transform: showVoiceToast ? "rotate(90deg)" : "rotate(45deg)", transition: ".4s" }} />
+                                </div>
                             </div>
                             <div>
-                                <Button variant='' className='p-1 text-dark brand-color' >
-                                    <label htmlFor="share_gallery">
-                                        <BsImage />
-                                    </label>
-                                </Button>
+                                <label htmlFor="share_gallery" style={{ cursor: "pointer" }}>
+                                    <div className='text-dark brand-color side-action-form'>
+                                        <BsImage className="inner-btn brand-color" />
+                                    </div>
+                                </label>
+                            </div>
+                            <div>
+                                <div className='text-dark side-action-form' onClick={() => setShowStickers(!showStickers)} ref={stickers}>
+                                    <PiStickerFill className="brand-color" />
+                                </div>
+                            </div>
+                            <div>
+                                <div className='text-dark side-action-form' onClick={() => setShowGifs(!showGifs)} ref={gifs}>
+                                    <HiGif className="brand-color" />
+                                </div>
                             </div>
                             <div>
                                 <input multiple onChange={handleFileChange} type="file" className='d-none' id="share_gallery" onKeyDown={handleKeyPress} />
@@ -316,7 +331,7 @@ export default function MessageForm() {
                                         ""
                                 }
                                 <div className='cursor-pointer p-1 text-dark' style={{ fontSize: "16px" }} ref={emoji} onClick={() => setShowEmoji(!showEmoji)}>
-                                    <BsEmojiSmile />
+                                    <BsEmojiSmile className="brand-color" />
                                 </div>
                                 <Form className='w-100'>
                                     <Form.Control
@@ -334,8 +349,6 @@ export default function MessageForm() {
                             </div >
                             <Button variant='' onClick={handleSubmitMessage} >
                                 <AiOutlineSend className="brand-color" style={{ height: "30px", width: "30px" }} />
-
-                                {/* <Image className='img-fluid' src="https://i.ibb.co/QdZ8jVf/send-10109845.png" alt="" height={25} width={25} /> */}
                             </Button>
                         </>
                 }
@@ -360,6 +373,24 @@ export default function MessageForm() {
                             previewPosition="none"
                             skinTonePosition="none"
                         />
+                    </Tooltip>
+                )}
+            </Overlay>
+            <Overlay target={stickers.current} show={showStickers} placement="top">
+                {(props) => (
+                    <Tooltip {...props} className='inner_action_tooltip_sticker' >
+                        <div className='inner_tooltip_sticker'>
+                            There are all stickers
+                        </div>
+                    </Tooltip>
+                )}
+            </Overlay>
+            <Overlay target={gifs.current} show={showGifs} placement="top">
+                {(props) => (
+                    <Tooltip {...props} className='inner_action_tooltip_sticker' >
+                        <div className='inner_tooltip_sticker'>
+                            There are all gifs
+                        </div>
                     </Tooltip>
                 )}
             </Overlay>

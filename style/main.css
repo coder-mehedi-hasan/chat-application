@@ -193,8 +193,27 @@
     padding: 0;
 }
 
+.inner_action_tooltip_sticker {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 2px 12px;
+    margin-bottom: 10px !important;
+    border-radius: 10px;
+}
+
+.inner_action_tooltip_sticker .tooltip-inner {
+    background-color: #fff !important;
+    padding: 0;
+    color: #000;
+}
+
 .inner_action_tooltip_emoji_picker .tooltip-arrow::before {
     border-top-color: #fff;
+}
+
+.inner_action_tooltip_sticker .tooltip-arrow::before {
+    border-top-color: #fff;
+}
+.inner_tooltip_sticker{
+    padding: 12px;
 }
 
 #chat_bar .active {
@@ -378,4 +397,23 @@
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1;
+}
+
+.side-action-form {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    transition: .4s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.side-action-form:hover {
+    background-color: #e3e3e5;
+}
+
+.side-action-form .inner-btn {
+    font-size: 16px !important;
 }
