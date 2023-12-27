@@ -212,7 +212,8 @@
 .inner_action_tooltip_sticker .tooltip-arrow::before {
     border-top-color: #fff;
 }
-.inner_tooltip_sticker{
+
+.inner_tooltip_sticker {
     padding: 12px;
 }
 
@@ -416,4 +417,11 @@
 
 .side-action-form .inner-btn {
     font-size: 16px !important;
+}
+
+.inner_action_tooltip_sticker {
+    width: 250px !important;
+}
+.inner_action_tooltip_sticker .tooltip-inner{
+    max-width: 100% !important;
 }

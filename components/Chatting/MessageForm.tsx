@@ -14,6 +14,7 @@ import { HiGif } from "react-icons/hi2";
 import useGetStickers from '../../utils/useGetStickers';
 import useGenerateRandomColor from '../../utils/useRandomColorGenerate';
 import { apiUrl } from '../../utils/constant';
+import { isFileIsImage } from '../../utils/getFileType';
 
 
 export default function MessageForm() {
@@ -33,7 +34,7 @@ export default function MessageForm() {
     const [showGifs, setShowGifs] = useState(false);
     // const { stickersCategories, generateStickersCategory } = useGetStickers()
     const { color, generateColor } = useGenerateRandomColor()
-    const [stickersCategories, setStickersCategory] = useState([])
+    const [stickersCategories, setStickersCategory] = useState<any>(["cricket", 'bangla'])
 
 
     //preview files
@@ -162,6 +163,7 @@ export default function MessageForm() {
             dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
         })
     }
+    // console.log(stickersCategories)
 
     //add emoji in message
     const addEmoji = (emoji) => {
@@ -248,7 +250,7 @@ export default function MessageForm() {
             }
         })
         const data = await res.json()
-        if (res) {
+        if (data?.length) {
             setStickersCategory(data)
         }
     }
@@ -258,8 +260,19 @@ export default function MessageForm() {
         getStickersCategory()
     }, [currentChatUser])
 
+    // console.log({ selectedFiles })
+    const RenderPreviewImage = (src: string, index: number) => {
+        const isImage = isFileIsImage(selectedFiles[index])
+        if (isImage) {
+            return <Image src={src} className='img-fluid' />
+        }
+        return <div className='w-100 h-100'>
+            <p className='p-0 m-o text-dark w-100' style={{wordBreak:"break-word"}}>{selectedFiles[index]?.name}</p>
+        </div>
+    }
+
     return (
-        <div className='position-relative'>
+        <div className='position-relative message-form'>
             <div style={{ flex: 1, background: "#fff", height: "80px" }} className='position-relative w-100 h-100 text-white d-flex align-items-center justify-content-between px-lg-3 px-md-2 px-sm-1 px-xs-1'>
                 {
                     showVoiceForm ?
@@ -336,15 +349,16 @@ export default function MessageForm() {
                             <div size='sm' className="rounded d-flex w-100 position-relative bg_gray" >
                                 {
                                     previewFiles?.length ?
-
                                         <div className="w-100 d-flex rounded-top bg_gray scrollbar_visible_x" style={{ position: "absolute", top: isMobileWidth ? "-94px" : "-113px", left: "0", overflowX: "scroll", scrollBehavior: "smooth" }}>
                                             {
                                                 previewFiles?.map((item, index) => {
+                                                    console.log({ item, index })
                                                     return (
                                                         <div key={index} className='mx-2 my-3 position-relative'>
                                                             <div style={{ height: isMobileWidth ? "16px" : "20px", width: isMobileWidth ? "16px" : "20px", borderRadius: "50%", position: "absolute", top: "-5px", right: "-5px", cursor: "pointer", fontSize: isMobileWidth ? "14px" : "18px" }} className='text-dark bg-white d-flex justify-content-center align-items-center' onClick={() => deletePreviewImage(index)}><BsX /></div>
                                                             <div style={{ height: isMobileWidth ? 65 : 80, width: isMobileWidth ? 65 : 80, overflow: "hidden" }} className='rounded'>
-                                                                <Image src={item} className='img-fluid' />
+                                                                {/* <Image src={item} className='img-fluid' /> */}
+                                                                {RenderPreviewImage(item, index)}
                                                             </div>
                                                         </div>
                                                     )
@@ -403,13 +417,12 @@ export default function MessageForm() {
             <Overlay target={stickers.current} show={showStickers} placement="top">
                 {(props) => (
                     <Tooltip {...props} className='inner_action_tooltip_sticker'>
-                        <div className='inner_tooltip_sticker' style={{ maxWidth: "360px" }}>
-                            <div className='row w-100'>
+                        <div className='inner_tooltip_sticker w-100' style={{ padding: "0" }}>
+                            <div className='d-flex p-2 w-100 justify-content-between align-items-center'>
                                 {
                                     stickersCategories?.map(item => {
-                                        generateColor()
                                         return (
-                                            <div className='col-6 p-2' style={{ backgroundColor: color }}>
+                                            <div className='m-1 cursor-pointer bg_gray px-2 py-1 rounded' style={{ backgroundColor: `rgba(${Math.floor(Math.random() * 255)},${Math.floor(Math.random() * 255)},${Math.floor(Math.random() * 255)}) !important`, width: "50%" }}>
                                                 {item}
                                             </div>
                                         )

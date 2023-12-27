@@ -15,3 +15,21 @@ export const getFileType = (extension) => {
         return fileTypes?.other;
     }
 }
+
+export const isFileIsImage = (file) => {
+    const extesion = getFileExtension(file)
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'];
+    if (imageExtensions.includes(extesion.toLowerCase())) {
+        return !!(fileTypes?.image);
+    }
+    return false
+}
+
+function getFileExtension(file: any) {
+
+    const fileName = file?.name;
+    const parts = fileName?.split('.');
+    const extension = parts[parts?.length - 1];
+
+    return extension;
+}
