@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Button, Form, Image, Overlay, Tooltip } from 'react-bootstrap'
-import { BsX, BsImage, BsEmojiSmile, BsMicFill, BsFillPlayFill, BsPauseFill,BsFillXCircleFill } from "react-icons/bs";
+import { BsX, BsImage, BsEmojiSmile, BsMicFill, BsFillPlayFill, BsPauseFill, BsFillXCircleFill } from "react-icons/bs";
 import Toast from 'react-bootstrap/Toast';
 import { useMediaQuery } from 'react-responsive';
 import data from '@emoji-mart/data'
@@ -11,6 +11,9 @@ import { AudioRecorder, useAudioRecorder } from 'react-audio-voice-recorder';
 import { AiOutlineSend } from "react-icons/ai";
 import { PiStickerFill } from "react-icons/pi";
 import { HiGif } from "react-icons/hi2";
+import useGetStickers from '../../utils/useGetStickers';
+import useGenerateRandomColor from '../../utils/useRandomColorGenerate';
+import { apiUrl } from '../../utils/constant';
 
 
 export default function MessageForm() {
@@ -28,6 +31,10 @@ export default function MessageForm() {
     const [sendEvent, setSendEvent] = useState<any>(null)
     const [showStickers, setShowStickers] = useState(false);
     const [showGifs, setShowGifs] = useState(false);
+    // const { stickersCategories, generateStickersCategory } = useGetStickers()
+    const { color, generateColor } = useGenerateRandomColor()
+    const [stickersCategories, setStickersCategory] = useState([])
+
 
     //preview files
     const [previewFiles, setPreviewFiles] = useState([])
@@ -126,7 +133,7 @@ export default function MessageForm() {
 
         if (message?.message !== "" && message?.message !== null) {
             socket.current.emit('messageFromClient', message, (response) => {
-                // console.log("response from client :", response)
+                console.log({ response })
                 dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
                 dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
                 setMessage({ ...message, message: "" })
@@ -232,11 +239,24 @@ export default function MessageForm() {
 
     };
 
+    const getStickersCategory = async () => {
+        const res = await fetch(apiUrl.stickerCategories, {
+            method: "GET",
+            headers: {
+                'Authorization': `Bearer hc4yhGkqeVEs1nRYI5cPIoYKDRbuxHzV78DRW5xiyOG5FHVsJFiWMeN2Z61eLTAIFBdzkQGy2cWAa2gMdYx9ZohNylsTwN4uu5I7kFf4PDqTOacPncFqrP7P32ftGKDzBoYEmjhe9m8ucBAeWgzPKIrUo5oi0JDQgb18WLyHLIxaZCOOQTGf32unKrpQAWASTJoZ02vBzEEprTWg5DMEnTec8NKtmZVGC3l35aLhaSmyCkiv4iCTRmdYSHWy1xzx`,
+                'Content-Type': 'application/json'
+            }
+        })
+        const data = await res.json()
+        if (res) {
+            setStickersCategory(data)
+        }
+    }
+
     useEffect(() => {
         setMessage({ ...message, message: "", messageToUserID: currentChatUser.id, messageFromUserID: userInfo?.id })
+        getStickersCategory()
     }, [currentChatUser])
-
-
 
     return (
         <div className='position-relative'>
@@ -246,12 +266,14 @@ export default function MessageForm() {
                         <>
                             <div size='sm' className="voice-form rounded d-flex w-100 position-relative" style={{ transition: ".4s", display: showVoiceForm ? 'block' : "none" }} >
                                 <div>
-                                    <Button variant='' className='p-1 text-dark'>
-                                        <BsFillXCircleFill className="fs-5 brand-color" onClick={() => {
+                                    <Button variant='' className='p-1 text-dark'
+                                        onClick={() => {
                                             setShowVoiceForm(false)
                                             recorderControls?.stopRecording()
 
-                                        }} style={{ transform: showVoiceForm ? "rotate(90deg)" : "", transition: ".4s" }} />
+                                        }}
+                                    >
+                                        <BsFillXCircleFill className="fs-5 brand-color" style={{ transform: showVoiceForm ? "rotate(90deg)" : "", transition: ".4s" }} />
                                     </Button>
                                 </div>
                                 <div style={{ width: "100%", transition: ".4s" }} className='position-relative rounded-pill brand-bg overflow-hidden' >
@@ -296,7 +318,9 @@ export default function MessageForm() {
                                 </label>
                             </div>
                             <div>
-                                <div className='text-dark side-action-form' onClick={() => setShowStickers(!showStickers)} ref={stickers}>
+                                <div className='text-dark side-action-form' onClick={() => {
+                                    setShowStickers(!showStickers)
+                                }} ref={stickers}>
                                     <PiStickerFill className="brand-color" />
                                 </div>
                             </div>
@@ -378,9 +402,20 @@ export default function MessageForm() {
             </Overlay>
             <Overlay target={stickers.current} show={showStickers} placement="top">
                 {(props) => (
-                    <Tooltip {...props} className='inner_action_tooltip_sticker' >
-                        <div className='inner_tooltip_sticker'>
-                            There are all stickers
+                    <Tooltip {...props} className='inner_action_tooltip_sticker'>
+                        <div className='inner_tooltip_sticker' style={{ maxWidth: "360px" }}>
+                            <div className='row w-100'>
+                                {
+                                    stickersCategories?.map(item => {
+                                        generateColor()
+                                        return (
+                                            <div className='col-6 p-2' style={{ backgroundColor: color }}>
+                                                {item}
+                                            </div>
+                                        )
+                                    })
+                                }
+                            </div>
                         </div>
                     </Tooltip>
                 )}
