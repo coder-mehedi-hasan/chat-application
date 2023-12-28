@@ -3,20 +3,30 @@ import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
 import { useStateProvider } from "../../context/StateContext";
 import { useEffect, useState } from "react";
+import { getFileExtensionAndType } from '../../utils/getFileExtensionAndType';
+import { fileTypes } from "../../utils/constant";
 
 const CustomImageGallery = ({ onClick, image }) => {
-    const [galleryImages, setGalleryImages] = useState([])
+    const [galleryImages, setGalleryImages] = useState<any>([])
     const [{ messages }] = useStateProvider()
 
     useEffect(() => {
-        messages && setGalleryImages(messages?.map(item => {
+        const images = []
+        messages && messages?.map(item  => {
             if (item?.cloudfrontUrl) {
-                return {
-                    original: item?.cloudfrontUrl,
-                    thumbnail: item?.cloudfrontUrl,
+                const fileInfo = getFileExtensionAndType(item?.cloudfrontUrl)
+                console.log(fileInfo)
+                if (fileInfo?.fileType === fileTypes?.image) {
+                    images.push({
+                        original: item?.cloudfrontUrl,
+                        thumbnail: item?.cloudfrontUrl,
+                    })
+
                 }
             }
-        }))
+        })
+        setGalleryImages(images)
+
     }, [messages])
     return (
         <div style={{ width: "100%", height: "100%", }}>

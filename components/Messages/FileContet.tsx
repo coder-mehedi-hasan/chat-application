@@ -27,10 +27,9 @@ export default function FileContent({ img }) {
                 {
                     fileInfo?.fileType == fileTypes?.image ?
                         <div style={{ maxWidth: "480px", borderRadius: "18px", height: "auto", overflow: "hidden", position: "relative" }}>
-                            <div style={{ position: "absolute", top: "0", left: "0", height: "100%", width: "100%", cursor: "pointer", zIndex: 1, background: "none" }} ></div>
-                            <img src={img} alt="img" style={{ maxWidth: "100%", maxHeight: "220px" }} onClick={() => setGallery(!gallery)} />
+                            <div style={{ position: "absolute", top: "0", left: "0", height: "100%", width: "100%", cursor: "pointer", zIndex: 1, background: "none" }} onClick={() => setGallery(!gallery)} ></div>
+                            <img src={img} alt="img" style={{ maxWidth: "100%", maxHeight: "220px" }}  />
                         </div>
-
                         :
                         fileInfo?.fileType == fileTypes?.audio ?
                             <ReactAudioPlayer
