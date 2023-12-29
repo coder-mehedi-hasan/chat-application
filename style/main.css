@@ -420,8 +420,26 @@
 }
 
 .inner_action_tooltip_sticker {
-    width: 250px !important;
+    width: 300px !important;
+    max-height: 330px;
+    max-height: 400px;
+    overflow-y: scroll;
 }
-.inner_action_tooltip_sticker .tooltip-inner{
+
+.inner_action_tooltip_sticker .tooltip-inner {
     max-width: 100% !important;
+}
+
+.inner_action_tooltip_sticker .sticker-scroll-btn-top {
+    height: 20px;
+    width: 20px;
+    background-color: #3cb29d;
+    color: #fff !important;
+}
+
+.inner_action_tooltip_sticker .category-active {
+    background: #3cb29d !important;
+    color: #fff !important;
+    transition: .3s;
+    border-radius: 0px 15px 0px 15px !important;
 }

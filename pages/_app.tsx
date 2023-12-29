@@ -42,13 +42,15 @@ export function Main({ Component, pageProps }) {
 	useEffect(() => {
 		getLocation()
 		const userId = window.localStorage.getItem("userId")
-		const token = window.localStorage.getItem("token")
+		const messageToken = window.localStorage.getItem("messageToken")
+		const userToken = window.localStorage.getItem("userToken")
 		const userName = window.localStorage.getItem("userName")
 		if (userInfo === undefined) {
 			dispatch({
 				type: reducerCases.SET_USER_INFO, userInfo: {
 					id: userId,
-					token: token,
+					messageToken: messageToken,
+					userToken: userToken,
 					name: userName
 				}
 			})
@@ -68,7 +70,7 @@ export function Main({ Component, pageProps }) {
 		// console.log("socket   =>>>:", { userInfo })
 		// console.log("socket   =>>>:", { current_location })
 		if (userInfo && current_location) {
-			const connectionKey = `${process.env.NEXT_PUBLIC_SOCKET_URL}?userId=${userInfo?.id}&name=${userInfo?.name}&lastSocketId=${"LAST_CONNECTED_SOCKETID"}&location={"longitude": ${current_location?.lon}, "latitude": ${current_location?.lat}}&token=${userInfo?.token}`
+			const connectionKey = `${process.env.NEXT_PUBLIC_SOCKET_URL}?userId=${userInfo?.id}&name=${userInfo?.name}&lastSocketId=${"LAST_CONNECTED_SOCKETID"}&location={"longitude": ${current_location?.lon}, "latitude": ${current_location?.lat}}&token=${userInfo?.messageToken}`
 			socket.current = io(connectionKey)
 			dispatch({ type: reducerCases.SET_SOCKET, socket: socket })
 			socket.current.on('onlineClient', (online) => {

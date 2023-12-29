@@ -14,13 +14,15 @@ export default function Home() {
 
 	const login = (user) => {
 		window.localStorage.setItem('userName', user?.name)
-		window.localStorage.setItem('token', user?.token)
+		window.localStorage.setItem('messageToken', user?.messageToken)
+		window.localStorage.setItem('userToken', user?.userToken)
 		window.localStorage.setItem('userId', user?.id)
 		if (userInfo === undefined) {
 			dispatch({
 				type: reducerCases.SET_USER_INFO, userInfo: {
 					id: user?.id,
-					token: user?.token,
+					messageToken: user?.messageToken,
+					userToken: user?.userToken,
 					name: user?.name
 				}
 			})

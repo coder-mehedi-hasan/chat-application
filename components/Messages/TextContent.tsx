@@ -28,7 +28,7 @@ export default function TextContent({ content, isSender, message }) {
         fetch(`https://messaging-dev.kotha.im/mobile/api/messages/reactions/${message?._id}?skip=0&limit=10`, {
             method: 'GET',
             headers: {
-                'Authorization': userInfo?.token
+                'Authorization': userInfo?.messageToken
             }
         })
             .then(response => {

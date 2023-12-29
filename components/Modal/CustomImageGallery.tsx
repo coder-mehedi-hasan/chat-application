@@ -15,7 +15,6 @@ const CustomImageGallery = ({ onClick, image }) => {
         messages && messages?.map(item  => {
             if (item?.cloudfrontUrl) {
                 const fileInfo = getFileExtensionAndType(item?.cloudfrontUrl)
-                console.log(fileInfo)
                 if (fileInfo?.fileType === fileTypes?.image) {
                     images.push({
                         original: item?.cloudfrontUrl,

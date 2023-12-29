@@ -6,5 +6,6 @@ export const fileTypes = {
 }
 
 export const apiUrl = {
-    stickerCategories: "https://user-dev.kotha.im/mobile/api/stickers/categories"
+    stickerCategories: "https://user-dev.kotha.im/mobile/api/stickers/categories",
+    stickers: "https://user-dev.kotha.im/mobile/api/stickers/public",
 }

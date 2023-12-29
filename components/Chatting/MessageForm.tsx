@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Button, Form, Image, Overlay, Tooltip } from 'react-bootstrap'
-import { BsX, BsImage, BsEmojiSmile, BsMicFill, BsFillPlayFill, BsPauseFill, BsFillXCircleFill } from "react-icons/bs";
+import { BsX, BsImage, BsEmojiSmile, BsMicFill, BsFillPlayFill, BsPauseFill, BsFillXCircleFill, BsChevronRight, BsChevronLeft, BsChevronDown } from "react-icons/bs";
 import Toast from 'react-bootstrap/Toast';
 import { useMediaQuery } from 'react-responsive';
 import data from '@emoji-mart/data'
@@ -17,13 +17,14 @@ import { apiUrl } from '../../utils/constant';
 import { isFileIsImage } from '../../utils/getFileType';
 
 
-export default function MessageForm() {
+function MessageForm() {
     const [showVoiceToast, setShowVoiceToast] = useState(false);
     const [showVoiceForm, setShowVoiceForm] = useState(false);
     const isMobileWidth = useMediaQuery({ maxWidth: 576 })
     const [showEmoji, setShowEmoji] = useState(false)
     const emoji = useRef(null);
     const stickers = useRef(null);
+    const stickerCategoryRef = useRef(null);
     const gifs = useRef(null);
     const inputReference = useRef();
     const [message, setMessage] = useState<any>({ messageType: 1, messageFromUserID: "", messageToUserID: '', message: "" })
@@ -32,10 +33,9 @@ export default function MessageForm() {
     const [sendEvent, setSendEvent] = useState<any>(null)
     const [showStickers, setShowStickers] = useState(false);
     const [showGifs, setShowGifs] = useState(false);
-    // const { stickersCategories, generateStickersCategory } = useGetStickers()
     const { color, generateColor } = useGenerateRandomColor()
-    const [stickersCategories, setStickersCategory] = useState<any>(["cricket", 'bangla'])
-
+    const [stickersCategories, setStickersCategory] = useState<any>([])
+    const [selectCategory, setSelectCategory] = useState<any>(null);
 
     //preview files
     const [previewFiles, setPreviewFiles] = useState([])
@@ -245,13 +245,15 @@ export default function MessageForm() {
         const res = await fetch(apiUrl.stickerCategories, {
             method: "GET",
             headers: {
-                'Authorization': `Bearer hc4yhGkqeVEs1nRYI5cPIoYKDRbuxHzV78DRW5xiyOG5FHVsJFiWMeN2Z61eLTAIFBdzkQGy2cWAa2gMdYx9ZohNylsTwN4uu5I7kFf4PDqTOacPncFqrP7P32ftGKDzBoYEmjhe9m8ucBAeWgzPKIrUo5oi0JDQgb18WLyHLIxaZCOOQTGf32unKrpQAWASTJoZ02vBzEEprTWg5DMEnTec8NKtmZVGC3l35aLhaSmyCkiv4iCTRmdYSHWy1xzx`,
+                'Authorization': `Bearer ${userInfo?.userToken}`,
                 'Content-Type': 'application/json'
             }
         })
         const data = await res.json()
-        if (data?.length) {
+        if (Array.isArray(data) && data?.length) {
             setStickersCategory(data)
+            setSelectCategory(data[0])
+
         }
     }
 
@@ -267,8 +269,21 @@ export default function MessageForm() {
             return <Image src={src} className='img-fluid' />
         }
         return <div className='w-100 h-100'>
-            <p className='p-0 m-o text-dark w-100' style={{wordBreak:"break-word"}}>{selectedFiles[index]?.name}</p>
+            <p className='p-0 m-o text-dark w-100' style={{ wordBreak: "break-word" }}>{selectedFiles[index]?.name}</p>
         </div>
+    }
+
+    const stickerCategoryScrolling = (offset: number) => {
+        stickerCategoryRef.current.scrollLeft += offset
+    }
+
+    const handlStickerClick = (sticker) => {
+        socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: sticker?.Url, message: "" }, (response) => {
+            dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
+            dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
+            setShowStickers(false)
+        })
+
     }
 
     return (
@@ -337,11 +352,11 @@ export default function MessageForm() {
                                     <PiStickerFill className="brand-color" />
                                 </div>
                             </div>
-                            <div>
+                            {/* <div>
                                 <div className='text-dark side-action-form' onClick={() => setShowGifs(!showGifs)} ref={gifs}>
                                     <HiGif className="brand-color" />
                                 </div>
-                            </div>
+                            </div> */}
                             <div>
                                 <input multiple onChange={handleFileChange} type="file" className='d-none' id="share_gallery" onKeyDown={handleKeyPress} />
                             </div>
@@ -352,7 +367,6 @@ export default function MessageForm() {
                                         <div className="w-100 d-flex rounded-top bg_gray scrollbar_visible_x" style={{ position: "absolute", top: isMobileWidth ? "-94px" : "-113px", left: "0", overflowX: "scroll", scrollBehavior: "smooth" }}>
                                             {
                                                 previewFiles?.map((item, index) => {
-                                                    console.log({ item, index })
                                                     return (
                                                         <div key={index} className='mx-2 my-3 position-relative'>
                                                             <div style={{ height: isMobileWidth ? "16px" : "20px", width: isMobileWidth ? "16px" : "20px", borderRadius: "50%", position: "absolute", top: "-5px", right: "-5px", cursor: "pointer", fontSize: isMobileWidth ? "14px" : "18px" }} className='text-dark bg-white d-flex justify-content-center align-items-center' onClick={() => deletePreviewImage(index)}><BsX /></div>
@@ -418,22 +432,46 @@ export default function MessageForm() {
                 {(props) => (
                     <Tooltip {...props} className='inner_action_tooltip_sticker'>
                         <div className='inner_tooltip_sticker w-100' style={{ padding: "0" }}>
-                            <div className='d-flex p-2 w-100 justify-content-between align-items-center'>
+                            <div className='bg-white' style={{ position: "sticky", top: "0" }}>
                                 {
-                                    stickersCategories?.map(item => {
-                                        return (
-                                            <div className='m-1 cursor-pointer bg_gray px-2 py-1 rounded' style={{ backgroundColor: `rgba(${Math.floor(Math.random() * 255)},${Math.floor(Math.random() * 255)},${Math.floor(Math.random() * 255)}) !important`, width: "50%" }}>
-                                                {item}
-                                            </div>
-                                        )
-                                    })
+                                    !isMobileWidth &&
+                                    <div className='d-flex w-100 justify-content-between align-items-center'>
+                                        <span className='sticker-scroll-btn-top cursor-pointer' onClick={() => stickerCategoryScrolling(-80)}>
+                                            <BsChevronLeft />
+                                        </span>
+                                        <span className='sticker-scroll-btn-top cursor-pointer' onClick={() => stickerCategoryScrolling(80)}>
+                                            <BsChevronRight />
+                                        </span>
+                                    </div>
                                 }
+                                <div className='d-flex px-1 w-100 justify-content-between align-items-center overflow-scroll' ref={stickerCategoryRef} style={{ scrollBehavior: "smooth", transition: ".4s" }}>
+                                    {
+                                        stickersCategories?.map(item => {
+                                            return (
+                                                <div className={`m-1 cursor-pointer bg_gray px-2 py-1 rounded ${selectCategory === item ? "category-active" : ""}`} onClick={
+                                                    (e) => {
+                                                        setSelectCategory(item)
+                                                    }
+                                                } style={{ width: "50%",textTransform:"capitalize" }}>
+                                                    {item}
+                                                </div>
+                                            )
+                                        })
+                                    }
+
+                                </div>
                             </div>
+                            {
+                                selectCategory &&
+                                <div className='w-100 my-2 overflow-scroll'>
+                                    <StickerList category={selectCategory} handlStickerClick={handlStickerClick} />
+                                </div>
+                            }
                         </div>
                     </Tooltip>
                 )}
             </Overlay>
-            <Overlay target={gifs.current} show={showGifs} placement="top">
+            {/* <Overlay target={gifs.current} show={showGifs} placement="top">
                 {(props) => (
                     <Tooltip {...props} className='inner_action_tooltip_sticker' >
                         <div className='inner_tooltip_sticker'>
@@ -441,8 +479,51 @@ export default function MessageForm() {
                         </div>
                     </Tooltip>
                 )}
-            </Overlay>
+            </Overlay> */}
         </div>
     )
 }
 
+const StickerList = ({ category, handlStickerClick,...props }) => {
+    const [{ currentChatUser, userInfo, socket }, dispatch] = useStateProvider()
+    const [stickers, setStickers] = useState<any>([])
+
+    const getStickers = async () => {
+        const response = await fetch(`${apiUrl?.stickers}?category=${category}`, {
+            method: "GET",
+            headers: {
+                'Authorization': `Bearer ${userInfo?.userToken}`,
+                'Content-Type': 'application/json'
+            }
+        })
+        const json = await response.json()
+        if (response && Array.isArray(json)) {
+            setStickers(json)
+        }
+    }
+
+    useEffect(() => {
+        getStickers()
+        setStickers(stickers)
+    }, [category])
+
+
+    return (
+        <>
+            {
+                Array.isArray(stickers) && stickers?.length &&
+                stickers?.map(img => {
+                    return <>
+                        <div className='w-100 cursor-pointer my-1' onClick={() => handlStickerClick(img)}>
+                            <img src={img?.Url} alt="" className='img-fluid' />
+                        </div>
+                    </>
+                })
+            }
+        </>
+    )
+
+}
+
+
+export default MessageForm;
