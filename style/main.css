@@ -443,3 +443,19 @@
     transition: .3s;
     border-radius: 0px 15px 0px 15px !important;
 }
+
+.active-users {
+   cursor: grab;
+}
+
+.active-users-wrapper {
+    max-width: 85px;
+    cursor: pointer;
+    margin: 0 2px;
+}
+
+.active-users-wrapper p {
+    font-size: 14px !important;
+    text-align: center;
+    font-weight: 500;
+}

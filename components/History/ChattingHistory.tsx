@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import SearchBox from '../Dashboard/SearchBox'
 import user from '../../fake_data/user.json';
 import ActiveUser from '../ActiveUser';
@@ -11,7 +11,29 @@ import { useStateProvider } from '../../context/StateContext';
 export default function ChattingHistory() {
 
     const [{ userInfo }, dispatch] = useStateProvider()
+    const activeUserRef = useRef(null)
+    const [pageX, setPageX] = useState(0)
+    const [mouseClick, setMouseClick] = useState(false)
 
+    const handleGrabbing = (e) => {
+        // console.log(activeUserRef)
+        // console.log(e)
+        // setPageX(e.pageX)
+        // setMouseClick(true)
+
+    }
+
+    const handleOver = (e) => {
+        // if (mouseClick) {
+        //     if (e.pageX > pageX) {
+        //         activeUserRef.current.scrollLeft += 50
+        //     }
+        //     else if (e.pageX < pageX) {
+        //         activeUserRef.current.scrollLeft -= 50
+        //     }
+        //     // console.log(e)
+        // }
+    }
 
     return (
         <>
@@ -21,11 +43,11 @@ export default function ChattingHistory() {
                     <SearchBox />
                 </div>
                 <div className='my-2'>
-                    <div className='h-100 d-flex align-items-start' style={{ overflow: "scroll" }}>
+                    <div className='h-100 d-flex align-items-start active-users' style={{ overflow: "scroll", scrollBehavior: "smooth",transition:".4s" }} ref={activeUserRef} onMouseOver={handleOver} onMouseDown={handleGrabbing}>
                         {
                             user?.slice(0, 10)?.map((item, index) => {
                                 return (
-                                    <div key={index}>
+                                    <div key={index} className='active-users-wrapper'>
                                         {
                                             userInfo?.id !== item?.id ?
                                                 <ActiveUser user={item} /> : ""

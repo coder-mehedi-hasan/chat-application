@@ -44,17 +44,37 @@ export default function MessageSideAction({ message }) {
             })
     }
 
-    const handleClick = () => {
-        socket.current.emit("editMessage", {
-            _id:message?._id,
-            react: true,
-            reactionParams: {
-                score: 1,
-                reaction: "SAD",
-            },
-        },(res)=>{
-            console.log({res})
-        });
+    const handleClick = (e) => {
+        e.preventDefault()
+        console.log(userInfo)
+        console.log(currentChatUser)
+        console.log(message)
+        console.log(
+            {
+                "_id": message?._id,
+                "react": true,
+                "reactionParams": {
+                    "score": "1",
+                    "reaction": "UP_VOTE",
+                    "reactedBy": userInfo?.id,
+                }
+            }
+        )
+        // return
+        socket.current.emit("editMessage",
+            {
+                "_id": message?._id,
+                "react": true,
+                "reactionParams": {
+                    "score": 1,
+                    "reaction": "LOVE",
+                    "reactedBy": userInfo?.id,
+                }
+            }
+            , (res) => {
+                console.log({ res })
+            }
+        );
     };
 
 
@@ -140,8 +160,8 @@ export default function MessageSideAction({ message }) {
                 {(props) => (
                     <Tooltip id="overlay-example" className='inner_action_tooltip inner_action_tooltip_emoji' {...props}>
                         <div className='d-flex justify-content-center align-items-center' style={{ padding: "5px" }}>
-                            <div style={{ margin: "0 2px", cursor: "pointer" }}>
-                                <img src="https://z-p3-static.xx.fbcdn.net/images/emoji.php/v9/tf9/1.5/32/2764.png" height={32} width={32} alt="" onClick={handleClick} />
+                            <div style={{ margin: "0 2px", cursor: "pointer" }} onClick={handleClick} >
+                                <img src="https://z-p3-static.xx.fbcdn.net/images/emoji.php/v9/tf9/1.5/32/2764.png" height={32} width={32} alt="" />
                             </div>
                             {/* <div style={{ margin: "0 2px", cursor: "pointer" }}>
                                 <img src="https://z-p3-static.xx.fbcdn.net/images/emoji.php/v9/te7/1.5/32/1f606.png" height={32} width={32} alt="" />
