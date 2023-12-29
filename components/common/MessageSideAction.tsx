@@ -71,7 +71,7 @@ export default function MessageSideAction({ message }) {
                     "reactedBy": userInfo?.id,
                 }
             }
-            , (res) => {
+            , (err,res) => {
                 console.log({ res })
             }
         );
