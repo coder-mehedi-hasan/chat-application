@@ -4,7 +4,6 @@ import { identifyTextOrLink } from '../../utils/identifyTextOrLink';
 import Link from 'next/link';
 
 export default function TextContent({ content, isSender, message }) {
-    const [reactions, setReactions] = useState([]);
     const [{ userInfo }, dispatch] = useStateProvider()
 
     const containerStyle = {
@@ -22,29 +21,6 @@ export default function TextContent({ content, isSender, message }) {
         fontSize: "15px",
         fontWeight: 400
     }
-
-
-    useEffect(() => {
-        fetch(`https://messaging-dev.kotha.im/mobile/api/messages/reactions/${message?._id}?skip=0&limit=10`, {
-            method: 'GET',
-            headers: {
-                'Authorization': userInfo?.messageToken
-            }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Authentication Failed'); // Customize the error message as needed
-                }
-                return response.json();
-            })
-            .then(data => {
-                setReactions(data)
-                // console.log(data)
-            }
-            )
-            .catch(error => console.error('Error fetching categories:', error));
-
-    }, []);
 
     return (
         <>

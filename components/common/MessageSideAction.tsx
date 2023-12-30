@@ -2,26 +2,27 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Badge, Button, Image, Overlay, OverlayTrigger, Popover, Tooltip } from 'react-bootstrap'
 import { BsEmojiSmile, BsFillReplyFill, BsPlus, BsThreeDotsVertical } from 'react-icons/bs'
 import { useStateProvider } from '../../context/StateContext';
+import { reactionEmojis } from '../../utils/constant';
 
 export default function MessageSideAction({ message }) {
     const [showMore, setShowMore] = useState(false);
-    const [showEmoji, setShowEmoji] = useState(false)
+    const [showReaction, setShowReaction] = useState(false)
     const more = useRef(null);
     const emoji = useRef(null);
     const [{ currentChatUser, socket, userInfo }] = useStateProvider()
 
     const innerActions = (ac) => {
         if (ac === "more") {
-            setShowEmoji(false)
+            setShowReaction(false)
             setShowMore(!showMore)
         } else {
             setShowMore(false)
-            setShowEmoji(!showEmoji)
+            setShowReaction(!showReaction)
         }
     }
 
     const onMouse = () => {
-        // setShowEmoji(false)
+        // setShowReaction(false)
         // setShowMore(false)
     }
     // console.log( userInfo   )
@@ -44,35 +45,20 @@ export default function MessageSideAction({ message }) {
             })
     }
 
-    const handleClick = (e) => {
-        e.preventDefault()
-        console.log(userInfo)
-        console.log(currentChatUser)
-        console.log(message)
-        console.log(
-            {
-                "_id": message?._id,
-                "react": true,
-                "reactionParams": {
-                    "score": "1",
-                    "reaction": "UP_VOTE",
-                    "reactedBy": userInfo?.id,
-                }
-            }
-        )
-        // return
+    const handleClick = (reaction) => {
         socket.current.emit("editMessage",
             {
                 "_id": message?._id,
                 "react": true,
                 "reactionParams": {
                     "score": 1,
-                    "reaction": "LOVE",
+                    "reaction": reaction?.name,
                     "reactedBy": userInfo?.id,
                 }
             }
-            , (err,res) => {
-                console.log({ res })
+            , (err, res) => {
+                // console.log({ res })
+
             }
         );
     };
@@ -156,13 +142,19 @@ export default function MessageSideAction({ message }) {
                     </Tooltip>
                 )}
             </Overlay>
-            <Overlay target={emoji.current} show={showEmoji} placement="top">
+            <Overlay target={emoji.current} show={showReaction} placement="top">
                 {(props) => (
                     <Tooltip id="overlay-example" className='inner_action_tooltip inner_action_tooltip_emoji' {...props}>
                         <div className='d-flex justify-content-center align-items-center' style={{ padding: "5px" }}>
-                            <div style={{ margin: "0 2px", cursor: "pointer" }} onClick={handleClick} >
-                                <img src="https://z-p3-static.xx.fbcdn.net/images/emoji.php/v9/tf9/1.5/32/2764.png" height={32} width={32} alt="" />
-                            </div>
+                            {
+                                reactionEmojis?.map((reaction, index) => {
+                                    return (
+                                        <div style={{ margin: "0 2px", cursor: "pointer" }} onClick={()=>handleClick(reaction)} key={index} >
+                                            <img src={reaction?.src} height={32} width={32} alt="" />
+                                        </div>
+                                    )
+                                })
+                            }
                             {/* <div style={{ margin: "0 2px", cursor: "pointer" }}>
                                 <img src="https://z-p3-static.xx.fbcdn.net/images/emoji.php/v9/te7/1.5/32/1f606.png" height={32} width={32} alt="" />
                             </div>
