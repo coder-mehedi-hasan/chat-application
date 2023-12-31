@@ -7,17 +7,22 @@ import Head from 'next/head';
 import reducer, { initialState } from '../context/StateReducers';
 import { io } from 'socket.io-client';
 import { reducerCases } from '../context/constant';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
 
 export default function App({ Component, pageProps }: AppProps) {
+	const [queryClient] = React.useState(() => new QueryClient());
 
 	return (
 		<StateProvider initialState={initialState} reducer={reducer}>
-			<Head>
-				<title>Kotha App</title>
-				<link rel='shortcut icon' href='/favicon.png'></link>
-			</Head>
-			{/* <Component {...pageProps} /> */}
-			<Main Component={Component} pageProps={pageProps} />
+			<QueryClientProvider client={queryClient}>
+				<Head>
+					<title>Kotha App</title>
+					<link rel='shortcut icon' href='/favicon.png'></link>
+				</Head>
+				{/* <Component {...pageProps} /> */}
+				<Main Component={Component} pageProps={pageProps} />
+			</QueryClientProvider>
 		</StateProvider>
 	);
 }

@@ -4,7 +4,7 @@ import { BsEmojiSmile, BsFillReplyFill, BsPlus, BsThreeDotsVertical } from 'reac
 import { useStateProvider } from '../../context/StateContext';
 import { reactionEmojis } from '../../utils/constant';
 
-export default function MessageSideAction({ message }) {
+export default function MessageSideAction({ message, refetch }) {
     const [showMore, setShowMore] = useState(false);
     const [showReaction, setShowReaction] = useState(false)
     const more = useRef(null);
@@ -58,6 +58,9 @@ export default function MessageSideAction({ message }) {
             }
             , (err, res) => {
                 // console.log({ res })
+                if (res && !err) {
+                    refetch()
+                }
 
             }
         );
@@ -149,7 +152,7 @@ export default function MessageSideAction({ message }) {
                             {
                                 reactionEmojis?.map((reaction, index) => {
                                     return (
-                                        <div style={{ margin: "0 2px", cursor: "pointer" }} onClick={()=>handleClick(reaction)} key={index} >
+                                        <div style={{ margin: "0 2px", cursor: "pointer" }} onClick={() => handleClick(reaction)} key={index} >
                                             <img src={reaction?.src} height={32} width={32} alt="" />
                                         </div>
                                     )
