@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Image } from 'react-bootstrap'
+import { Image, Modal } from 'react-bootstrap'
 import { useMediaQuery } from 'react-responsive'
 import { BsCheck2All, BsCheck2, BsCheckLg, BsCheckAll } from "react-icons/bs";
 import { useEffect } from 'react';
@@ -12,13 +12,13 @@ import FileContent from './FileContet';
 import { useStateProvider } from '../../context/StateContext';
 import { reactionEmojis } from '../../utils/constant';
 import { useQuery } from '@tanstack/react-query';
+import Reactions from './Reactions';
 
-export default function SenderMessages({ data }) {
+function SenderMessages({ data }) {
     const isMediumWidth = useMediaQuery({ maxWidth: 768 })
     const isLargeWidth = useMediaQuery({ maxWidth: 992 })
     const [{ currentChatUser, userInfo, current_location, messages }, dispatch] = useStateProvider()
     const [reactions, setReactions] = useState<any>([]);
-    console.log(reactions)
 
     const [del, setDel] = useState(false)
     const divRef = useRef()
@@ -44,16 +44,6 @@ export default function SenderMessages({ data }) {
     }, []);
 
 
-
-    const getReactions = (reactionName: any) => {
-        const reactionFind = reactionEmojis.find(item => item?.name === reactionName)
-        return (
-            <>
-                <img src={reactionFind?.src} alt={reactionName?.name} height={10} />
-            </>
-        )
-    }
-
     const { data: reactionsAll, isSuccess, refetch } = useQuery({
         queryKey: [`${data?._id}`],
         queryFn: () => getReactionsApi()
@@ -76,8 +66,6 @@ export default function SenderMessages({ data }) {
         }
         return []
     }
-
-    console.log(reactionsAll)
     return (
         <div className="row my-3 w-100 message_content" ref={divRef} >
             <div className="d-flex align-items-center justify-content-end">
@@ -86,21 +74,27 @@ export default function SenderMessages({ data }) {
                     data?.cloudfrontUrl && !data?.message ?
                         <div>
                             <FileContent img={data?.cloudfrontUrl} />
+                            <div className='reaction'>
+                                {
+                                    reactionsAll?.length && Array.isArray(reactionsAll) && reactionsAll?.map(item => {
+                                        return <Reactions reaction={item} />
+                                    })
+                                }
+                            </div>
                         </div>
                         :
                         <div>
                             <TextContent isSender={true} content={data?.message} message={data} />
+                            <div className='reaction'>
+                                {
+                                    reactionsAll?.length && Array.isArray(reactionsAll) && reactionsAll?.map(item => {
+                                        return <Reactions reaction={item} />
+                                    })
+                                }
+                            </div>
                         </div>
                 }
-                {
-                    reactionsAll?.length && Array.isArray(reactionsAll) && reactionsAll?.map(item => {
-                        return <div>
-                            {
-                                getReactions(item?.reaction)
-                            }
-                        </div>
-                    })
-                }
+
                 {userInfo?.image &&
                     <div style={{ height: "30px", width: "30px", borderRadius: "50%", overflow: "hidden", marginRight: "5px" }}>
                         <img src={userInfo?.image} alt={userInfo?.name} className='w-100 h-100' />
@@ -110,3 +104,7 @@ export default function SenderMessages({ data }) {
         </div>
     )
 }
+
+
+
+export default SenderMessages;

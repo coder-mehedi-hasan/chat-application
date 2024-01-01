@@ -459,3 +459,30 @@
     text-align: center;
     font-weight: 500;
 }
+.reaction-modal{
+    width: 100vw;
+    background-color: rgba(255, 255, 255, 0.5);
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+.reaction-modal .modal-dialog{
+    margin: 0px;
+    width: 100%;
+}
+.reaction{
+    position: relative;
+}
+.reaction-wrapper{
+    position: absolute;
+    background: #fff;
+    height: 22px;
+    width: 22px;
+    border: 1px ridge;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: -8px;
+    left: 10%;
+}
