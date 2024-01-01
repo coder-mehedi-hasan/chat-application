@@ -53,6 +53,12 @@ function SenderMessages({ data }) {
 
     }
 
+    const handleRefetch = ()=>{
+        refetch()
+    }
+    console.log(reactionsAll)
+
+
     const getReactionsApi = async () => {
         const response = await fetch(`https://messaging-dev.kotha.im/mobile/api/messages/reactions/${data?._id}?skip=0&limit=10`, {
             method: 'GET',
@@ -69,7 +75,7 @@ function SenderMessages({ data }) {
     return (
         <div className="row my-3 w-100 message_content" ref={divRef} >
             <div className="d-flex align-items-center justify-content-end">
-                <MessageSideAction message={data} refetch={refetch} />
+                <MessageSideAction message={data} refetch={handleRefetch} />
                 {
                     data?.cloudfrontUrl && !data?.message ?
                         <div>

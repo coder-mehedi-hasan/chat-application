@@ -65,14 +65,7 @@ export default function MessageSideAction({ message, refetch }) {
             }
         );
     };
-    useEffect(()=>{
-        socket.current.on("editMessage",(res)=>{
-            console.log(" jk")
-            console.log(res)
-            
-        })
-    })
-
+    
 
     return (
         <>
