@@ -10,13 +10,15 @@ import MessageSideAction from '../common/MessageSideAction';
 import TextContent from './TextContent';
 import FileContent from './FileContet';
 import { useStateProvider } from '../../context/StateContext';
+import { useQuery } from '@tanstack/react-query';
+import Reactions from './Reactions';
 
-export default function ReceiverMessages({ data }) {
+export default function ReceiverMessages({ data, handleReactionSend, isReaction }) {
     const isMediumWidth = useMediaQuery({ maxWidth: 768 })
     const isLargeWidth = useMediaQuery({ maxWidth: 992 })
     const [del, setDel] = useState(false)
     const divRef = useRef()
-    const [{ currentChatUser }, dispatch] = useStateProvider()
+    const [{ currentChatUser, userInfo }, dispatch] = useStateProvider()
 
 
     const currentDate = new Date()
@@ -49,7 +51,31 @@ export default function ReceiverMessages({ data }) {
         }
     });
 
+    const { data: reactionsAll, isSuccess, refetch } = useQuery({
+        queryKey: [`${data?._id}`],
+        queryFn: () => getReactionsApi()
+    });
 
+
+    const getReactionsApi = async () => {
+        const response = await fetch(`https://messaging-dev.kotha.im/mobile/api/messages/reactions/${data?._id}?skip=0&limit=10`, {
+            method: 'GET',
+            headers: {
+                'Authorization': userInfo?.messageToken
+            }
+        })
+        const json = await response.json()
+        if (response) {
+            return json
+        }
+        return []
+    }
+
+
+
+    useEffect(() => {
+        refetch()
+    }, [isReaction])
 
     return (
         <div className="row my-3 w-100 message_content" ref={divRef} >
@@ -63,13 +89,27 @@ export default function ReceiverMessages({ data }) {
                     data?.cloudfrontUrl && !data?.message ?
                         <div>
                             <FileContent img={data?.cloudfrontUrl} />
+                            <div className='reaction'>
+                                {
+                                    reactionsAll?.length && Array.isArray(reactionsAll) && reactionsAll?.map(item => {
+                                        return <Reactions reaction={item} handleReactionSend={handleReactionSend} />
+                                    })
+                                }
+                            </div>
                         </div>
                         :
                         <div>
                             <TextContent message={data} isSender={false} content={data?.message} />
+                            <div className='reaction'>
+                                {
+                                    reactionsAll?.length && Array.isArray(reactionsAll) && reactionsAll?.map(item => {
+                                        return <Reactions reaction={item} handleReactionSend={handleReactionSend} />
+                                    })
+                                }
+                            </div>
                         </div>
                 }
-                <MessageSideAction message={data} />
+                <MessageSideAction message={data} handleReactionSend={handleReactionSend} />
             </div>
         </div>
     )

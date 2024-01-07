@@ -4,7 +4,7 @@ import { BsEmojiSmile, BsFillReplyFill, BsPlus, BsThreeDotsVertical } from 'reac
 import { useStateProvider } from '../../context/StateContext';
 import { reactionEmojis } from '../../utils/constant';
 
-export default function MessageSideAction({ message, refetch }) {
+export default function MessageSideAction({ message, handleReactionSend }: any) {
     const [showMore, setShowMore] = useState(false);
     const [showReaction, setShowReaction] = useState(false)
     const more = useRef(null);
@@ -25,47 +25,11 @@ export default function MessageSideAction({ message, refetch }) {
         // setShowReaction(false)
         // setShowMore(false)
     }
-    // console.log( userInfo   )
 
-    const handleReactions = (react) => {
-        socket.current.emit("editMessage",
-            {
-                _id: message?._id,
-                react: true,
-                reactionParams: {
-                    score: '1',
-                    reaction: "UP_VOTE",
-                    reactedBy: "5c18efa5c2a47d000cc1465b",
-                    cancel: true
-                }
-                // reactedBy: "5c18efa5c2a47d000cc1465b",
-            },
-            (response) => {
-                console.log({ response })
-            })
-    }
 
     const handleClick = (reaction) => {
-        socket.current.emit("editMessage",
-            {
-                "_id": message?._id,
-                "react": true,
-                "reactionParams": {
-                    "score": 1,
-                    "reaction": reaction?.name,
-                    "reactedBy": userInfo?.id,
-                }
-            }
-            , (err, res) => {
-                // console.log({ res })
-                if (res && !err) {
-                    refetch()
-                }
-
-            }
-        );
+        handleReactionSend(message?._id, reaction?.name, true)
     };
-    
 
     return (
         <>

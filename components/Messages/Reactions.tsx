@@ -6,7 +6,7 @@ import { useStateProvider } from "../../context/StateContext"
 
 
 
-const Reactions = ({ reaction }) => {
+const Reactions = ({ reaction, handleReactionSend }) => {
     const [show, setShow] = useState(false)
     // console.log(reaction)
 
@@ -18,7 +18,7 @@ const Reactions = ({ reaction }) => {
                 }
             </div>
             <Modal show={show} className='reaction-modal' onHide={() => setShow(!show)}>
-                <ListOfReactions messageId={reaction?.messageId} />
+                <ListOfReactions messageId={reaction?.messageId} handleReactionSend={handleReactionSend} />
             </Modal>
 
         </>
@@ -34,8 +34,8 @@ const getReactions = (reactionName: any) => {
     )
 }
 
-const ListOfReactions = ({ messageId }) => {
-    const [{ userInfo, socket}, dispatch] = useStateProvider()
+const ListOfReactions = ({ messageId, handleReactionSend }: any) => {
+    const [{ userInfo, socket }, dispatch] = useStateProvider()
     const { refetch, isSuccess, data: reactions, isError } = useQuery({
         queryKey: ["reaction list for modal"],
         queryFn: () => getReactionsApi()
@@ -56,22 +56,7 @@ const ListOfReactions = ({ messageId }) => {
     }
 
     const handleDeleteReaction = () => {
-        socket.current.emit("editMessage",
-            {
-                "_id": messageId,
-                "react": true,
-                "reactionParams": {
-                    "reactedBy": userInfo?.id,
-                    "cancel": true
-                }
-            }
-            , (err, res) => {
-                if (res && !err) {
-                    refetch()
-                    console.log(res)
-                }
-            }
-        );
+        handleReactionSend(messageId, "", false)
     }
 
 

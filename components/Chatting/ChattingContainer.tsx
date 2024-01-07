@@ -3,11 +3,13 @@ import SenderMessages from '../Messages/SenderMessage'
 import ReceiverMessages from '../Messages/ReceiverMessage'
 import { useStateProvider } from '../../context/StateContext'
 import { reducerCases } from '../../context/constant'
+import { useQuery } from '@tanstack/react-query'
 
 export default function ChattingContainer() {
-    const [{ currentChatUser, userInfo, socket, messages }, dispatch] = useStateProvider()
-    const [senderReaction, setSenderReaction] = useState()
-    const [receiverReaction, setReceiverReaction] = useState()
+    const [{ currentChatUser, userInfo, socket, messages }, dispatch]: any = useStateProvider()
+    const [senderReaction, setSenderReaction]: any = useState()
+    const [receiverReaction, setReceiverReaction]: any = useState()
+    const [messageReaction, setMessageReaction] = useState<Boolean>(false)
 
     useEffect(() => {
         dispatch({ type: reducerCases.SET_MESSAGES, messages: [] })
@@ -15,25 +17,37 @@ export default function ChattingContainer() {
 
     useEffect(() => {
         socket.current.on("editMessage", (res: any) => {
-
+            if (res) {
+                setMessageReaction(!messageReaction)
+            }
         })
     })
     const handleReactionSend = (messageId: string, reactionName: string, sendingType: boolean) => {
-        socket.current.emit("editMessage",
-            {
+        let params: any = {
+            "_id": messageId,
+            "react": true,
+            "reactionParams": {
+                "score": 1,
+                "reaction": reactionName,
+                "reactedBy": userInfo?.id,
+                "cancel": sendingType
+            }
+        }
+        if (!sendingType) {
+            params = {
                 "_id": messageId,
                 "react": true,
                 "reactionParams": {
-                    "score": 1,
-                    "reaction": reactionName,
                     "reactedBy": userInfo?.id,
+                    "cancel": true
                 }
             }
-            , (err:any, res:any) => {
-                if (res && !err) {
+        }
 
-                }
-
+        socket.current.emit("editMessage", params
+            , (err, res) => {
+                setSenderReaction(res)
+                setMessageReaction(!messageReaction)
             }
         );
     }
@@ -47,9 +61,9 @@ export default function ChattingContainer() {
                             {
                                 userInfo.id === item.messageFromUserID
                                     ?
-                                    <SenderMessages data={item} />
+                                    <SenderMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction} />
                                     :
-                                    <ReceiverMessages data={item} />
+                                    <ReceiverMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction} />
                             }
                         </div>
                     )

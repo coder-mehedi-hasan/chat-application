@@ -14,10 +14,10 @@ import { reactionEmojis } from '../../utils/constant';
 import { useQuery } from '@tanstack/react-query';
 import Reactions from './Reactions';
 
-function SenderMessages({ data }) {
+function SenderMessages({ data, handleReactionSend, isReaction }: any) {
     const isMediumWidth = useMediaQuery({ maxWidth: 768 })
     const isLargeWidth = useMediaQuery({ maxWidth: 992 })
-    const [{ currentChatUser, userInfo, current_location, messages }, dispatch] = useStateProvider()
+    const [{ currentChatUser, userInfo, current_location, messages }, dispatch]: any = useStateProvider()
     const [reactions, setReactions] = useState<any>([]);
 
     const [del, setDel] = useState(false)
@@ -44,19 +44,20 @@ function SenderMessages({ data }) {
     }, []);
 
 
-    const { data: reactionsAll, isSuccess, refetch } = useQuery({
-        queryKey: [`${data?._id}`],
-        queryFn: () => getReactionsApi()
-    });
 
     const setAllReactions = async () => {
 
     }
 
-    const handleRefetch = ()=>{
-        refetch()
-    }
-    console.log(reactionsAll)
+    // const handleRefetch = () => {
+    //     refetch()
+    // }
+    // console.log(reactionsAll)
+
+    const { data: reactionsAll, isSuccess, refetch } = useQuery({
+        queryKey: [`${data?._id}`],
+        queryFn: () => getReactionsApi()
+    });
 
 
     const getReactionsApi = async () => {
@@ -72,10 +73,16 @@ function SenderMessages({ data }) {
         }
         return []
     }
+
+    useEffect(() => {
+        refetch()
+    }, [isReaction])
+
+
     return (
         <div className="row my-3 w-100 message_content" ref={divRef} >
             <div className="d-flex align-items-center justify-content-end">
-                <MessageSideAction message={data} refetch={handleRefetch} />
+                <MessageSideAction message={data} handleReactionSend={handleReactionSend} />
                 {
                     data?.cloudfrontUrl && !data?.message ?
                         <div>
@@ -83,7 +90,7 @@ function SenderMessages({ data }) {
                             <div className='reaction'>
                                 {
                                     reactionsAll?.length && Array.isArray(reactionsAll) && reactionsAll?.map(item => {
-                                        return <Reactions reaction={item} />
+                                        return <Reactions reaction={item} handleReactionSend={handleReactionSend} />
                                     })
                                 }
                             </div>
@@ -94,7 +101,7 @@ function SenderMessages({ data }) {
                             <div className='reaction'>
                                 {
                                     reactionsAll?.length && Array.isArray(reactionsAll) && reactionsAll?.map(item => {
-                                        return <Reactions reaction={item} />
+                                        return <Reactions reaction={item}  handleReactionSend={handleReactionSend}  />
                                     })
                                 }
                             </div>
