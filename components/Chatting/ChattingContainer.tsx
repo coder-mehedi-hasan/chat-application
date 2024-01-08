@@ -17,12 +17,14 @@ export default function ChattingContainer() {
 
     useEffect(() => {
         socket.current.on("editMessage", (res: any) => {
+            console.log(res)
             if (res) {
                 setMessageReaction(!messageReaction)
             }
         })
     })
     const handleReactionSend = (messageId: string, reactionName: string, sendingType: boolean) => {
+        // console.log({messageId,reactionName,sendingType})
         let params: any = {
             "_id": messageId,
             "react": true,
@@ -30,7 +32,7 @@ export default function ChattingContainer() {
                 "score": 1,
                 "reaction": reactionName,
                 "reactedBy": userInfo?.id,
-                "cancel": sendingType
+                "cancel": false
             }
         }
         if (!sendingType) {
@@ -44,10 +46,15 @@ export default function ChattingContainer() {
             }
         }
 
+        //         console.log(params)
+        // return
         socket.current.emit("editMessage", params
             , (err, res) => {
-                setSenderReaction(res)
-                setMessageReaction(!messageReaction)
+                if (!err) {
+                    console.log(res)
+                    setSenderReaction(res)
+                    setMessageReaction(!messageReaction)
+                }
             }
         );
     }

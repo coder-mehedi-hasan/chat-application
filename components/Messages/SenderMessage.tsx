@@ -17,8 +17,9 @@ import Reactions from './Reactions';
 function SenderMessages({ data, handleReactionSend, isReaction }: any) {
     const isMediumWidth = useMediaQuery({ maxWidth: 768 })
     const isLargeWidth = useMediaQuery({ maxWidth: 992 })
-    const [{ currentChatUser, userInfo, current_location, messages }, dispatch]: any = useStateProvider()
+    const [{  userInfo,socket  }, dispatch]: any = useStateProvider()
     const [reactions, setReactions] = useState<any>([]);
+    // console.log("isReaction",isReaction)
 
     const [del, setDel] = useState(false)
     const divRef = useRef()
@@ -59,6 +60,8 @@ function SenderMessages({ data, handleReactionSend, isReaction }: any) {
         queryFn: () => getReactionsApi()
     });
 
+    // console.log(data?._id)
+
 
     const getReactionsApi = async () => {
         const response = await fetch(`https://messaging-dev.kotha.im/mobile/api/messages/reactions/${data?._id}?skip=0&limit=10`, {
@@ -68,6 +71,7 @@ function SenderMessages({ data, handleReactionSend, isReaction }: any) {
             }
         })
         const json = await response.json()
+        // console.log({json})
         if (response) {
             return json
         }
@@ -75,8 +79,15 @@ function SenderMessages({ data, handleReactionSend, isReaction }: any) {
     }
 
     useEffect(() => {
+        // console.log("refetch")
         refetch()
     }, [isReaction])
+
+    useEffect(() => {
+        socket.current.on('updateSenderMessageStatusV2', (data: any) => {
+            console.log('on, updateSenderMessageStatusV2', data);
+        });
+    })
 
 
     return (

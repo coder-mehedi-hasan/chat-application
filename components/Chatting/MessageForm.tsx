@@ -133,11 +133,14 @@ function MessageForm() {
         }
 
         if (message?.message !== "" && message?.message !== null) {
+            // console.log("message",message)
             socket.current.emit('messageFromClient', message, (response) => {
-                console.log({ response })
+                // console.log({ response })
                 dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
                 dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
                 setMessage({ ...message, message: "" })
+                // console.log("response",response)
+                handleMessageStatus([response?._id])
             })
         }
         // if (selectedFiles?.length) {
@@ -285,6 +288,15 @@ function MessageForm() {
         })
 
     }
+
+    const handleMessageStatus = (ids: string[]) => {
+        socket.current.emit('updateMessageStatusV2', {
+            _ids: ids,
+            currentStatus: 2
+        })
+
+    }
+
 
     return (
         <div className='position-relative message-form'>
@@ -452,7 +464,7 @@ function MessageForm() {
                                                     (e) => {
                                                         setSelectCategory(item)
                                                     }
-                                                } style={{ width: "50%",textTransform:"capitalize" }}>
+                                                } style={{ width: "50%", textTransform: "capitalize" }}>
                                                     {item}
                                                 </div>
                                             )
@@ -484,7 +496,7 @@ function MessageForm() {
     )
 }
 
-const StickerList = ({ category, handlStickerClick,...props }) => {
+const StickerList = ({ category, handlStickerClick, ...props }) => {
     const [{ currentChatUser, userInfo, socket }, dispatch] = useStateProvider()
     const [stickers, setStickers] = useState<any>([])
 

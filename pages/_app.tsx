@@ -76,7 +76,10 @@ export function Main({ Component, pageProps }) {
 		// console.log("socket   =>>>:", { current_location })
 		if (userInfo && current_location) {
 			const connectionKey = `${process.env.NEXT_PUBLIC_SOCKET_URL}?userId=${userInfo?.id}&name=${userInfo?.name}&lastSocketId=${"LAST_CONNECTED_SOCKETID"}&location={"longitude": ${current_location?.lon}, "latitude": ${current_location?.lat}}&token=${userInfo?.messageToken}`
+			// console.log("message Token",connectionKey)
 			socket.current = io(connectionKey)
+
+			// console.log("connection",io(connectionKey))
 			dispatch({ type: reducerCases.SET_SOCKET, socket: socket })
 			socket.current.on('onlineClient', (online) => {
 				console.log({ online })

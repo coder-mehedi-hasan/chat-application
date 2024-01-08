@@ -18,7 +18,7 @@ export default function ReceiverMessages({ data, handleReactionSend, isReaction 
     const isLargeWidth = useMediaQuery({ maxWidth: 992 })
     const [del, setDel] = useState(false)
     const divRef = useRef()
-    const [{ currentChatUser, userInfo }, dispatch] = useStateProvider()
+    const [{ currentChatUser, userInfo, socket }, dispatch]: any = useStateProvider()
 
 
     const currentDate = new Date()
@@ -76,6 +76,12 @@ export default function ReceiverMessages({ data, handleReactionSend, isReaction 
     useEffect(() => {
         refetch()
     }, [isReaction])
+
+    useEffect(() => {
+        socket.current.on('updateReceiverMessageStatusV2', function (data: any) {
+            console.log('on, updateReceiverMessageStatusV2', data);
+        });
+    })
 
     return (
         <div className="row my-3 w-100 message_content" ref={divRef} >
