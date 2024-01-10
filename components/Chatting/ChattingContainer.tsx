@@ -59,16 +59,23 @@ export default function ChattingContainer() {
         );
     }
 
+    useEffect(() => {
+        socket.current.on('updateReceiverMessageStatusV2', function (data) {
+            console.log('on, updateReceiverMessageStatusV2', data);
+        });
+    })
+
     return (
         <div style={{ height: "100%", padding: "", scrollBehavior: "auto", overflowY: "scroll" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll scrollbar_visible_y'>
             {
                 userInfo && messages && messages?.map((item, index) => {
+                    const isLastMessage = (messages?.length - 1) === index
                     return (
                         <div key={index}>
                             {
                                 userInfo.id === item.messageFromUserID
                                     ?
-                                    <SenderMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction} />
+                                    <SenderMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction} isLastMessage={isLastMessage} />
                                     :
                                     <ReceiverMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction} />
                             }

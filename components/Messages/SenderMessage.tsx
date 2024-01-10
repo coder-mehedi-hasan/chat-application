@@ -14,11 +14,12 @@ import { reactionEmojis } from '../../utils/constant';
 import { useQuery } from '@tanstack/react-query';
 import Reactions from './Reactions';
 
-function SenderMessages({ data, handleReactionSend, isReaction }: any) {
+function SenderMessages({ data, handleReactionSend, isReaction, isLastMessage }: any) {
     const isMediumWidth = useMediaQuery({ maxWidth: 768 })
     const isLargeWidth = useMediaQuery({ maxWidth: 992 })
-    const [{  userInfo,socket  }, dispatch]: any = useStateProvider()
+    const [{ userInfo, socket, currentChatUser }, dispatch]: any = useStateProvider()
     const [reactions, setReactions] = useState<any>([]);
+    const [statusLastMessage, setStatusLastMessage] = useState<any>([]);
     // console.log("isReaction",isReaction)
 
     const [del, setDel] = useState(false)
@@ -85,9 +86,29 @@ function SenderMessages({ data, handleReactionSend, isReaction }: any) {
 
     useEffect(() => {
         socket.current.on('updateSenderMessageStatusV2', (data: any) => {
-            console.log('on, updateSenderMessageStatusV2', data);
+            if (isLastMessage) {
+                setStatusLastMessage(data)
+            }
         });
     })
+
+    const getMessageStatus = () => {
+        const find = statusLastMessage?.find((i: any) => i?._id === data?._id)
+        if (find && find?.currentStatus === 1) {
+            return <span className='text-dark fs-6 me-1'><BsCheckLg /></span>
+        }
+        else if (find && find?.currentStatus === 2) {
+            return <span className='text-dark fs-6 me-1'><BsCheckAll /></span>
+        }
+        if (find && find?.currentStatus === 3) {
+            return <span className='text-dark fs-6 brand-color me-1'><BsCheckAll /></span>
+            return (
+                <div style={{ height: "14px", width: "14px", borderRadius: "50%", overflow: "hidden", }}>
+                    <img src={currentChatUser?.image} alt={currentChatUser?.name} className='w-100 h-100' style={{ height: "14px", width: "14px" }} />
+                </div>
+            )
+        }
+    }
 
 
     return (
@@ -100,9 +121,9 @@ function SenderMessages({ data, handleReactionSend, isReaction }: any) {
                             <FileContent img={data?.cloudfrontUrl} />
                             <div className='reaction'>
                                 {
-                                    reactionsAll?.length && Array.isArray(reactionsAll) && reactionsAll?.map(item => {
+                                    reactionsAll?.length && Array.isArray(reactionsAll) ? reactionsAll?.map(item => {
                                         return <Reactions reaction={item} handleReactionSend={handleReactionSend} />
-                                    })
+                                    }) : ""
                                 }
                             </div>
                         </div>
@@ -111,19 +132,17 @@ function SenderMessages({ data, handleReactionSend, isReaction }: any) {
                             <TextContent isSender={true} content={data?.message} message={data} />
                             <div className='reaction'>
                                 {
-                                    reactionsAll?.length && Array.isArray(reactionsAll) && reactionsAll?.map(item => {
-                                        return <Reactions reaction={item}  handleReactionSend={handleReactionSend}  />
-                                    })
+                                    reactionsAll?.length && Array.isArray(reactionsAll) ? reactionsAll?.map(item => {
+                                        return <Reactions reaction={item} handleReactionSend={handleReactionSend} />
+                                    }) : ""
                                 }
                             </div>
                         </div>
                 }
 
-                {userInfo?.image &&
-                    <div style={{ height: "30px", width: "30px", borderRadius: "50%", overflow: "hidden", marginRight: "5px" }}>
-                        <img src={userInfo?.image} alt={userInfo?.name} className='w-100 h-100' />
-                    </div>
-                }
+            </div>
+            <div className='d-flex justify-content-end'>
+            {isLastMessage && getMessageStatus()}
             </div>
         </div>
     )

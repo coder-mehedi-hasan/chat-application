@@ -486,3 +486,14 @@
     top: -8px;
     left: 10%;
 }
+
+.fs-7{
+    font-size: 14px;
+    font-weight: 400;
+    text-transform: capitalize;
+}
+.fs-8{
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: capitalize;
+}

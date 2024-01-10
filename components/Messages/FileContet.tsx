@@ -61,18 +61,6 @@ export default function FileContent({ img }) {
 
 
                 }
-
-
-                <div>
-                    <p className='p-0 text-end text-dark' style={{ fontSize: "15px" }}>
-                        {sent ?
-                            <BsCheckAll />
-                            : <>
-                                <Spinner animation="border" size="sm" />
-                                <BsCheckLg />
-                            </>
-                        }</p>
-                </div>
             </div>
             <Modal show={gallery} className='image-content'>
                 <CustomImageGallery onClick={setGallery} image={img} />

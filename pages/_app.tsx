@@ -100,6 +100,10 @@ export function Main({ Component, pageProps }) {
 		if (socket.current && socketEvent) {
 			socket.current.on('clientToClientMessage', (response) => {
 				dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
+				socket.current.emit('updateMessageStatusV2', {
+					_ids: [response?.sMessageObj?._id],
+					currentStatus: 3
+				  })
 			})
 
 			return () => {
