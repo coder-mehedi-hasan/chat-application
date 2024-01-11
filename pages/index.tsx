@@ -31,6 +31,14 @@ export default function Home() {
 		router.push('/chat')
 	}
 
+	const handleLogout = () => {
+		window.localStorage.removeItem("userId")
+		window.localStorage.removeItem("userName")
+		window.localStorage.removeItem("messageToken")
+		window.localStorage.removeItem("userToken")
+		window.location.reload()
+	}
+
 	return (
 		<>
 			<CardGroup>
@@ -49,7 +57,7 @@ export default function Home() {
 											<ButtonGroup>
 												<Button variant="primary" disabled>Logged</Button>
 												<Button variant="primary" onClick={() => router.push('chat')}>Go to chat</Button>
-
+												<Button variant="primary" className='mx-2' onClick={handleLogout}>Log Out</Button>
 											</ButtonGroup>
 										</>
 											:
