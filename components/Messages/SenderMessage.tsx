@@ -17,7 +17,7 @@ import Reactions from './Reactions';
 function SenderMessages({ data, handleReactionSend, isReaction, isLastMessage }: any) {
     const isMediumWidth = useMediaQuery({ maxWidth: 768 })
     const isLargeWidth = useMediaQuery({ maxWidth: 992 })
-    const [{ userInfo, socket, currentChatUser }, dispatch]: any = useStateProvider()
+    const [{ userInfo, socket, currentChatUser,messages }, dispatch]: any = useStateProvider()
     const [reactions, setReactions] = useState<any>([]);
     const [statusLastMessage, setStatusLastMessage] = useState<any>([]);
     // console.log("isReaction",isReaction)
@@ -38,12 +38,7 @@ function SenderMessages({ data, handleReactionSend, isReaction, isLastMessage }:
     const currTime = getTime(currentDate)
     useEffect(() => {
         divRef.current.scrollIntoView();
-        if (currTime + 2000) {
-            setDel(true)
-        } else {
-            setDel(false)
-        }
-    }, []);
+    });
 
 
 

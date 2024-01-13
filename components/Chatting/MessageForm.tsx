@@ -63,6 +63,7 @@ function MessageForm() {
                     // console.log("response from share file :", response)
                     dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
                     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
+                    handleMessageStatus([response?._id])
                 })
             }
 
@@ -128,7 +129,7 @@ function MessageForm() {
         if (showEmoji) {
             setShowEmoji(!showEmoji)
         }
-        if (selectedFiles?.length) {
+        if (selectedFiles?.length && previewFiles?.length) {
             fetchSignedUrlsForMessaging()
         }
 
@@ -230,10 +231,11 @@ function MessageForm() {
                         body: file,
                     });
                     if (response) {
-                        socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response) => {
+                        socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response: any) => {
                             dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
                             dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
                             setSendEvent(null)
+                            handleMessageStatus([response?._id])
                         })
                     }
                 })
@@ -280,11 +282,12 @@ function MessageForm() {
         stickerCategoryRef.current.scrollLeft += offset
     }
 
-    const handlStickerClick = (sticker) => {
+    const handlStickerClick = (sticker: any) => {
         socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: sticker?.Url, message: "" }, (response) => {
             dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
             dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
             setShowStickers(false)
+            handleMessageStatus([response?._id])
         })
 
     }
