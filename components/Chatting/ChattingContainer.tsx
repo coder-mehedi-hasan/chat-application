@@ -97,6 +97,8 @@ export default function ChattingContainer() {
         console.log(e)
     }
 
+    console.log("messages",messages)
+
     return (
         <div  style={{ height: "100%", padding: "", scrollBehavior: "auto", overflowY: "scroll" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll scrollbar_visible_y' ref={containerRef}>
             {
