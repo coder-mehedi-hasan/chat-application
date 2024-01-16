@@ -22,13 +22,13 @@ export default function ChattingContainer() {
 
     const { isError, refetch, isSuccess, data: allChattingMessages } = useQuery({
         queryKey: [],
-        queryFn: () => getAllMessages(0, 1000)
+        queryFn: () => getAllMessages(0, 50)
     })
 
     // console.log({ messages })
     // console.log({ allChattingMessages })
     const getAllMessages = async (skip: any, limit: any) => {
-        const response = await fetch(`https://messaging.kotha.im/api/v1/web/private/messages?skip=${skip}&limit=${limit}&messageFrom=${userInfo?.id}`, {
+        const response = await fetch(`https://messaging-dev.kotha.im/api/v1/web/private/messages?skip=${skip}&limit=${limit}&messageFrom=${currentChatUser?.id}`, {
             headers: {
                 "Authorization": userInfo?.messageToken
             }
@@ -94,10 +94,12 @@ export default function ChattingContainer() {
     });
 
     const handleScroll = (e) => {
-        console.log(e)
+        // console.log(e)
     }
 
-    console.log("messages",messages)
+    console.log("allChattingMessages",allChattingMessages.reverse())
+
+    const reversed = allChattingMessages?.reverse()
 
     return (
         <div  style={{ height: "100%", padding: "", scrollBehavior: "auto", overflowY: "scroll" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll scrollbar_visible_y' ref={containerRef}>
