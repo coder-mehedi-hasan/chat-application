@@ -1,3 +1,4 @@
+"use client"
 import { useQuery } from '@tanstack/react-query';
 import React, { useState, useEffect, useRef } from 'react';
 
@@ -69,12 +70,24 @@ const Home = () => {
   //   };
   // }, []);
 
-
+  const showNotification = () => {
+    if (Notification.permission === 'granted') {
+      new Notification('Hello, this is a notification!')
+    } else if (Notification.permission !== 'denied') {
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          new Notification('Permission granted! You can now receive notifications.');
+        }
+      });
+    }
+  };
 
   return (
     <div>
-      git 
+      <h1>Welcome to My Next.js App</h1>
+      <button onClick={() => showNotification()}>Show Notification</button>
     </div>
+
   );
 };
 export default Home;
