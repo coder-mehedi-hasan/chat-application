@@ -36,9 +36,9 @@ function SenderMessages({ data, handleReactionSend, isReaction, isLastMessage }:
     }
 
     const currTime = getTime(currentDate)
-    useEffect(() => {
-        divRef.current.scrollIntoView();
-    });
+    // useEffect(() => {
+    //     divRef.current.scrollIntoView();
+    // });
 
 
 

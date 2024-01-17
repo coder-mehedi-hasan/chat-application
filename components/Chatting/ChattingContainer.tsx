@@ -6,23 +6,22 @@ import { reducerCases } from '../../context/constant'
 import { useQuery } from '@tanstack/react-query'
 
 export default function ChattingContainer() {
-    const [{ currentChatUser, userInfo, socket, messages }, dispatch]: any = useStateProvider()
+    const [{ currentChatUser, userInfo, socket, messages, socketEvent }, dispatch]: any = useStateProvider()
     const [senderReaction, setSenderReaction]: any = useState()
     const [receiverReaction, setReceiverReaction]: any = useState()
     const [messageReaction, setMessageReaction] = useState<Boolean>(false)
     const messagesRef = useRef(null)
     const containerRef = useRef(null)
-    console.log(containerRef)
+    // console.log(containerRef)
+    const [skip, setSkip] = useState<number>(0);
+    const [test, setTest] = useState<number>(0);
+    const [perPage, setPerPage] = useState<number>(50)
 
-    useEffect(() => {
 
-        // const messages = getAllMessages(0, 50)
-        dispatch({ type: reducerCases.SET_MESSAGES, messages: [] })
-    }, [currentChatUser])
 
     const { isError, refetch, isSuccess, data: allChattingMessages } = useQuery({
         queryKey: [],
-        queryFn: () => getAllMessages(0, 50)
+        queryFn: () => getAllMessages(Math.floor(skip * perPage), perPage)
     })
 
     // console.log({ messages })
@@ -42,7 +41,7 @@ export default function ChattingContainer() {
 
     useEffect(() => {
         socket.current.on("editMessage", (res: any) => {
-            console.log(res)
+            // console.log(res)
             if (res) {
                 setMessageReaction(!messageReaction)
             }
@@ -89,25 +88,124 @@ export default function ChattingContainer() {
             console.log('on, updateReceiverMessageStatusV2', data);
         });
     })
+    // useEffect(() => {
+    //     messagesRef?.current?.scrollIntoView();
+    // });
+
+    // useEffect(() => {
+    //     const handleScroll = () => {
+    //         const container = containerRef.current;
+    //         if (container) {
+    //           const isAtBottom = container.scrollTop + container.clientHeight === container.scrollHeight;
+    //           if (isAtBottom) {
+    //             // When the container is scrolled to the bottom, load more data
+    //             // setTest(pre=> pre + 1)
+    //           }
+    //         }
+    //       };
+
+
+    //     // Add event listener for scroll
+    //     containerRef.current.addEventListener('scroll', handleScroll);
+
+    //     // Remove event listener on component unmount
+    //     return () => {
+    //         containerRef.current.removeEventListener('scroll', handleScroll);
+    //     };
+    // }, []);
+
+
+    const handleScroll = () => {
+        const container = containerRef.current;
+        if (container) {
+            const isAtTop = container.scrollTop === 0;
+            const isAtBottom = container.scrollTop + container.clientHeight === container.scrollHeight;
+
+            if (isAtTop) {
+                setSkip(pre => pre + 1);
+                // refetch()
+                // You can perform actions when it's at the top
+            }
+        }
+    };
+
     useEffect(() => {
-        messagesRef?.current?.scrollIntoView();
-    });
+        // Add event listener for scroll on the specific container
+        const container = containerRef.current;
+        if (container) {
+            container.addEventListener('scroll', handleScroll);
+        }
 
-    const handleScroll = (e) => {
-        // console.log(e)
-    }
+        // Remove event listener on component unmount
+        return () => {
+            if (container) {
+                container.removeEventListener('scroll', handleScroll);
+            }
+        };
+    }, []);
 
-    console.log("allChattingMessages",allChattingMessages.reverse())
 
-    const reversed = allChattingMessages?.reverse()
+    useEffect(() => {
+        if (isSuccess && allChattingMessages?.length) {
+            console.log("new messaging")
+            const reversed = [...allChattingMessages]?.reverse();
+            const newMessages = reversed?.map(item => {
+                return {
+                    ...item,
+                    message: item?.messageBody,
+                    messageToUserID: item?.messageTo,
+                    messageFromUserID: item?.messageFrom
+                }
+            })
+            // const oldMessages = messages
+            dispatch({ type: reducerCases.SET_MESSAGES, messages: [...newMessages,...messages] })
+            // console.log(reversed)
+        }
+
+    }, [isSuccess, currentChatUser,skip])
+
+    // console.log("messages", messages)
+    // useEffect(() => {
+    //     dispatch({ type: reducerCases.SET_MESSAGES, messages: [] })
+    // }, [currentChatUser])
+
+
+    useEffect(() => {
+        refetch()
+    }, [skip])
+
+
+
+
+    useEffect(() => {
+        if (socket.current && socketEvent) {
+            socket.current.on('clientToClientMessage', (response) => {
+                dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
+                socket.current.emit('updateMessageStatusV2', {
+                    _ids: [response?.sMessageObj?._id],
+                    currentStatus: 3
+                })
+                messagesRef?.current?.scrollIntoView();
+            })
+
+            return () => {
+                // Remove the event listener when the component unmounts if necessary
+                if (socket.current) {
+                    socket.current.off('clientToClientMessage');
+                    dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: false })
+                }
+            };
+        }
+    }, [socket.current, dispatch, socketEvent]);
+
 
     return (
-        <div  style={{ height: "100%", padding: "", scrollBehavior: "auto", overflowY: "scroll" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll scrollbar_visible_y' ref={containerRef}>
+        <div style={{ height: "100%", padding: "", scrollBehavior: "auto", overflowY: "scroll" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll scrollbar_visible_y message-container-bg' ref={containerRef}>
             {
                 userInfo && messages && messages?.map((item, index) => {
                     const isLastMessage = (messages?.length - 1) === index
                     return (
-                        <div key={index} ref={messagesRef} onScroll={handleScroll}>
+                        <div key={index} ref={messagesRef}>
                             {
                                 userInfo.id === item.messageFromUserID
                                     ?

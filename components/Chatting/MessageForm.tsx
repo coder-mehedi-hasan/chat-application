@@ -136,11 +136,9 @@ function MessageForm() {
         if (message?.message !== "" && message?.message !== null) {
             // console.log("message",message)
             socket.current.emit('messageFromClient', message, (response) => {
-                // console.log({ response })
+                setMessage({ ...message, message: "" })
                 dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
                 dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
-                setMessage({ ...message, message: "" })
-                // console.log("response",response)
                 handleMessageStatus([response?._id])
             })
         }
@@ -148,6 +146,7 @@ function MessageForm() {
         //     uploadFilesForMessaging()
         // }
     }
+    // console.log
 
     //handle send file message
     const handleSendFileMessage = (url, index) => {
@@ -306,7 +305,7 @@ function MessageForm() {
 
 
     return (
-        <div className='position-relative message-form'>
+        <div className='position-relative border-top message-form'>
             <div style={{ flex: 1, background: "#fff", height: "80px" }} className='position-relative w-100 h-100 text-white d-flex align-items-center justify-content-between px-lg-3 px-md-2 px-sm-1 px-xs-1'>
                 {
                     showVoiceForm ?

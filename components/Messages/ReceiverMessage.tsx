@@ -31,26 +31,6 @@ export default function ReceiverMessages({ data, handleReactionSend, isReaction 
         return timeString
     }
 
-    const currTime = getTime(currentDate)
-    useEffect(() => {
-        divRef.current.scrollIntoView();
-        if (currTime + 2000) {
-            setDel(true)
-        } else {
-            setDel(false)
-        }
-    }, []);
-
-
-    useEffect(() => {
-        const currTime = currentDate.getTime()
-        if (currTime + 5000) {
-            setDel(true)
-        } else {
-            setDel(false)
-        }
-    });
-
     const { data: reactionsAll, isSuccess, refetch } = useQuery({
         queryKey: [`${data?._id}`],
         queryFn: () => getReactionsApi()

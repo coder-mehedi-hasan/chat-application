@@ -24,7 +24,7 @@ export default function TextContent({ content, isSender, message }) {
 
     return (
         <>
-            <div style={containerStyle}>
+            <div style={containerStyle} className={isSender? "brand-bg":""}>
                 <div style={{ boxSizing: "border-box" }}>
                     <div className='m-0 w-100' style={textStyle}>
                         {

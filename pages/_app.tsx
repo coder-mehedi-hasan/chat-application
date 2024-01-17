@@ -95,26 +95,6 @@ export function Main({ Component, pageProps }) {
 		// };
 	}, [userInfo, current_location, dispatch]);
 
-
-	useEffect(() => {
-		if (socket.current && socketEvent) {
-			socket.current.on('clientToClientMessage', (response) => {
-				dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
-				socket.current.emit('updateMessageStatusV2', {
-					_ids: [response?.sMessageObj?._id],
-					currentStatus: 3
-				  })
-			})
-
-			return () => {
-				// Remove the event listener when the component unmounts if necessary
-				if (socket.current) {
-					socket.current.off('clientToClientMessage');
-					dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: false })
-				}
-			};
-		}
-	}, [socket.current, dispatch, socketEvent]);
 	return (
 		<Component pageProps={...pageProps} />
 	)
