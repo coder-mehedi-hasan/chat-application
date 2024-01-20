@@ -296,11 +296,6 @@ function MessageForm() {
             _ids: ids,
             currentStatus: 1
         })
-        socket.current.emit('updateMessageStatusV2', {
-            _ids: ids,
-            currentStatus: 2
-        })
-
     }
 
 

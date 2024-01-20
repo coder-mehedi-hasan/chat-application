@@ -12,20 +12,16 @@ export default function ChattingContainer() {
     const [messageReaction, setMessageReaction] = useState<Boolean>(false)
     const messagesRef = useRef(null)
     const containerRef = useRef(null)
-    // console.log(containerRef)
     const [skip, setSkip] = useState<number>(0);
-    const [test, setTest] = useState<number>(0);
     const [perPage, setPerPage] = useState<number>(50)
 
 
 
-    const { isError, refetch, isSuccess, data: allChattingMessages } = useQuery({
-        queryKey: [],
+    const { isError, refetch, isSuccess, data: allChattingMessages, isFetching, isLoading, isRefetching } = useQuery({
+        queryKey: ["fetch latest messages"],
         queryFn: () => getAllMessages(Math.floor(skip * perPage), perPage)
     })
 
-    // console.log({ messages })
-    // console.log({ allChattingMessages })
     const getAllMessages = async (skip: any, limit: any) => {
         const response = await fetch(`https://messaging-dev.kotha.im/api/v1/web/private/messages?skip=${skip}&limit=${limit}&messageFrom=${currentChatUser?.id}`, {
             headers: {
@@ -47,6 +43,7 @@ export default function ChattingContainer() {
             }
         })
     })
+    console.log("isLoading", isRefetching)
     const handleReactionSend = (messageId: string, reactionName: string, sendingType: boolean) => {
         // console.log({messageId,reactionName,sendingType})
         let params: any = {
@@ -120,23 +117,17 @@ export default function ChattingContainer() {
         if (container) {
             const isAtTop = container.scrollTop === 0;
             const isAtBottom = container.scrollTop + container.clientHeight === container.scrollHeight;
-
             if (isAtTop) {
                 setSkip(pre => pre + 1);
-                // refetch()
-                // You can perform actions when it's at the top
             }
         }
     };
 
     useEffect(() => {
-        // Add event listener for scroll on the specific container
         const container = containerRef.current;
         if (container) {
             container.addEventListener('scroll', handleScroll);
         }
-
-        // Remove event listener on component unmount
         return () => {
             if (container) {
                 container.removeEventListener('scroll', handleScroll);
@@ -144,10 +135,14 @@ export default function ChattingContainer() {
         };
     }, []);
 
+    useEffect(() => {
+        setSkip(0)
+        refetch()
+    }, [currentChatUser])
 
     useEffect(() => {
+        console.log("set event firing")
         if (isSuccess && allChattingMessages?.length) {
-            console.log("new messaging")
             const reversed = [...allChattingMessages]?.reverse();
             const newMessages = reversed?.map(item => {
                 return {
@@ -157,39 +152,36 @@ export default function ChattingContainer() {
                     messageFromUserID: item?.messageFrom
                 }
             })
-            // const oldMessages = messages
-            dispatch({ type: reducerCases.SET_MESSAGES, messages: [...newMessages,...messages] })
-            // console.log(reversed)
+            if (skip === 0) {
+                dispatch({ type: reducerCases.SET_MESSAGES, messages: newMessages })
+            }
+            else {
+                dispatch({ type: reducerCases.SET_MESSAGES, messages: [...newMessages, ...messages] })
+            }
         }
 
-    }, [isSuccess, currentChatUser,skip])
-
-    // console.log("messages", messages)
-    // useEffect(() => {
-    //     dispatch({ type: reducerCases.SET_MESSAGES, messages: [] })
-    // }, [currentChatUser])
-
-
+    }, [isFetching, isLoading])
     useEffect(() => {
         refetch()
     }, [skip])
 
-
-
-
     useEffect(() => {
         if (socket.current && socketEvent) {
-            socket.current.on('clientToClientMessage', (response) => {
-                dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
-                socket.current.emit('updateMessageStatusV2', {
-                    _ids: [response?.sMessageObj?._id],
-                    currentStatus: 3
-                })
-                messagesRef?.current?.scrollIntoView();
+            socket.current.on('clientToClientMessage', (response: any) => {
+                console.log("responsefromreciver", response)
+                if (response.sMessageObj?.messageFromUserID !== currentChatUser?.id) {
+                    dispatch({ type: reducerCases.SET_OTHERS_MESSAGE, newMessage: response.sMessageObj })
+                }
+                else {
+                    dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
+                    socket.current.emit('updateMessageStatusV2', {
+                        _ids: [response?.sMessageObj?._id],
+                        currentStatus: 3
+                    })
+                    messagesRef?.current?.scrollIntoView();
+                }
             })
-
             return () => {
-                // Remove the event listener when the component unmounts if necessary
                 if (socket.current) {
                     socket.current.off('clientToClientMessage');
                     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: false })
@@ -198,10 +190,13 @@ export default function ChattingContainer() {
         }
     }, [socket.current, dispatch, socketEvent]);
 
+    console.log("all messages", messages)
 
     return (
         <div style={{ height: "100%", padding: "", scrollBehavior: "auto", overflowY: "scroll" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll scrollbar_visible_y message-container-bg' ref={containerRef}>
             {
+                // isLoading || isRefetching ?
+                // "Loading...":
                 userInfo && messages && messages?.map((item, index) => {
                     const isLastMessage = (messages?.length - 1) === index
                     return (
@@ -216,6 +211,14 @@ export default function ChattingContainer() {
                         </div>
                     )
                 })
+            }
+            {
+                isLoading || isRefetching || isFetching?
+                    <div className='messages-overlay-loading'>
+
+                    </div>
+
+                    : ""
             }
         </div>
     )

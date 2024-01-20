@@ -92,9 +92,6 @@ function SenderMessages({ data, handleReactionSend, isReaction, isLastMessage }:
         if (find && find?.currentStatus === 1) {
             return <span className='text-dark fs-6 me-1'><BsCheckLg /></span>
         }
-        else if (find && find?.currentStatus === 2) {
-            return <span className='text-dark fs-6 me-1'><BsCheckAll /></span>
-        }
         if (find && find?.currentStatus === 3) {
             return <span className='text-dark fs-6 brand-color me-1'><BsCheckAll /></span>
             return (

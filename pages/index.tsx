@@ -79,7 +79,7 @@ export default function Home() {
 					user?.map(item => {
 						return (
 							<Card style={{ width: '18rem' }} key={item?.id}>
-								<Card.Img variant="top" src={item?.image} />
+								<Card.Img variant="top" src={item?.image} style={{maxWidth:"200px"}} className='img-fluid' />
 								<Card.Body>
 									<Card.Title>{item?.name}</Card.Title>
 									<Card.Text>

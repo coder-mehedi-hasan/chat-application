@@ -10,7 +10,7 @@ import { useStateProvider } from '../../context/StateContext';
 
 export default function ChattingHistory() {
 
-    const [{ userInfo }, dispatch] = useStateProvider()
+    const [{ userInfo, otherMessages }, dispatch] = useStateProvider()
     const activeUserRef = useRef(null)
     const [pageX, setPageX] = useState(0)
     const [mouseClick, setMouseClick] = useState(false)
@@ -34,6 +34,7 @@ export default function ChattingHistory() {
         //     // console.log(e)
         // }
     }
+    console.log("otherMessages",otherMessages)
 
     return (
         <>
@@ -43,7 +44,7 @@ export default function ChattingHistory() {
                     <SearchBox />
                 </div>
                 <div className='my-2'>
-                    <div className='h-100 d-flex align-items-start active-users' style={{ overflow: "scroll", scrollBehavior: "smooth",transition:".4s" }} ref={activeUserRef} onMouseOver={handleOver} onMouseDown={handleGrabbing}>
+                    <div className='h-100 d-flex align-items-start active-users' style={{ overflow: "scroll", scrollBehavior: "smooth", transition: ".4s" }} ref={activeUserRef} onMouseOver={handleOver} onMouseDown={handleGrabbing}>
                         {
                             user?.slice(0, 10)?.map((item, index) => {
                                 return (

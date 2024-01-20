@@ -7,6 +7,7 @@ export const initialState = {
     socket: undefined,
     messages: [],
     socketEvent: false,
+    otherMessages:[]
 }
 
 const reducer = (state, action) => {
@@ -45,6 +46,11 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 socketEvent: action.socketEvent
+            }
+        case reducerCases.SET_OTHERS_MESSAGE:
+            return {
+                ...state,
+                otherMessages: [...state.otherMessages,action?.newMessage]
             }
         default:
             return state;
