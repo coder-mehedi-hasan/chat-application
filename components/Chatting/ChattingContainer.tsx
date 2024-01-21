@@ -43,7 +43,7 @@ export default function ChattingContainer() {
             }
         })
     })
-    console.log("isLoading", isRefetching)
+    // console.log("isFetching", isFetching)
     const handleReactionSend = (messageId: string, reactionName: string, sendingType: boolean) => {
         // console.log({messageId,reactionName,sendingType})
         let params: any = {
@@ -116,7 +116,7 @@ export default function ChattingContainer() {
         const container = containerRef.current;
         if (container) {
             const isAtTop = container.scrollTop === 0;
-            const isAtBottom = container.scrollTop + container.clientHeight === container.scrollHeight;
+            // const isAtBottom = container.scrollTop + container.clientHeight === container.scrollHeight;
             if (isAtTop) {
                 setSkip(pre => pre + 1);
             }
@@ -138,10 +138,11 @@ export default function ChattingContainer() {
     useEffect(() => {
         setSkip(0)
         refetch()
+
     }, [currentChatUser])
 
     useEffect(() => {
-        console.log("set event firing")
+        // console.log("set event firing")
         if (isSuccess && allChattingMessages?.length) {
             const reversed = [...allChattingMessages]?.reverse();
             const newMessages = reversed?.map(item => {
@@ -159,10 +160,15 @@ export default function ChattingContainer() {
                 dispatch({ type: reducerCases.SET_MESSAGES, messages: [...newMessages, ...messages] })
             }
         }
-
     }, [isFetching, isLoading])
+
+    // if (isLoading) {
+    //     messagesRef?.current?.scrollIntoView();
+    // }
+
     useEffect(() => {
         refetch()
+        // messagesRef?.current?.scrollIntoView();
     }, [skip])
 
     useEffect(() => {
@@ -190,7 +196,14 @@ export default function ChattingContainer() {
         }
     }, [socket.current, dispatch, socketEvent]);
 
-    console.log("all messages", messages)
+    useEffect(() => {
+        if (skip === 0) {
+            messagesRef?.current?.scrollIntoView();
+        } else {
+            // console.log("current_position", Math.floor((containerRef?.current?.scrollHeight) / skip))
+            containerRef.current.scrollTop = Math.floor((containerRef?.current?.scrollHeight) / skip)
+        }
+    })
 
     return (
         <div style={{ height: "100%", padding: "", scrollBehavior: "auto", overflowY: "scroll" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll scrollbar_visible_y message-container-bg' ref={containerRef}>
@@ -213,11 +226,12 @@ export default function ChattingContainer() {
                 })
             }
             {
-                isLoading || isRefetching || isFetching?
+                isLoading || isRefetching || isFetching ?
                     <div className='messages-overlay-loading'>
-
+                        <div className="spinner-border loading" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
                     </div>
-
                     : ""
             }
         </div>
