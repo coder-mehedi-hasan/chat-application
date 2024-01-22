@@ -10,7 +10,7 @@ export const initialState = {
     otherMessages:[]
 }
 
-const reducer = (state, action) => {
+const reducer = (state:any, action:any) => {
     switch (action.type) {
         case reducerCases.CHANGE_CURRENT_CHAT_USER:
             return {
@@ -47,10 +47,15 @@ const reducer = (state, action) => {
                 ...state,
                 socketEvent: action.socketEvent
             }
-        case reducerCases.SET_OTHERS_MESSAGE:
+        case reducerCases.ADD_OTHERS_MESSAGE:
             return {
                 ...state,
                 otherMessages: [...state.otherMessages,action?.newMessage]
+            }
+        case reducerCases.SET_OTHERS_MESSAGE:
+            return {
+                ...state,
+                otherMessages: action.otherMessages
             }
         default:
             return state;

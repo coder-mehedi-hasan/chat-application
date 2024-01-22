@@ -1,7 +1,7 @@
 import React from 'react'
 import { Image } from 'react-bootstrap'
 
-export default function UserInfoBox({ user, size }) {
+export default function UserInfoBox({ user, size, lastMessage }: any) {
     return (
         <div className={`w-100 h-100 d-flex align-items-center text-body-emphasis`}>
             <div>
@@ -11,7 +11,7 @@ export default function UserInfoBox({ user, size }) {
             </div>
             <div className='ms-3' >
                 <p style={{ fontSize: `${size / 3}px` }} className='m-0'>{user?.name}</p>
-                <p style={{ fontSize: "12px", margin: "0" }} className='m-o fw-light'>{user?.id} minute ago</p>
+                <p style={{ fontSize: "12px", margin: "0" }} className='m-o fw-light'>{lastMessage?.message}</p>
             </div>
         </div>
     )

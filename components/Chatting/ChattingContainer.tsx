@@ -1,17 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react'
+"use client"
+import React, { memo, useEffect, useRef, useState } from 'react'
 import SenderMessages from '../Messages/SenderMessage'
 import ReceiverMessages from '../Messages/ReceiverMessage'
 import { useStateProvider } from '../../context/StateContext'
 import { reducerCases } from '../../context/constant'
 import { useQuery } from '@tanstack/react-query'
 
-export default function ChattingContainer() {
+export default memo(function ChattingContainer() {
     const [{ currentChatUser, userInfo, socket, messages, socketEvent }, dispatch]: any = useStateProvider()
     const [senderReaction, setSenderReaction]: any = useState()
     const [receiverReaction, setReceiverReaction]: any = useState()
     const [messageReaction, setMessageReaction] = useState<Boolean>(false)
-    const messagesRef = useRef(null)
-    const containerRef = useRef(null)
+    const messagesRef: any = useRef(null)
+    const containerRef: any = useRef(null)
     const [skip, setSkip] = useState<number>(0);
     const [perPage, setPerPage] = useState<number>(50)
     const [scrollBarPos, setScrollBarPos] = useState<any>()
@@ -43,9 +44,7 @@ export default function ChattingContainer() {
             }
         })
     })
-    // console.log("isFetching", isFetching)
     const handleReactionSend = (messageId: string, reactionName: string, sendingType: boolean) => {
-        // console.log({messageId,reactionName,sendingType})
         let params: any = {
             "_id": messageId,
             "react": true,
@@ -70,7 +69,7 @@ export default function ChattingContainer() {
         //         console.log(params)
         // return
         socket.current.emit("editMessage", params
-            , (err, res) => {
+            , (err: any, res: any) => {
                 if (!err) {
                     console.log(res)
                     setSenderReaction(res)
@@ -81,7 +80,7 @@ export default function ChattingContainer() {
     }
 
     useEffect(() => {
-        socket.current.on('updateReceiverMessageStatusV2', function (data) {
+        socket.current.on('updateReceiverMessageStatusV2', function (data: any) {
             console.log('on, updateReceiverMessageStatusV2', data);
         });
     })
@@ -113,7 +112,7 @@ export default function ChattingContainer() {
 
 
     const handleScroll = () => {
-        const container = containerRef.current;
+        const container: any = containerRef.current;
         if (container) {
             const isAtTop = container.scrollTop === 0;
             if (isAtTop && !isRefetching) {
@@ -123,7 +122,7 @@ export default function ChattingContainer() {
     };
 
     useEffect(() => {
-        const container = containerRef.current;
+        const container: any = containerRef.current;
         if (container) {
             container.addEventListener('scroll', handleScroll);
         }
@@ -174,7 +173,7 @@ export default function ChattingContainer() {
             socket.current.on('clientToClientMessage', (response: any) => {
                 console.log("responsefromreciver", response)
                 if (response.sMessageObj?.messageFromUserID !== currentChatUser?.id) {
-                    dispatch({ type: reducerCases.SET_OTHERS_MESSAGE, newMessage: response.sMessageObj })
+                    dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: response.sMessageObj })
                 }
                 else {
                     dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
@@ -197,7 +196,7 @@ export default function ChattingContainer() {
     useEffect(() => {
         if (skip !== 0) {
             if (containerRef) {
-                const difference = containerRef.current.scrollHeight - containerRef.current.clientHeight;
+                const difference: any = containerRef.current.scrollHeight - containerRef.current.clientHeight;
                 containerRef.current.scrollTop = Math.floor(difference / (messages?.length / perPage)) - 200;
             }
         }
@@ -210,11 +209,9 @@ export default function ChattingContainer() {
 
     return (
         <>
-            <div style={{ height: "100%", padding: "", scrollBehavior: "smooth", overflowY: "scroll" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll scrollbar_visible_y message-container-bg' ref={containerRef}>
+            <div style={{ height: "100%", padding: "", scrollBehavior: "auto", overflowY: "scroll" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll scrollbar_visible_y message-container-bg' ref={containerRef}>
                 {
-                    // isLoading || isRefetching ?
-                    // "Loading...":
-                    userInfo && messages && messages?.map((item, index) => {
+                    userInfo && messages ? messages?.map((item: any, index: any) => {
                         const isLastMessage = (messages?.length - 1) === index
                         return (
                             <div key={index} ref={messagesRef}>
@@ -228,7 +225,7 @@ export default function ChattingContainer() {
                                 {/* <span className='text-danger'>{index + 1}</span> */}
                             </div>
                         )
-                    })
+                    }) : ""
                 }
             </div>
             {
@@ -242,4 +239,4 @@ export default function ChattingContainer() {
             }
         </>
     )
-}
+})

@@ -10,12 +10,12 @@ import { useStateProvider } from '../../context/StateContext';
 
 export default function ChattingHistory() {
 
-    const [{ userInfo, otherMessages }, dispatch] = useStateProvider()
+    const [{ userInfo, otherMessages }, dispatch]: any = useStateProvider()
     const activeUserRef = useRef(null)
     const [pageX, setPageX] = useState(0)
     const [mouseClick, setMouseClick] = useState(false)
 
-    const handleGrabbing = (e) => {
+    const handleGrabbing = (e: any) => {
         // console.log(activeUserRef)
         // console.log(e)
         // setPageX(e.pageX)
@@ -23,7 +23,7 @@ export default function ChattingHistory() {
 
     }
 
-    const handleOver = (e) => {
+    const handleOver = (e: any) => {
         // if (mouseClick) {
         //     if (e.pageX > pageX) {
         //         activeUserRef.current.scrollLeft += 50
@@ -34,7 +34,7 @@ export default function ChattingHistory() {
         //     // console.log(e)
         // }
     }
-    console.log("otherMessages",otherMessages)
+    console.log("otherMessages", otherMessages)
 
     return (
         <>
