@@ -14,7 +14,7 @@ export default function ChattingContainer() {
     const containerRef = useRef(null)
     const [skip, setSkip] = useState<number>(0);
     const [perPage, setPerPage] = useState<number>(50)
-
+    const [scrollBarPos, setScrollBarPos] = useState<any>()
 
 
     const { isError, refetch, isSuccess, data: allChattingMessages, isFetching, isLoading, isRefetching } = useQuery({
@@ -116,8 +116,7 @@ export default function ChattingContainer() {
         const container = containerRef.current;
         if (container) {
             const isAtTop = container.scrollTop === 0;
-            // const isAtBottom = container.scrollTop + container.clientHeight === container.scrollHeight;
-            if (isAtTop) {
+            if (isAtTop && !isRefetching) {
                 setSkip(pre => pre + 1);
             }
         }
@@ -168,7 +167,6 @@ export default function ChattingContainer() {
 
     useEffect(() => {
         refetch()
-        // messagesRef?.current?.scrollIntoView();
     }, [skip])
 
     useEffect(() => {
@@ -197,43 +195,51 @@ export default function ChattingContainer() {
     }, [socket.current, dispatch, socketEvent]);
 
     useEffect(() => {
-        if (skip === 0) {
-            messagesRef?.current?.scrollIntoView();
-        } else {
-            // console.log("current_position", Math.floor((containerRef?.current?.scrollHeight) / skip))
-            containerRef.current.scrollTop = Math.floor((containerRef?.current?.scrollHeight) / skip)
+        if (skip !== 0) {
+            if (containerRef) {
+                const difference = containerRef.current.scrollHeight - containerRef.current.clientHeight;
+                containerRef.current.scrollTop = Math.floor(difference / (messages?.length / perPage)) - 200;
+            }
         }
-    })
+        else {
+            if (containerRef) {
+                containerRef.current.scrollTop = containerRef.current.scrollHeight
+            }
+        }
+    }, [messages]);
 
     return (
-        <div style={{ height: "100%", padding: "", scrollBehavior: "auto", overflowY: "scroll" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll scrollbar_visible_y message-container-bg' ref={containerRef}>
+        <>
+            <div style={{ height: "100%", padding: "", scrollBehavior: "smooth", overflowY: "scroll" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll scrollbar_visible_y message-container-bg' ref={containerRef}>
+                {
+                    // isLoading || isRefetching ?
+                    // "Loading...":
+                    userInfo && messages && messages?.map((item, index) => {
+                        const isLastMessage = (messages?.length - 1) === index
+                        return (
+                            <div key={index} ref={messagesRef}>
+                                {
+                                    userInfo.id === item.messageFromUserID
+                                        ?
+                                        <SenderMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction} isLastMessage={isLastMessage} />
+                                        :
+                                        <ReceiverMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction} />
+                                }
+                                {/* <span className='text-danger'>{index + 1}</span> */}
+                            </div>
+                        )
+                    })
+                }
+            </div>
             {
-                // isLoading || isRefetching ?
-                // "Loading...":
-                userInfo && messages && messages?.map((item, index) => {
-                    const isLastMessage = (messages?.length - 1) === index
-                    return (
-                        <div key={index} ref={messagesRef}>
-                            {
-                                userInfo.id === item.messageFromUserID
-                                    ?
-                                    <SenderMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction} isLastMessage={isLastMessage} />
-                                    :
-                                    <ReceiverMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction} />
-                            }
-                        </div>
-                    )
-                })
-            }
-            {
-                isLoading || isRefetching || isFetching ?
-                    <div className='messages-overlay-loading'>
+                isLoading || isRefetching || isFetching || !isSuccess ?
+                    <div className='messages-overlay-loading' style={{ height: "100% !important" }}>
                         <div className="spinner-border loading" role="status">
-                            <span className="visually-hidden">Loading...</span>
+                            <span className="visually-hidden"></span>
                         </div>
                     </div>
                     : ""
             }
-        </div>
+        </>
     )
 }

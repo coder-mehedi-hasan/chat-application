@@ -66,10 +66,10 @@ export default function ReceiverMessages({ data, handleReactionSend, isReaction 
     return (
         <div className="row my-3 w-100 message_content" ref={divRef} >
             <div className="d-flex align-items-center justify-content-start">
-                {currentChatUser?.image &&
+                {currentChatUser?.image ?
                     <div style={{ height: "30px", width: "30px", borderRadius: "50%", overflow: "hidden", marginRight: "5px" }}>
                         <img src={currentChatUser?.image} alt={currentChatUser?.name} className='w-100 h-100' />
-                    </div>
+                    </div>:""
                 }
                 {
                     data?.cloudfrontUrl && !data?.message ?
@@ -77,9 +77,9 @@ export default function ReceiverMessages({ data, handleReactionSend, isReaction 
                             <FileContent img={data?.cloudfrontUrl} />
                             <div className='reaction'>
                                 {
-                                    reactionsAll?.length && Array.isArray(reactionsAll) && reactionsAll?.map(item => {
+                                    reactionsAll?.length && Array.isArray(reactionsAll) ? reactionsAll?.map(item => {
                                         return <Reactions reaction={item} handleReactionSend={handleReactionSend} />
-                                    })
+                                    }) :""
                                 }
                             </div>
                         </div>
@@ -88,9 +88,9 @@ export default function ReceiverMessages({ data, handleReactionSend, isReaction 
                             <TextContent message={data} isSender={false} content={data?.message} />
                             <div className='reaction'>
                                 {
-                                    reactionsAll?.length && Array.isArray(reactionsAll) && reactionsAll?.map(item => {
+                                    reactionsAll?.length && Array.isArray(reactionsAll) ? reactionsAll?.map(item => {
                                         return <Reactions reaction={item} handleReactionSend={handleReactionSend} />
-                                    })
+                                    }):""
                                 }
                             </div>
                         </div>

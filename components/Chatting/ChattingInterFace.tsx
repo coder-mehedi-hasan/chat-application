@@ -33,14 +33,18 @@ export default function ChattingInterFace() {
                     <Modal show={show} fullscreen={true}>
                         <div style={{ height: "100vh", display: "flex", flexDirection: "column", paddingLeft: "0.5px", width: "100%" }} className='chat-interface'>
                             <ChatHeader modal={handleShow} />
-                            <ChattingContainer />
+                            <div>
+                                <ChattingContainer />
+                            </div>
                             <MessageForm />
                         </div>
                     </Modal>
                     :
                     <div style={{ height: "100vh", display: "flex", flexDirection: "column", paddingLeft: "0.5px", width: "100%" }} className='chat-interface'>
                         <ChatHeader modal={handleShow} />
-                        <ChattingContainer />
+                        <div className='position-relative overflow-hidden'>
+                            <ChattingContainer />
+                        </div>
                         <MessageForm />
                     </div>
             }
