@@ -209,7 +209,7 @@ export default memo(function ChattingContainer() {
 
     return (
         <>
-            <div style={{ height: "100%", padding: "", scrollBehavior: "auto", overflowY: "scroll" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll scrollbar_visible_y message-container-bg' ref={containerRef}>
+            <div style={{ height: "100%", padding: "", scrollBehavior: `${skip === 0 ? "auto" : "smooth"}`, overflowY: "scroll" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll scrollbar_visible_y message-container-bg' ref={containerRef}>
                 {
                     userInfo && messages ? messages?.map((item: any, index: any) => {
                         const isLastMessage = (messages?.length - 1) === index
