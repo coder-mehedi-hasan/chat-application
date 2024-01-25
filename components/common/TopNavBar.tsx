@@ -1,9 +1,12 @@
+import { useRouter } from 'next/router';
 import React, { useState } from 'react'
 import { Offcanvas } from 'react-bootstrap'
 import { BsFillXCircleFill, BsPencilFill } from 'react-icons/bs'
-import { FaBars } from 'react-icons/fa'
+import { FaBars, FaHome } from 'react-icons/fa'
 
-export default function TopNavBar({ type }) {
+export default function TopNavBar({ type }: any) {
+    const router = useRouter()
+    // router.
     const [canvas, setCanvas] = useState(false);
     return (
         <div style={{ height: "50px", width: "100%" }}>
@@ -29,8 +32,9 @@ export default function TopNavBar({ type }) {
                     </div>
                 </div>
                 <div>
-                    <div style={{ height: "30px", width: "30px", cursor: "pointer" }} className='bg-secondary rounded-circle d-flex justify-content-center align-items-center'>
-                        <BsPencilFill style={{ color: "gray", fontSize: "14px" }} />
+                    <div onClick={() => router.push('/')} style={{ height: "30px", width: "30px", cursor: "pointer" }} className='bg-secondary rounded-circle d-flex justify-content-center align-items-center'>
+                        {/* <BsPencilFill style={{ color: "gray", fontSize: "14px" }} /> */}
+                        <FaHome style={{ color: "gray", fontSize: "14px" }} />
                     </div>
                 </div>
             </div>

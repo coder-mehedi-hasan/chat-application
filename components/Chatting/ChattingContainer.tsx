@@ -5,6 +5,7 @@ import ReceiverMessages from '../Messages/ReceiverMessage'
 import { useStateProvider } from '../../context/StateContext'
 import { reducerCases } from '../../context/constant'
 import { useQuery } from '@tanstack/react-query'
+import { handleMessageStatus } from '../../utils/functions/message'
 
 export default memo(function ChattingContainer() {
     const [{ currentChatUser, userInfo, socket, messages, socketEvent }, dispatch]: any = useStateProvider()
@@ -16,6 +17,7 @@ export default memo(function ChattingContainer() {
     const [skip, setSkip] = useState<number>(0);
     const [perPage, setPerPage] = useState<number>(50)
     const [scrollBarPos, setScrollBarPos] = useState<any>()
+    const [statusLastMessage, setStatusLastMessage] = useState<any>([]);
 
 
     const { isError, refetch, isSuccess, data: allChattingMessages, isFetching, isLoading, isRefetching } = useQuery({
@@ -71,7 +73,7 @@ export default memo(function ChattingContainer() {
         socket.current.emit("editMessage", params
             , (err: any, res: any) => {
                 if (!err) {
-                    console.log(res)
+                    // console.log(res)
                     setSenderReaction(res)
                     setMessageReaction(!messageReaction)
                 }
@@ -81,7 +83,7 @@ export default memo(function ChattingContainer() {
 
     useEffect(() => {
         socket.current.on('updateReceiverMessageStatusV2', function (data: any) {
-            console.log('on, updateReceiverMessageStatusV2', data);
+            // console.log('on, updateReceiverMessageStatusV2', data);
         });
     })
     // useEffect(() => {
@@ -116,6 +118,9 @@ export default memo(function ChattingContainer() {
         if (container) {
             const isAtTop = container.scrollTop === 0;
             if (isAtTop && !isRefetching) {
+                // if (socketEvent) {
+                dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: false })
+                // }
                 setSkip(pre => pre + 1);
             }
         }
@@ -136,14 +141,18 @@ export default memo(function ChattingContainer() {
     useEffect(() => {
         setSkip(0)
         refetch()
-
-    }, [currentChatUser])
+    }, [currentChatUser?.id])
 
     useEffect(() => {
         // console.log("set event firing")
         if (isSuccess && allChattingMessages?.length) {
             const reversed = [...allChattingMessages]?.reverse();
+            const unseenMessages = reversed?.filter((item: any) => item?.messageStatus !== 3)
+            const unseenIds = unseenMessages?.filter((item:any) => item?.messageFrom == currentChatUser?.id)?.map((item: any) => item?._id)
+            // console.log("unseenIds",unseenIds)
+            handleMessageStatus(unseenIds,socket,3)
             const newMessages = reversed?.map(item => {
+                // console.log("message history", item)
                 return {
                     ...item,
                     message: item?.messageBody,
@@ -168,10 +177,11 @@ export default memo(function ChattingContainer() {
         refetch()
     }, [skip])
 
+
     useEffect(() => {
         if (socket.current && socketEvent) {
             socket.current.on('clientToClientMessage', (response: any) => {
-                console.log("responsefromreciver", response)
+                // console.log("responsefromreciver", response)
                 if (response.sMessageObj?.messageFromUserID !== currentChatUser?.id) {
                     dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: response.sMessageObj })
                 }
@@ -181,7 +191,8 @@ export default memo(function ChattingContainer() {
                         _ids: [response?.sMessageObj?._id],
                         currentStatus: 3
                     })
-                    messagesRef?.current?.scrollIntoView();
+                    // messagesRef?.current?.scrollIntoView();
+                    containerRef?.current?.scrollIntoView();
                 }
             })
             return () => {
@@ -194,10 +205,15 @@ export default memo(function ChattingContainer() {
     }, [socket.current, dispatch, socketEvent]);
 
     useEffect(() => {
-        if (skip !== 0) {
+        // console.log("socketEvent", socketEvent)
+        if (socketEvent) {
+            containerRef?.current?.scrollIntoView();
+            messagesRef?.current?.scrollIntoView();
+        }
+        else if (skip !== 0) {
             if (containerRef) {
                 const difference: any = containerRef.current.scrollHeight - containerRef.current.clientHeight;
-                containerRef.current.scrollTop = Math.floor(difference / (messages?.length / perPage)) - 200;
+                containerRef.current.scrollTop = Math.floor(difference / (messages?.length / perPage)) - (window.innerHeight - perPage);
             }
         }
         else {
@@ -205,20 +221,55 @@ export default memo(function ChattingContainer() {
                 containerRef.current.scrollTop = containerRef.current.scrollHeight
             }
         }
+        return
     }, [messages]);
+
+    const getMessageStatus = (message: any) => {
+        const find = statusLastMessage?.find((i: any) => i?._id === message?._id)
+        if (find) {
+            if (find?.currentStatus <= message?.messageStatus) {
+                return message?.messageStatus
+            }
+            return find?.currentStatus
+        }
+        return message?.messageStatus
+        // if (find && find?.currentStatus === 1 || data?.messageStatus === 1) {
+        //     return <span className='text-dark fs-6 me-1'><BsCheckLg /></span>
+        // }
+        // else if (find && find?.currentStatus === 3 || data?.messageStatus === 3) {
+        //     return <span className='text-dark fs-6 brand-color me-1'><BsCheckAll /></span>
+        //     return (
+        //         <div style={{ height: "14px", width: "14px", borderRadius: "50%", overflow: "hidden", }}>
+        //             <img src={currentChatUser?.image} alt={currentChatUser?.name} className='w-100 h-100' style={{ height: "14px", width: "14px" }} />
+        //         </div>
+        //     )
+        // }
+    }
+
+
+    useEffect(() => {
+        socket.current.on('updateSenderMessageStatusV2', (data: any) => {
+            setStatusLastMessage(data)
+        });
+    })
+console.log(messages)
 
     return (
         <>
-            <div style={{ height: "100%", padding: "", scrollBehavior: `${skip === 0 ? "auto" : "smooth"}`, overflowY: "scroll" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll scrollbar_visible_y message-container-bg' ref={containerRef}>
+            <div style={{ height: "100%", padding: "", scrollBehavior: `${skip === 0 ? "auto" : "auto"}`, overflowY: "scroll" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll scrollbar_visible_y message-container-bg' ref={containerRef}>
                 {
                     userInfo && messages ? messages?.map((item: any, index: any) => {
                         const isLastMessage = (messages?.length - 1) === index
+                        const status = getMessageStatus(item)
+                        // if (isLastMessage) {
+                        //     console.log("message chat status", status)
+                        // }
                         return (
                             <div key={index} ref={messagesRef}>
                                 {
                                     userInfo.id === item.messageFromUserID
                                         ?
-                                        <SenderMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction} isLastMessage={isLastMessage} />
+                                        <SenderMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction} isLastMessage={isLastMessage} status={status} />
                                         :
                                         <ReceiverMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction} />
                                 }

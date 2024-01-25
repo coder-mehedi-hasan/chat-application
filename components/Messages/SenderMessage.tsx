@@ -14,13 +14,13 @@ import { reactionEmojis } from '../../utils/constant';
 import { useQuery } from '@tanstack/react-query';
 import Reactions from './Reactions';
 
-function SenderMessages({ data, handleReactionSend, isReaction, isLastMessage }: any) {
+function SenderMessages({ data, handleReactionSend, isReaction, isLastMessage, status }: any) {
     const isMediumWidth = useMediaQuery({ maxWidth: 768 })
     const isLargeWidth = useMediaQuery({ maxWidth: 992 })
-    const [{ userInfo, socket, currentChatUser,messages }, dispatch]: any = useStateProvider()
+    const [{ userInfo, socket, currentChatUser, messages }, dispatch]: any = useStateProvider()
     const [reactions, setReactions] = useState<any>([]);
     const [statusLastMessage, setStatusLastMessage] = useState<any>([]);
-    // console.log("isReaction",isReaction)
+    // console.log("isLastMessage", isLastMessage)
 
     const [del, setDel] = useState(false)
     const divRef = useRef()
@@ -81,25 +81,36 @@ function SenderMessages({ data, handleReactionSend, isReaction, isLastMessage }:
 
     useEffect(() => {
         socket.current.on('updateSenderMessageStatusV2', (data: any) => {
-            if (isLastMessage) {
+            if (isLastMessage && data?.length) {
+                // console.log(data)
                 setStatusLastMessage(data)
             }
         });
     })
 
-    const getMessageStatus = () => {
-        const find = statusLastMessage?.find((i: any) => i?._id === data?._id)
-        if (find && find?.currentStatus === 1) {
+    const getMessageStatus = (status: any) => {
+        // const find = statusLastMessage?.find((i: any) => i?._id === data?._id)
+        // if (find && find?.currentStatus === 1 || data?.messageStatus === 1) {
+        //     return <span className='text-dark fs-6 me-1'><BsCheckLg /></span>
+        // }
+        // else if (find && find?.currentStatus === 3 || data?.messageStatus === 3) {
+        //     return <span className='text-dark fs-6 brand-color me-1'><BsCheckAll /></span>
+        //     return (
+        //         <div style={{ height: "14px", width: "14px", borderRadius: "50%", overflow: "hidden", }}>
+        //             <img src={currentChatUser?.image} alt={currentChatUser?.name} className='w-100 h-100' style={{ height: "14px", width: "14px" }} />
+        //         </div>
+        //     )
+        // }
+        if (status === 1) {
             return <span className='text-dark fs-6 me-1'><BsCheckLg /></span>
         }
-        if (find && find?.currentStatus === 3) {
-            return <span className='text-dark fs-6 brand-color me-1'><BsCheckAll /></span>
-            return (
-                <div style={{ height: "14px", width: "14px", borderRadius: "50%", overflow: "hidden", }}>
-                    <img src={currentChatUser?.image} alt={currentChatUser?.name} className='w-100 h-100' style={{ height: "14px", width: "14px" }} />
-                </div>
-            )
+        else if (status === 2) {
+            return <span className='text-dark fs-6 me-1'><BsCheckAll /></span>
         }
+        else if (status === 3) {
+            return <span className='text-dark fs-6 brand-color me-1'><BsCheckAll /></span>
+        }
+
     }
 
 
@@ -134,7 +145,7 @@ function SenderMessages({ data, handleReactionSend, isReaction, isLastMessage }:
 
             </div>
             <div className='d-flex justify-content-end'>
-            {isLastMessage && getMessageStatus()}
+                {isLastMessage ? getMessageStatus(parseInt(status)) : ""}
             </div>
         </div>
     )

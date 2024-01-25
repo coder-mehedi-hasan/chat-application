@@ -15,6 +15,7 @@ import useGetStickers from '../../utils/useGetStickers';
 import useGenerateRandomColor from '../../utils/useRandomColorGenerate';
 import { apiUrl } from '../../utils/constant';
 import { isFileIsImage } from '../../utils/getFileType';
+import { handleMessageStatus } from '../../utils/functions/message';
 
 
 function MessageForm() {
@@ -28,7 +29,7 @@ function MessageForm() {
     const gifs = useRef(null);
     const inputReference = useRef();
     const [message, setMessage] = useState<any>({ messageType: 1, messageFromUserID: "", messageToUserID: '', message: "" })
-    const [{ currentChatUser, userInfo, socket }, dispatch] = useStateProvider()
+    const [{ currentChatUser, userInfo, socket }, dispatch]: any = useStateProvider()
     const recorderControls = useAudioRecorder()
     const [sendEvent, setSendEvent] = useState<any>(null)
     const [showStickers, setShowStickers] = useState(false);
@@ -44,7 +45,7 @@ function MessageForm() {
     const [uploadUrls, setUploadUrls] = useState<any>([]);
 
     //upload file in database
-    const uploadFilesForMessaging = async (url, index) => {
+    const uploadFilesForMessaging = async (url: any, index: any) => {
         if (!selectedFiles?.length && url && length) {
             console.error('No files selected or no upload URLs available', uploadUrls);
             return;
@@ -59,11 +60,11 @@ function MessageForm() {
                 body: file,
             });
             if (response) {
-                socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response) => {
+                socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response: any) => {
                     // console.log("response from share file :", response)
                     dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
                     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
-                    handleMessageStatus([response?._id])
+                    handleMessageStatus([response?._id], socket, 1)
                 })
             }
 
@@ -75,15 +76,15 @@ function MessageForm() {
     //fetch file and sending
     const fetchSignedUrlsForMessaging = async () => {
         try {
-            const filesData = selectedFiles.map((file) => ({
+            const filesData = selectedFiles.map((file: any) => ({
                 "fileName": file.name,
                 "fileType": file.type,
             }));
 
-            const jsonFiles = filesData?.map(item => JSON.stringify(item))
+            const jsonFiles = filesData?.map((item: any) => JSON.stringify(item))
             const response = await fetch(`https://feed.kotha.im/app/feed/getS3FileUploadUrl?files=[${jsonFiles}]&folder=messaging&uploaderId=${userInfo?.id}`, { method: 'GET' });
             const data = await response.json();
-            data?.map((url, index) => {
+            data?.map((url: any, index: any) => {
                 uploadFilesForMessaging(url, index)
                 setPreviewFiles([])
             })
@@ -93,7 +94,7 @@ function MessageForm() {
     };
 
     //handle file change
-    const handleFileChange = (event) => {
+    const handleFileChange = (event: any) => {
 
         const files = Array.from(event.target.files);
         setSelectedFiles(files);
@@ -112,9 +113,9 @@ function MessageForm() {
     };
 
     //delete preview image  
-    const deletePreviewImage = (index) => {
+    const deletePreviewImage = (index: any) => {
         const files = selectedFiles.splice(index, 1)
-        const newFilesArr = selectedFiles.filter((element) => element !== files[0]);
+        const newFilesArr = selectedFiles.filter((element: any) => element !== files[0]);
         setSelectedFiles(newFilesArr)
 
         //delete preview files
@@ -124,7 +125,7 @@ function MessageForm() {
     }
 
     //handle submit message
-    const handleSubmitMessage = (e) => {
+    const handleSubmitMessage = (e: any) => {
         e.preventDefault()
         if (showEmoji) {
             setShowEmoji(!showEmoji)
@@ -135,11 +136,11 @@ function MessageForm() {
 
         if (message?.message !== "" && message?.message !== null) {
             // console.log("message",message)
-            socket.current.emit('messageFromClient', message, (response) => {
+            socket.current.emit('messageFromClient', message, (response: any) => {
                 setMessage({ ...message, message: "" })
                 dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
                 dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
-                handleMessageStatus([response?._id])
+                handleMessageStatus([response?._id], socket, 1)
             })
         }
         // if (selectedFiles?.length) {
@@ -149,7 +150,7 @@ function MessageForm() {
     // console.log
 
     //handle send file message
-    const handleSendFileMessage = (url, index) => {
+    const handleSendFileMessage = (url: any, index: any) => {
         // console.log("url from submit file mesage ==>>", url)
         // socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response) => {
         //     console.log("response from client :", response)
@@ -160,7 +161,7 @@ function MessageForm() {
         //     setUploadUrls(uploadUrl)
         // })
         const tempUrl = previewFiles[index]
-        socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response) => {
+        socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response: any) => {
             console.log("response from share file :", response)
             dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: { ...response.sMessageObj, cloudfrontUrl: tempUrl } })
             dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
@@ -169,13 +170,13 @@ function MessageForm() {
     // console.log(stickersCategories)
 
     //add emoji in message
-    const addEmoji = (emoji) => {
+    const addEmoji = (emoji: any) => {
         const msg = message?.message + emoji
         setMessage({ ...message, message: msg });
     }
 
     //handle key press send message and line break
-    const handleKeyPress = (event) => {
+    const handleKeyPress = (event: any) => {
         if (event.ctrlKey && event.key === 'Enter') {
             const msg = message?.message + '\n'
             setMessage({ ...message, message: msg });
@@ -197,18 +198,18 @@ function MessageForm() {
         recorderControls.startRecording()
     }
 
-    const blobToFile = (blob, fileName) => {
+    const blobToFile = (blob: any, fileName: any) => {
         const file = new File([blob], fileName, { type: blob.type });
         return file;
     };
 
-    const handleSendVoiceMessage = (event) => {
+    const handleSendVoiceMessage = (event: any) => {
         recorderControls.stopRecording()
         setSendEvent({ event, sending: true })
     }
 
     //send voice message
-    const addAudioElement = async (blob) => {
+    const addAudioElement = async (blob: any) => {
         if (sendEvent) {
             const file = await blobToFile(blob, `${new Date().toString()}_voice.webm`)
             const filesData = [{
@@ -222,7 +223,7 @@ function MessageForm() {
             const data = await response.json();
             if (response) {
                 setShowVoiceForm(false)
-                data?.map(async (url) => {
+                data?.map(async (url: any) => {
                     const myHeaders = new Headers({ 'Content-Type': file?.type });
                     const response = await fetch(url?.signed_request, {
                         method: 'PUT',
@@ -234,7 +235,7 @@ function MessageForm() {
                             dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
                             dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
                             setSendEvent(null)
-                            handleMessageStatus([response?._id])
+                            handleMessageStatus([response?._id], socket, 1)
                         })
                     }
                 })
@@ -282,21 +283,15 @@ function MessageForm() {
     }
 
     const handlStickerClick = (sticker: any) => {
-        socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: sticker?.Url, message: "" }, (response) => {
+        socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: sticker?.Url, message: "" }, (response: any) => {
             dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
             dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
             setShowStickers(false)
-            handleMessageStatus([response?._id])
+            handleMessageStatus([response?._id], socket, 1)
         })
 
     }
 
-    const handleMessageStatus = (ids: string[]) => {
-        socket.current.emit('updateMessageStatusV2', {
-            _ids: ids,
-            currentStatus: 1
-        })
-    }
 
 
     return (
@@ -497,8 +492,8 @@ function MessageForm() {
     )
 }
 
-const StickerList = ({ category, handlStickerClick, ...props }) => {
-    const [{ currentChatUser, userInfo, socket }, dispatch] = useStateProvider()
+const StickerList = ({ category, handlStickerClick, ...props }: any) => {
+    const [{ currentChatUser, userInfo, socket }, dispatch]: any = useStateProvider()
     const [stickers, setStickers] = useState<any>([])
 
     const getStickers = async () => {

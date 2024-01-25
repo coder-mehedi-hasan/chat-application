@@ -9,14 +9,14 @@ import { Router, useRouter } from 'next/router';
 import { useMutation } from '@tanstack/react-query';
 
 export default function Home() {
-	const [{ userInfo }, dispatch] = useStateProvider()
+	const [{ userInfo }, dispatch]: any = useStateProvider()
 	const [loading, setLoading] = useState(false)
 
 	// const {} = useMutation()
 
 	const router = useRouter()
 
-	const login = async (user) => {
+	const login = async (user: any) => {
 		setLoading(!loading)
 		const res = await fetch("https://user-dev.kotha.im/mobile/oauth2/authorize?client_id=1235&response_type=code&redirect_uri=https%3A%2F%2Fuser-dev.kotha.im%2Fmobile%2Foauth2%2Fcode", {
 			method: "GET",
@@ -79,7 +79,7 @@ export default function Home() {
 					user?.map(item => {
 						return (
 							<Card style={{ width: '18rem' }} key={item?.id}>
-								<Card.Img variant="top" src={item?.image} style={{maxWidth:"200px"}} className='img-fluid' />
+								<Card.Img variant="top" src={item?.image} style={{ maxWidth: "200px" }} className='img-fluid' />
 								<Card.Body>
 									<Card.Title>{item?.name}</Card.Title>
 									<Card.Text>

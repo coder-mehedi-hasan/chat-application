@@ -34,7 +34,7 @@ export default function ChattingHistory() {
         //     // console.log(e)
         // }
     }
-    console.log("otherMessages", otherMessages)
+    // console.log("otherMessages", otherMessages)
 
     return (
         <>
