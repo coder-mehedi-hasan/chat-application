@@ -9,7 +9,7 @@ import { handleMessageStatus } from '../../utils/functions/message'
 import { IoIosArrowDown } from "react-icons/io";
 
 export default memo(function ChattingContainer() {
-    const [{ currentChatUser, userInfo, socket, messages, socketEvent }, dispatch]: any = useStateProvider()
+    const [{ currentChatUser, userInfo, socket, messages, socketEvent, otherMessages }, dispatch]: any = useStateProvider()
     const [senderReaction, setSenderReaction]: any = useState()
     const [receiverReaction, setReceiverReaction]: any = useState()
     const [messageReaction, setMessageReaction] = useState<Boolean>(false)
@@ -24,7 +24,8 @@ export default memo(function ChattingContainer() {
     const { isError, refetch, isSuccess, data: allChattingMessages, isFetching, isLoading, isRefetching } = useQuery({
         queryKey: ["fetch latest messages"],
         queryFn: () => getAllMessages(Math.floor(skip * perPage), perPage),
-        enabled: !!currentChatUser
+        enabled: !!currentChatUser,
+        staleTime: 1
     })
 
     const getAllMessages = async (skip: any, limit: any) => {
@@ -101,7 +102,6 @@ export default memo(function ChattingContainer() {
             }
             const isAtBottom = container.scrollTop + container.clientHeight >= container.scrollHeight - window.innerHeight;
             if (isAtBottom) {
-                console.log('Scroll bar is at the bottom');
                 setScrollBarPositionUp(false)
             } else {
                 setScrollBarPositionUp(true)
@@ -166,7 +166,10 @@ export default memo(function ChattingContainer() {
                     })
                     containerRef?.current?.scrollIntoView();
                 } else {
-                    dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: response.sMessageObj })
+                    console.log(otherMessages)
+                    const newOtherMessages = otherMessages?.filter((msg: any) => msg?._messageToUserID !== response.sMessageObj?.messageToUserID)
+                    // dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: response.sMessageObj })
+                    dispatch({ type: reducerCases.SET_OTHERS_MESSAGE, otherMessages: [...[response.sMessageObj], ...newOtherMessages] })
                 }
             })
             return () => {
@@ -245,7 +248,7 @@ export default memo(function ChattingContainer() {
                 }
             </div>
             {
-                isLoading || isRefetching || isFetching || !isSuccess ?
+                scrollBarPositionUp && isLoading || isRefetching || isFetching || !isSuccess ?
                     <div className='messages-overlay-loading' style={{ height: "100% !important" }}>
                         <div className="spinner-border loading" role="status">
                             <span className="visually-hidden"></span>
@@ -260,10 +263,14 @@ export default memo(function ChattingContainer() {
                         d-flex justify-content-center align-items-center
                         ${scrollBarPositionUp ? "d-block" : "d-none"}
                     `}
-                    onClick={() => messagesRef?.current?.scrollIntoView()}
+                    onClick={(e) => {
+                        e.preventDefault()
+                        containerRef?.current?.scrollIntoView();
+                        messagesRef?.current?.scrollIntoView();
+                    }}
                 >
                     <IoIosArrowDown
-                        style={{ fontSize: "20px" }}
+                        style={{ fontSize: "25px" }}
                         className="brand-color"
                     />
                 </div>
