@@ -183,8 +183,8 @@ export default function ChattingContainer() {
     useEffect(() => {
         if (socket.current && socketEvent) {
             socket.current.on('clientToClientMessage', (response: any) => {
-                console.log("currentChatUserId",currentChatUserId)
-                return
+                // console.log("currentChatUserId",currentChatUserId)
+                // return
                 // console.log("checking", response?.sMessageObj.messageFromUserID, currentChatUser.id)
                 if (response.sMessageObj.messageFromUserID === currentChatUserId) {
                     dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
