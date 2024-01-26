@@ -28,11 +28,11 @@ export default function App({ Component, pageProps }: AppProps) {
 }
 
 
-export function Main({ Component, pageProps }) {
+export function Main({ Component, pageProps }: any) {
 	const [lat, setLat] = useState<any>()
 	const [lon, setLon] = useState<any>()
-	const [{ currentChatUser, userInfo, current_location, messages, socketEvent }, dispatch] = useStateProvider()
-	const socket = useRef()
+	const [{ currentChatUser, userInfo, current_location, messages, socketEvent }, dispatch]: any = useStateProvider()
+	const socket: any = useRef()
 
 	const getLocation = () => {
 		if ('geolocation' in navigator) {
@@ -81,18 +81,23 @@ export function Main({ Component, pageProps }) {
 
 			// console.log("connection",io(connectionKey))
 			dispatch({ type: reducerCases.SET_SOCKET, socket: socket })
-			socket.current.on('onlineClient', (online) => {
+			socket.current.on('onlineClient', (online: any) => {
 				// console.log({ online })
 			})
-			socket.current.on('onlineClientList', (onlineList) => {
+			socket.current.on('onlineClientList', (onlineList: any) => {
 				// console.log({ onlineList })
 			})
+
 		}
-		// return () => {
-		//     if (socket.current) {
-		//         socket.current.disconnect();
-		//     }
-		// };
+		return () => {
+		    if (socket.current) {
+		        socket.current.off('onlineClientList');
+		        socket.current.off('onlineClient');
+		    }
+		};
+
+
+
 	}, [userInfo, current_location, dispatch]);
 
 	return (

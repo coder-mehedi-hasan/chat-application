@@ -1,13 +1,14 @@
 "use client"
-import React, { useEffect, useRef, useState } from 'react'
+import React, { memo, useEffect, useRef, useState } from 'react'
 import SenderMessages from '../Messages/SenderMessage'
 import ReceiverMessages from '../Messages/ReceiverMessage'
 import { useStateProvider } from '../../context/StateContext'
 import { reducerCases } from '../../context/constant'
 import { useQuery } from '@tanstack/react-query'
 import { handleMessageStatus } from '../../utils/functions/message'
+import { IoIosArrowDown } from "react-icons/io";
 
-export default function ChattingContainer() {
+export default memo(function ChattingContainer() {
     const [{ currentChatUser, userInfo, socket, messages, socketEvent }, dispatch]: any = useStateProvider()
     const [senderReaction, setSenderReaction]: any = useState()
     const [receiverReaction, setReceiverReaction]: any = useState()
@@ -16,15 +17,14 @@ export default function ChattingContainer() {
     const containerRef: any = useRef(null)
     const [skip, setSkip] = useState<number>(0);
     const [perPage, setPerPage] = useState<number>(50)
-    const [scrollBarPos, setScrollBarPos] = useState<any>()
+    const [scrollBarPositionUp, setScrollBarPositionUp] = useState<boolean>(false)
     const [statusLastMessage, setStatusLastMessage] = useState<any>([]);
     const [currentChatUserId, setCurrentChatUserId] = useState(null)
-    // console.log("currentChatUser",{currentChatUserId})
-
 
     const { isError, refetch, isSuccess, data: allChattingMessages, isFetching, isLoading, isRefetching } = useQuery({
         queryKey: ["fetch latest messages"],
-        queryFn: () => getAllMessages(Math.floor(skip * perPage), perPage)
+        queryFn: () => getAllMessages(Math.floor(skip * perPage), perPage),
+        enabled: !!currentChatUser
     })
 
     const getAllMessages = async (skip: any, limit: any) => {
@@ -42,12 +42,15 @@ export default function ChattingContainer() {
 
     useEffect(() => {
         socket.current.on("editMessage", (res: any) => {
-            // console.log(res)
             if (res) {
                 setMessageReaction(!messageReaction)
             }
         })
+        return () => {
+            socket.current.off("editMessage")
+        }
     })
+
     const handleReactionSend = (messageId: string, reactionName: string, sendingType: boolean) => {
         let params: any = {
             "_id": messageId,
@@ -69,13 +72,9 @@ export default function ChattingContainer() {
                 }
             }
         }
-
-        //         console.log(params)
-        // return
         socket.current.emit("editMessage", params
             , (err: any, res: any) => {
                 if (!err) {
-                    // console.log(res)
                     setSenderReaction(res)
                     setMessageReaction(!messageReaction)
                 }
@@ -85,45 +84,27 @@ export default function ChattingContainer() {
 
     useEffect(() => {
         socket.current.on('updateReceiverMessageStatusV2', function (data: any) {
-            // console.log('on, updateReceiverMessageStatusV2', data);
         });
+
+        return () => {
+            socket.current.off("updateReceiverMessageStatusV2")
+        }
     })
-    // useEffect(() => {
-    //     messagesRef?.current?.scrollIntoView();
-    // });
-
-    // useEffect(() => {
-    //     const handleScroll = () => {
-    //         const container = containerRef.current;
-    //         if (container) {
-    //           const isAtBottom = container.scrollTop + container.clientHeight === container.scrollHeight;
-    //           if (isAtBottom) {
-    //             // When the container is scrolled to the bottom, load more data
-    //             // setTest(pre=> pre + 1)
-    //           }
-    //         }
-    //       };
-
-
-    //     // Add event listener for scroll
-    //     containerRef.current.addEventListener('scroll', handleScroll);
-
-    //     // Remove event listener on component unmount
-    //     return () => {
-    //         containerRef.current.removeEventListener('scroll', handleScroll);
-    //     };
-    // }, []);
-
 
     const handleScroll = () => {
         const container: any = containerRef.current;
         if (container) {
             const isAtTop = container.scrollTop === 0;
             if (isAtTop && !isRefetching) {
-                // if (socketEvent) {
                 dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: false })
-                // }
                 setSkip(pre => pre + 1);
+            }
+            const isAtBottom = container.scrollTop + container.clientHeight >= container.scrollHeight - window.innerHeight;
+            if (isAtBottom) {
+                console.log('Scroll bar is at the bottom');
+                setScrollBarPositionUp(false)
+            } else {
+                setScrollBarPositionUp(true)
             }
         }
     };
@@ -147,15 +128,12 @@ export default function ChattingContainer() {
     }, [currentChatUser?.id])
 
     useEffect(() => {
-        // console.log("set event firing")
         if (isSuccess && allChattingMessages?.length) {
             const reversed = [...allChattingMessages]?.reverse();
             const unseenMessages = reversed?.filter((item: any) => item?.messageStatus !== 3)
             const unseenIds = unseenMessages?.filter((item: any) => item?.messageFrom == currentChatUser?.id)?.map((item: any) => item?._id)
-            // console.log("unseenIds",unseenIds)
             handleMessageStatus(unseenIds, socket, 3)
             const newMessages = reversed?.map(item => {
-                // console.log("message history", item)
                 return {
                     ...item,
                     message: item?.messageBody,
@@ -172,32 +150,22 @@ export default function ChattingContainer() {
         }
     }, [isFetching, isLoading])
 
-    // if (isLoading) {
-    //     messagesRef?.current?.scrollIntoView();
-    // }
-
     useEffect(() => {
         refetch()
     }, [skip])
-    
+
     useEffect(() => {
         if (socket.current && socketEvent) {
             socket.current.on('clientToClientMessage', (response: any) => {
-                // console.log("currentChatUserId",currentChatUserId)
-                // return
-                // console.log("checking", response?.sMessageObj.messageFromUserID, currentChatUser.id)
-                if (response.sMessageObj.messageFromUserID === currentChatUserId) {
+
+                if (response.sMessageObj.messageFromUserID == currentChatUserId) {
                     dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
-                    // console.log("checking", "Own Message")
                     socket.current.emit('updateMessageStatusV2', {
                         _ids: [response?.sMessageObj?._id],
                         currentStatus: 3
                     })
-                    // messagesRef?.current?.scrollIntoView();
                     containerRef?.current?.scrollIntoView();
-                }
-                else {
-                    // console.log("checking", "Others Message")
+                } else {
                     dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: response.sMessageObj })
                 }
             })
@@ -205,14 +173,14 @@ export default function ChattingContainer() {
                 if (socket.current) {
                     socket.current.off('clientToClientMessage');
                     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: false })
-                    currentChatUser
                 }
             };
         }
-    }, [socket.current, dispatch, socketEvent]);
+    }, [socket.current, dispatch, socketEvent, currentChatUserId]);
+
+
 
     useEffect(() => {
-        // console.log("socketEvent", socketEvent)
         if (socketEvent) {
             containerRef?.current?.scrollIntoView();
             messagesRef?.current?.scrollIntoView();
@@ -240,17 +208,6 @@ export default function ChattingContainer() {
             return find?.currentStatus
         }
         return message?.messageStatus
-        // if (find && find?.currentStatus === 1 || data?.messageStatus === 1) {
-        //     return <span className='text-dark fs-6 me-1'><BsCheckLg /></span>
-        // }
-        // else if (find && find?.currentStatus === 3 || data?.messageStatus === 3) {
-        //     return <span className='text-dark fs-6 brand-color me-1'><BsCheckAll /></span>
-        //     return (
-        //         <div style={{ height: "14px", width: "14px", borderRadius: "50%", overflow: "hidden", }}>
-        //             <img src={currentChatUser?.image} alt={currentChatUser?.name} className='w-100 h-100' style={{ height: "14px", width: "14px" }} />
-        //         </div>
-        //     )
-        // }
     }
 
 
@@ -258,19 +215,19 @@ export default function ChattingContainer() {
         socket.current.on('updateSenderMessageStatusV2', (data: any) => {
             setStatusLastMessage(data)
         });
+
+        return () => {
+            socket.current.off("updateSenderMessageStatusV2")
+        }
     })
-    // console.log(messages)
 
     return (
         <>
             <div style={{ height: "100%", padding: "", scrollBehavior: `${skip === 0 ? "auto" : "auto"}`, overflowY: "scroll" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll scrollbar_visible_y message-container-bg' ref={containerRef}>
                 {
-                    userInfo && messages ? messages?.map((item: any, index: any) => {
+                    userInfo && messages?.length ? messages?.map((item: any, index: any) => {
                         const isLastMessage = (messages?.length - 1) === index
                         const status = getMessageStatus(item)
-                        // if (isLastMessage) {
-                        //     console.log("message chat status", status)
-                        // }
                         return (
                             <div key={index} ref={messagesRef}>
                                 {
@@ -280,10 +237,11 @@ export default function ChattingContainer() {
                                         :
                                         <ReceiverMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction} />
                                 }
-                                {/* <span className='text-danger'>{index + 1}</span> */}
                             </div>
                         )
-                    }) : ""
+                    }) : <div>
+                        YOU HAVE NO MESSAGE
+                    </div>
                 }
             </div>
             {
@@ -295,6 +253,22 @@ export default function ChattingContainer() {
                     </div>
                     : ""
             }
+            {
+                <div
+                    className={`
+                        cursor-pointer position-absolute scrollbar-controller 
+                        d-flex justify-content-center align-items-center
+                        ${scrollBarPositionUp ? "d-block" : "d-none"}
+                    `}
+                    onClick={() => messagesRef?.current?.scrollIntoView()}
+                >
+                    <IoIosArrowDown
+                        style={{ fontSize: "20px" }}
+                        className="brand-color"
+                    />
+                </div>
+            }
+
         </>
     )
-}
+})

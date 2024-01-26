@@ -4,9 +4,9 @@ import { BsArrowLeft } from 'react-icons/bs'
 import { useMediaQuery } from 'react-responsive'
 import { useStateProvider } from '../../context/StateContext'
 
-export default function ChatHeader({ modal }) {
+export default function ChatHeader({ modal }: any) {
     const isMobileWidth = useMediaQuery({ maxWidth: 576 })
-    const [{ currentChatUser }] = useStateProvider()
+    const [{ currentChatUser }]: any = useStateProvider()
 
 
     return (

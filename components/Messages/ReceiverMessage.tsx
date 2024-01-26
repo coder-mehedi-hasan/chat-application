@@ -61,6 +61,10 @@ export default function ReceiverMessages({ data, handleReactionSend, isReaction 
         socket.current.on('updateReceiverMessageStatusV2', function (data: any) {
             // console.log('on, updateReceiverMessageStatusV2', data);
         });
+
+        return () => {
+            socket.current.off("updateReceiverMessageStatusV2")
+        }
     })
 
     return (

@@ -86,6 +86,10 @@ function SenderMessages({ data, handleReactionSend, isReaction, isLastMessage, s
                 setStatusLastMessage(data)
             }
         });
+
+        return () => {
+            socket.current.off("updateSenderMessageStatusV2")
+        }
     })
 
     const getMessageStatus = (status: any) => {
