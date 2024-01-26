@@ -82,10 +82,10 @@ export function Main({ Component, pageProps }) {
 			// console.log("connection",io(connectionKey))
 			dispatch({ type: reducerCases.SET_SOCKET, socket: socket })
 			socket.current.on('onlineClient', (online) => {
-				console.log({ online })
+				// console.log({ online })
 			})
 			socket.current.on('onlineClientList', (onlineList) => {
-				console.log({ onlineList })
+				// console.log({ onlineList })
 			})
 		}
 		// return () => {

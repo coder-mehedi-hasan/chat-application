@@ -13,6 +13,7 @@ export default function ChatListItem({ user }: any) {
         dispatch({ type: reducerCases.SET_OTHERS_MESSAGE, otherMessages: removeMessageFromOthers })
 
     }
+    // console.log("otherMessages",otherMessages)
 
     return (
         <div style={{ padding: "10px 5px", height: "60px", cursor: "pointer" }} className={`${(currentChatUser?.id === user?.id) && "current_user_active"}`} onClick={handleClickContact} >

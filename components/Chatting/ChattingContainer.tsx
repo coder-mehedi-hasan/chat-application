@@ -1,5 +1,5 @@
 "use client"
-import React, { memo, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import SenderMessages from '../Messages/SenderMessage'
 import ReceiverMessages from '../Messages/ReceiverMessage'
 import { useStateProvider } from '../../context/StateContext'
@@ -7,7 +7,7 @@ import { reducerCases } from '../../context/constant'
 import { useQuery } from '@tanstack/react-query'
 import { handleMessageStatus } from '../../utils/functions/message'
 
-export default memo(function ChattingContainer() {
+export default function ChattingContainer() {
     const [{ currentChatUser, userInfo, socket, messages, socketEvent }, dispatch]: any = useStateProvider()
     const [senderReaction, setSenderReaction]: any = useState()
     const [receiverReaction, setReceiverReaction]: any = useState()
@@ -18,6 +18,8 @@ export default memo(function ChattingContainer() {
     const [perPage, setPerPage] = useState<number>(50)
     const [scrollBarPos, setScrollBarPos] = useState<any>()
     const [statusLastMessage, setStatusLastMessage] = useState<any>([]);
+    const [currentChatUserId, setCurrentChatUserId] = useState(null)
+    // console.log("currentChatUser",{currentChatUserId})
 
 
     const { isError, refetch, isSuccess, data: allChattingMessages, isFetching, isLoading, isRefetching } = useQuery({
@@ -141,6 +143,7 @@ export default memo(function ChattingContainer() {
     useEffect(() => {
         setSkip(0)
         refetch()
+        setCurrentChatUserId(currentChatUser?.id)
     }, [currentChatUser?.id])
 
     useEffect(() => {
@@ -148,9 +151,9 @@ export default memo(function ChattingContainer() {
         if (isSuccess && allChattingMessages?.length) {
             const reversed = [...allChattingMessages]?.reverse();
             const unseenMessages = reversed?.filter((item: any) => item?.messageStatus !== 3)
-            const unseenIds = unseenMessages?.filter((item:any) => item?.messageFrom == currentChatUser?.id)?.map((item: any) => item?._id)
+            const unseenIds = unseenMessages?.filter((item: any) => item?.messageFrom == currentChatUser?.id)?.map((item: any) => item?._id)
             // console.log("unseenIds",unseenIds)
-            handleMessageStatus(unseenIds,socket,3)
+            handleMessageStatus(unseenIds, socket, 3)
             const newMessages = reversed?.map(item => {
                 // console.log("message history", item)
                 return {
@@ -176,17 +179,16 @@ export default memo(function ChattingContainer() {
     useEffect(() => {
         refetch()
     }, [skip])
-
-
+    
     useEffect(() => {
         if (socket.current && socketEvent) {
             socket.current.on('clientToClientMessage', (response: any) => {
-                // console.log("responsefromreciver", response)
-                if (response.sMessageObj?.messageFromUserID !== currentChatUser?.id) {
-                    dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: response.sMessageObj })
-                }
-                else {
+                console.log("currentChatUserId",currentChatUserId)
+                return
+                // console.log("checking", response?.sMessageObj.messageFromUserID, currentChatUser.id)
+                if (response.sMessageObj.messageFromUserID === currentChatUserId) {
                     dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
+                    // console.log("checking", "Own Message")
                     socket.current.emit('updateMessageStatusV2', {
                         _ids: [response?.sMessageObj?._id],
                         currentStatus: 3
@@ -194,11 +196,16 @@ export default memo(function ChattingContainer() {
                     // messagesRef?.current?.scrollIntoView();
                     containerRef?.current?.scrollIntoView();
                 }
+                else {
+                    // console.log("checking", "Others Message")
+                    dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: response.sMessageObj })
+                }
             })
             return () => {
                 if (socket.current) {
                     socket.current.off('clientToClientMessage');
                     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: false })
+                    currentChatUser
                 }
             };
         }
@@ -252,7 +259,7 @@ export default memo(function ChattingContainer() {
             setStatusLastMessage(data)
         });
     })
-console.log(messages)
+    // console.log(messages)
 
     return (
         <>
@@ -290,4 +297,4 @@ console.log(messages)
             }
         </>
     )
-})
+}

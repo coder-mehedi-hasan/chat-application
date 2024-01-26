@@ -19,7 +19,7 @@ export default function Chat() {
 const StickerCategories = () => {
     const [categories, setCategories] = useState([]);
     const [{ userInfo }, dispatch] = useStateProvider()
-    console.log(userInfo)
+    // console.log(userInfo)
     useEffect(() => {
         fetch('https://user-dev.kotha.im/mobile/api/stickers/categories', {
             method: 'GET',

@@ -162,7 +162,7 @@ function MessageForm() {
         // })
         const tempUrl = previewFiles[index]
         socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response: any) => {
-            console.log("response from share file :", response)
+            // console.log("response from share file :", response)
             dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: { ...response.sMessageObj, cloudfrontUrl: tempUrl } })
             dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
         })
