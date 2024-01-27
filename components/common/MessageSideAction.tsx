@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { Badge, Button, Image, Overlay, OverlayTrigger, Popover, Tooltip } from 'react-bootstrap'
+import React, { useState, useRef } from 'react'
+import {  Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { BsEmojiSmile, BsFillReplyFill, BsPlus, BsThreeDotsVertical } from 'react-icons/bs'
 import { useStateProvider } from '../../context/StateContext';
 import { reactionEmojis } from '../../utils/constant';
@@ -9,7 +9,6 @@ export default function MessageSideAction({ message, handleReactionSend }: any) 
     const [showReaction, setShowReaction] = useState(false)
     const more = useRef(null);
     const emoji = useRef(null);
-    const [{ currentChatUser, socket, userInfo }] = useStateProvider()
 
     const innerActions = (ac) => {
         if (ac === "more") {
@@ -122,21 +121,6 @@ export default function MessageSideAction({ message, handleReactionSend }: any) 
                                     )
                                 })
                             }
-                            {/* <div style={{ margin: "0 2px", cursor: "pointer" }}>
-                                <img src="https://z-p3-static.xx.fbcdn.net/images/emoji.php/v9/te7/1.5/32/1f606.png" height={32} width={32} alt="" />
-                            </div>
-                            <div style={{ margin: "0 2px", cursor: "pointer" }}>
-                                <img src="	https://z-p3-static.xx.fbcdn.net/images/emoji.php/v9/td4/1.5/32/1f62e.png" height={32} width={32} alt="" />
-                            </div>
-                            <div style={{ margin: "0 2px", cursor: "pointer" }}>
-                                <img src="	https://z-p3-static.xx.fbcdn.net/images/emoji.php/v9/t21/1.5/32/1f622.png" height={32} width={32} alt="" />
-                            </div>
-                            <div style={{ margin: "0 2px", cursor: "pointer" }}>
-                                <img src="	https://z-p3-static.xx.fbcdn.net/images/emoji.php/v9/t1f/1.5/32/1f620.png" height={32} width={32} alt="" />
-                            </div>
-                            <div style={{ margin: "0 2px", cursor: "pointer" }}>
-                                <img src="https://z-p3-static.xx.fbcdn.net/images/emoji.php/v9/tf/1.5/32/1f44d.png" height={32} width={32} alt="" />
-                            </div> */}
                             <div style={{ margin: "0 2px", cursor: "pointer", height: "32px", width: "32px", borderRadius: "50%", background: "#c4c4c7", display: "flex", justifyContent: "center", alignItems: "center" }} >
                                 <BsPlus style={{ fontSize: "15px" }} />
                             </div>

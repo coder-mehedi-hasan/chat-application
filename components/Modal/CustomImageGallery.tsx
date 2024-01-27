@@ -6,9 +6,9 @@ import { useEffect, useState } from "react";
 import { getFileExtensionAndType } from '../../utils/getFileExtensionAndType';
 import { fileTypes } from "../../utils/constant";
 
-const CustomImageGallery = ({ onClick, image }) => {
+const CustomImageGallery = ({ onClick, image }:any) => {
     const [galleryImages, setGalleryImages] = useState<any>([])
-    const [{ messages }] = useStateProvider()
+    const [{ messages }] :any= useStateProvider()
 
     useEffect(() => {
         const images = []

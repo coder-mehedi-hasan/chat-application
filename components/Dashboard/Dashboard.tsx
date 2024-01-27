@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useState } from 'react'
 import HomeChat from '../common/HomeChat';
 import ChattingInterFace from '../Chatting/ChattingInterFace';
 import { useMediaQuery } from 'react-responsive'

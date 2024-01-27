@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import SearchBox from '../Dashboard/SearchBox'
 import user from '../../fake_data/user.json';
 import ActiveUser from '../ActiveUser';
-import { BsArrowRight, BsFillXCircleFill, BsPencilFill } from 'react-icons/bs';
+import { BsArrowRight } from 'react-icons/bs';
 import TopNavBar from '../common/TopNavBar';
 import ChatListItem from './ChatListItem';
 import { useStateProvider } from '../../context/StateContext';
@@ -13,8 +13,6 @@ export default function ChattingHistory() {
     const [users, setUsers] = useState<any>(user)
     const [{ userInfo, otherMessages }, dispatch]: any = useStateProvider()
     const activeUserRef = useRef(null)
-    const [pageX, setPageX] = useState(0)
-    const [mouseClick, setMouseClick] = useState(false)
 
     const handleGrabbing = (e: any) => {
     }

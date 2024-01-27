@@ -3,8 +3,7 @@ import { useStateProvider } from '../../context/StateContext';
 import { identifyTextOrLink } from '../../utils/identifyTextOrLink';
 import Link from 'next/link';
 
-export default function TextContent({ content, isSender, message }) {
-    const [{ userInfo }, dispatch] = useStateProvider()
+export default function TextContent({ content, isSender, message }:any) {
 
     const containerStyle = {
         maxWidth: "564px",

@@ -1,10 +1,6 @@
 import React from 'react'
 import TopNavBar from '../common/TopNavBar'
-import SearchBox from '../Dashboard/SearchBox'
-import ActiveUser from '../ActiveUser'
 import user from '../../fake_data/user.json';
-import { BsArrowRight } from 'react-icons/bs';
-import UserInfoBox from '../common/UserInfoBox';
 
 export default function CallsHistory() {
     return (

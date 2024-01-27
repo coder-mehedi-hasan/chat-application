@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Button, Form, Image, Overlay, Tooltip } from 'react-bootstrap'
-import { BsX, BsImage, BsEmojiSmile, BsMicFill, BsFillPlayFill, BsPauseFill, BsFillXCircleFill, BsChevronRight, BsChevronLeft, BsChevronDown } from "react-icons/bs";
+import { BsX, BsImage, BsEmojiSmile, BsMicFill, BsFillPlayFill, BsPauseFill, BsFillXCircleFill, BsChevronRight, BsChevronLeft } from "react-icons/bs";
 import Toast from 'react-bootstrap/Toast';
 import { useMediaQuery } from 'react-responsive';
 import data from '@emoji-mart/data'
@@ -10,8 +10,6 @@ import { reducerCases } from '../../context/constant';
 import { AudioRecorder, useAudioRecorder } from 'react-audio-voice-recorder';
 import { AiOutlineSend } from "react-icons/ai";
 import { PiStickerFill } from "react-icons/pi";
-import { HiGif } from "react-icons/hi2";
-import useGetStickers from '../../utils/useGetStickers';
 import useGenerateRandomColor from '../../utils/useRandomColorGenerate';
 import { apiUrl } from '../../utils/constant';
 import { isFileIsImage } from '../../utils/getFileType';
@@ -33,8 +31,6 @@ function MessageForm() {
     const recorderControls = useAudioRecorder()
     const [sendEvent, setSendEvent] = useState<any>(null)
     const [showStickers, setShowStickers] = useState(false);
-    const [showGifs, setShowGifs] = useState(false);
-    const { color, generateColor } = useGenerateRandomColor()
     const [stickersCategories, setStickersCategory] = useState<any>([])
     const [selectCategory, setSelectCategory] = useState<any>(null);
 
@@ -61,13 +57,11 @@ function MessageForm() {
             });
             if (response) {
                 socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response: any) => {
-                    // console.log("response from share file :", response)
                     dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
                     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
                     handleMessageStatus([response?._id], socket, 1)
                 })
             }
-
         } catch (err) {
             console.log(err)
         }
@@ -162,12 +156,10 @@ function MessageForm() {
         // })
         const tempUrl = previewFiles[index]
         socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response: any) => {
-            // console.log("response from share file :", response)
             dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: { ...response.sMessageObj, cloudfrontUrl: tempUrl } })
             dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
         })
     }
-    // console.log(stickersCategories)
 
     //add emoji in message
     const addEmoji = (emoji: any) => {
@@ -181,7 +173,6 @@ function MessageForm() {
             const msg = message?.message + '\n'
             setMessage({ ...message, message: msg });
             event.preventDefault();
-
         }
         else if (event.key === 'Enter') {
             handleSubmitMessage(event)
@@ -267,7 +258,6 @@ function MessageForm() {
         getStickersCategory()
     }, [currentChatUser])
 
-    // console.log({ selectedFiles })
     const RenderPreviewImage = (src: string, index: number) => {
         const isImage = isFileIsImage(selectedFiles[index])
         if (isImage) {
@@ -360,11 +350,6 @@ function MessageForm() {
                                     <PiStickerFill className="brand-color" />
                                 </div>
                             </div>
-                            {/* <div>
-                                <div className='text-dark side-action-form' onClick={() => setShowGifs(!showGifs)} ref={gifs}>
-                                    <HiGif className="brand-color" />
-                                </div>
-                            </div> */}
                             <div>
                                 <input multiple onChange={handleFileChange} type="file" className='d-none' id="share_gallery" onKeyDown={handleKeyPress} />
                             </div>
@@ -379,7 +364,6 @@ function MessageForm() {
                                                         <div key={index} className='mx-2 my-3 position-relative'>
                                                             <div style={{ height: isMobileWidth ? "16px" : "20px", width: isMobileWidth ? "16px" : "20px", borderRadius: "50%", position: "absolute", top: "-5px", right: "-5px", cursor: "pointer", fontSize: isMobileWidth ? "14px" : "18px" }} className='text-dark bg-white d-flex justify-content-center align-items-center' onClick={() => deletePreviewImage(index)}><BsX /></div>
                                                             <div style={{ height: isMobileWidth ? 65 : 80, width: isMobileWidth ? 65 : 80, overflow: "hidden" }} className='rounded'>
-                                                                {/* <Image src={item} className='img-fluid' /> */}
                                                                 {RenderPreviewImage(item, index)}
                                                             </div>
                                                         </div>

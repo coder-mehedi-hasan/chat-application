@@ -3,13 +3,11 @@ import { Image } from 'react-bootstrap'
 import { useStateProvider } from '../context/StateContext'
 import { reducerCases } from '../context/constant'
 
-export default function ActiveUser({ user }) {
-    const [{ currentChatUser, userInfo }, dispatch] = useStateProvider()
+export default function ActiveUser({ user }:any) {
+    const [{ currentChatUser, userInfo }, dispatch]:any = useStateProvider()
 
     const handleClickContact = () => {
-        // if (currentChatUser?.id === data?.id) {
         dispatch({ type: reducerCases.CHANGE_CURRENT_CHAT_USER, user: user })
-        // }
     }
     return (
         <div style={{ padding: "0 5px" }} className='d-flex flex-column justify-content-center' onClick={handleClickContact}>

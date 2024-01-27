@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import Image50X50 from './Image50X50';
-import { Form, Image, InputGroup } from 'react-bootstrap';
+import React from 'react'
+import {  Image } from 'react-bootstrap';
 
-export default function UserHead({ sideBarHandler }) {
+export default function UserHead({ sideBarHandler }: any) {
 
     return (
         <div className='my-2'>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef, useContext } from 'react'
-import { Button, Modal } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react'
+import { Modal } from 'react-bootstrap';
 import MessageForm from './MessageForm';
 import { useMediaQuery } from 'react-responsive'
 import ChatHeader from './ChatHeader';
@@ -23,8 +23,6 @@ export default function ChattingInterFace() {
             handleShow()
         }
     }, [currentChatUser, isMobileWidth])
-
-    // console.log("current user from chat interface: ==>>", currentChatUser)
 
     return (
         <>

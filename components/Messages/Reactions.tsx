@@ -6,9 +6,8 @@ import { useStateProvider } from "../../context/StateContext"
 
 
 
-const Reactions = ({ reaction, handleReactionSend }) => {
+const Reactions = ({ reaction, handleReactionSend }: any) => {
     const [show, setShow] = useState(false)
-    // console.log(reaction)
 
     return (
         <>
@@ -20,7 +19,6 @@ const Reactions = ({ reaction, handleReactionSend }) => {
             <Modal show={show} className='reaction-modal' onHide={() => setShow(!show)}>
                 <ListOfReactions messageId={reaction?.messageId} handleReactionSend={handleReactionSend} />
             </Modal>
-
         </>
     )
 }
@@ -35,8 +33,8 @@ const getReactions = (reactionName: any) => {
 }
 
 const ListOfReactions = ({ messageId, handleReactionSend }: any) => {
-    const [{ userInfo, socket }, dispatch] = useStateProvider()
-    const { refetch, isSuccess, data: reactions, isError } = useQuery({
+    const [{ userInfo, socket }, dispatch]: any = useStateProvider()
+    const { refetch, isSuccess, data: reactions, isError }: any = useQuery({
         queryKey: ["reaction list for modal"],
         queryFn: () => getReactionsApi()
     })
@@ -62,7 +60,7 @@ const ListOfReactions = ({ messageId, handleReactionSend }: any) => {
 
     return <div>
         {
-            reactions?.map(item => {
+            reactions?.map((item:any) => {
                 return (
                     <div key={item?._id}>
                         <div className="d-flex justify-content-between align-items-center">

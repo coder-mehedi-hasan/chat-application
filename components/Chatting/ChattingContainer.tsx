@@ -7,6 +7,7 @@ import { reducerCases } from '../../context/constant'
 import { useQuery } from '@tanstack/react-query'
 import { handleMessageStatus } from '../../utils/functions/message'
 import { IoIosArrowDown } from "react-icons/io";
+import { BsCheckAll, BsCheckLg } from 'react-icons/bs'
 
 export default memo(function ChattingContainer() {
     const [{ currentChatUser, userInfo, socket, messages, socketEvent, otherMessages }, dispatch]: any = useStateProvider()
@@ -93,7 +94,6 @@ export default memo(function ChattingContainer() {
     })
 
     const handleScroll = () => {
-
         const container: any = containerRef.current;
         if (container) {
             const isAtTop = container.scrollTop === 0;
@@ -229,6 +229,19 @@ export default memo(function ChattingContainer() {
         }
     })
 
+    const getMessageStatusRender = (status: any) => {
+        if (status === 1) {
+            return <span className='text-dark fs-6 me-1'><BsCheckLg /></span>
+        }
+        else if (status === 2) {
+            return <span className='text-dark fs-6 me-1'><BsCheckAll /></span>
+        }
+        else if (status === 3) {
+            return <span className='text-dark fs-6 brand-color me-1'><BsCheckAll /></span>
+        }
+
+    }
+
     return (
         <>
             <div style={{ height: "100%", padding: "", scrollBehavior: `${skip === 0 ? "auto" : "auto"}`, overflowY: "scroll" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll scrollbar_visible_y message-container-bg' ref={containerRef}>
@@ -238,13 +251,18 @@ export default memo(function ChattingContainer() {
                         const status = getMessageStatus(item)
                         return (
                             <div key={index} ref={messagesRef}>
-                                {
-                                    userInfo.id === item.messageFromUserID
-                                        ?
-                                        <SenderMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction} isLastMessage={isLastMessage} status={status} />
-                                        :
-                                        <ReceiverMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction} />
-                                }
+                                <div className="row my-3 w-100 message_content">
+                                    {
+                                        userInfo.id === item.messageFromUserID
+                                            ?
+                                            <SenderMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction}/>
+                                            :
+                                            <ReceiverMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction} />
+                                    }
+                                    <div className='d-flex justify-content-end'>
+                                        {isLastMessage ? getMessageStatusRender(parseInt(status)) : ""}
+                                    </div>
+                                </div>
                             </div>
                         )
                     }) : <div>

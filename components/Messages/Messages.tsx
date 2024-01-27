@@ -1,16 +1,16 @@
 import React, { useState } from 'react'
 import { Image } from 'react-bootstrap'
 import { useMediaQuery } from 'react-responsive'
-import { BsCheck2All, BsCheck2, BsCheckLg, BsCheckAll } from "react-icons/bs";
+import { BsCheckLg, BsCheckAll } from "react-icons/bs";
 import { useEffect } from 'react';
 import { useRef } from 'react';
 import { useContext } from 'react';
 import { MessageConsumer } from '../../context/messageContext';
 
-export default function Messages({ img, data }) {
+export default function Messages({ img, data }: any) {
   const isMediumWidth = useMediaQuery({ maxWidth: 768 })
   const isLargeWidth = useMediaQuery({ maxWidth: 992 })
-  const messageContext = useContext(MessageConsumer)
+  const messageContext: any = useContext<any>(MessageConsumer)
   const [del, setDel] = useState(false)
   const divRef = useRef()
 
