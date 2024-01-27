@@ -93,6 +93,7 @@ export default memo(function ChattingContainer() {
     })
 
     const handleScroll = () => {
+
         const container: any = containerRef.current;
         if (container) {
             const isAtTop = container.scrollTop === 0;
@@ -125,6 +126,11 @@ export default memo(function ChattingContainer() {
         setSkip(0)
         refetch()
         setCurrentChatUserId(currentChatUser?.id)
+        const timeoutId = setTimeout(() => {
+            refetch()
+        }, 30000);
+
+        return () => clearTimeout(timeoutId);
     }, [currentChatUser?.id])
 
     useEffect(() => {
@@ -166,7 +172,6 @@ export default memo(function ChattingContainer() {
                     })
                     containerRef?.current?.scrollIntoView();
                 } else {
-                    console.log(otherMessages)
                     const newOtherMessages = otherMessages?.filter((msg: any) => msg?._messageToUserID !== response.sMessageObj?.messageToUserID)
                     // dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: response.sMessageObj })
                     dispatch({ type: reducerCases.SET_OTHERS_MESSAGE, otherMessages: [...[response.sMessageObj], ...newOtherMessages] })
@@ -249,11 +254,13 @@ export default memo(function ChattingContainer() {
             </div>
             {
                 scrollBarPositionUp && isLoading || isRefetching || isFetching || !isSuccess ?
-                    <div className='messages-overlay-loading' style={{ height: "100% !important" }}>
-                        <div className="spinner-border loading" role="status">
-                            <span className="visually-hidden"></span>
+                    <>
+                        <div className='messages-overlay-loading' style={{ height: "100% !important" }}>
+                            <div className="spinner-border loading" role="status">
+                                <span className="visually-hidden"></span>
+                            </div>
                         </div>
-                    </div>
+                    </>
                     : ""
             }
             {

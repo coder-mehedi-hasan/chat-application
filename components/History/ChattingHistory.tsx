@@ -1,4 +1,5 @@
-import React, { useRef, useState } from 'react'
+"use client"
+import React, { useEffect, useRef, useState } from 'react'
 import SearchBox from '../Dashboard/SearchBox'
 import user from '../../fake_data/user.json';
 import ActiveUser from '../ActiveUser';
@@ -9,33 +10,27 @@ import { useStateProvider } from '../../context/StateContext';
 
 
 export default function ChattingHistory() {
-
+    const [users, setUsers] = useState<any>(user)
     const [{ userInfo, otherMessages }, dispatch]: any = useStateProvider()
     const activeUserRef = useRef(null)
     const [pageX, setPageX] = useState(0)
     const [mouseClick, setMouseClick] = useState(false)
 
     const handleGrabbing = (e: any) => {
-        // console.log(activeUserRef)
-        // console.log(e)
-        // setPageX(e.pageX)
-        // setMouseClick(true)
-
     }
 
     const handleOver = (e: any) => {
-        // if (mouseClick) {
-        //     if (e.pageX > pageX) {
-        //         activeUserRef.current.scrollLeft += 50
-        //     }
-        //     else if (e.pageX < pageX) {
-        //         activeUserRef.current.scrollLeft -= 50
-        //     }
-        //     // console.log(e)
-        // }
     }
-    console.log("otherMessages", otherMessages)
-    // console.log(current)
+
+    useEffect(() => {
+        if (otherMessages?.length) {
+            const topUsers = users?.find((user: any) => user?.id === otherMessages[0]?.messageFromUserID)
+            setUsers((users: any) => {
+                const filterdUsers = users?.filter((user: any) => user?.id !== topUsers?.id)
+                return [...[topUsers], ...filterdUsers]
+            })
+        }
+    }, [otherMessages])
 
     return (
         <>
@@ -47,7 +42,7 @@ export default function ChattingHistory() {
                 <div className='my-2'>
                     <div className='h-100 d-flex align-items-start active-users' style={{ overflow: "scroll", scrollBehavior: "smooth", transition: ".4s" }} ref={activeUserRef} onMouseOver={handleOver} onMouseDown={handleGrabbing}>
                         {
-                            user?.slice(0, 10)?.map((item, index) => {
+                            users?.slice(0, 10)?.map((item: any, index: number) => {
                                 return (
                                     <div key={index} className='active-users-wrapper'>
                                         {
@@ -59,7 +54,7 @@ export default function ChattingHistory() {
                             })
                         }
                         {
-                            user?.length > 10 ?
+                            users?.length > 10 ?
                                 <div style={{ paddingRight: "10px" }} className='d-flex justify-content-center'>
                                     <div style={{ width: "60px", height: "60px", borderRadius: "50%", overflow: "hidden" }} className='flex-column text-white d-flex justify-content-center align-items-center bg-secondary rounded-circle'>
                                         <BsArrowRight className="fs-4" />
@@ -72,7 +67,7 @@ export default function ChattingHistory() {
                 </div>
                 <div>
                     {
-                        user?.map(item => {
+                        users?.map((item: any) => {
                             return (
                                 <>
                                     {
