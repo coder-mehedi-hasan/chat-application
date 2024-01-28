@@ -223,10 +223,6 @@ export default memo(function ChattingContainer() {
         socket.current.on('updateSenderMessageStatusV2', (data: any) => {
             setStatusLastMessage(data)
         });
-
-        return () => {
-            socket.current.off("updateSenderMessageStatusV2")
-        }
     })
 
     const getMessageStatusRender = (status: any) => {
