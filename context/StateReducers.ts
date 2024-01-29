@@ -7,7 +7,8 @@ export const initialState = {
     socket: undefined,
     messages: [],
     socketEvent: false,
-    otherMessages:[]
+    otherMessages:[],
+    chatContainerRef:null
 }
 
 const reducer = (state:any, action:any) => {
@@ -57,6 +58,13 @@ const reducer = (state:any, action:any) => {
                 ...state,
                 otherMessages: action.otherMessages
             }
+         
+        case reducerCases.SET_CHAT_CONTAINER_REF:
+            return {
+                ...state,
+                chatContainerRef: action.chatContainerRef
+            }
+            
         default:
             return state;
     }

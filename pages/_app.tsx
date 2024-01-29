@@ -31,7 +31,7 @@ export default function App({ Component, pageProps }: AppProps) {
 export function Main({ Component, pageProps }: any) {
 	const [lat, setLat] = useState<any>()
 	const [lon, setLon] = useState<any>()
-	const [{ currentChatUser, userInfo, current_location, messages, socketEvent }, dispatch]: any = useStateProvider()
+	const [{ currentChatUser, userInfo, current_location, messages, socketEvent, otherMessages, chatContainerRef }, dispatch]: any = useStateProvider()
 	const socket: any = useRef()
 
 	const getLocation = () => {
@@ -90,15 +90,41 @@ export function Main({ Component, pageProps }: any) {
 
 		}
 		return () => {
-		    if (socket.current) {
-		        socket.current.off('onlineClientList');
-		        socket.current.off('onlineClient');
-		    }
+			if (socket.current) {
+				socket.current.off('onlineClientList');
+				socket.current.off('onlineClient');
+			}
 		};
 
 
 
 	}, [userInfo, current_location, dispatch]);
+
+	useEffect(() => {
+		// if (socket.current && socketEvent) {
+		socket?.current?.on('clientToClientMessage', (response: any) => {
+			// console.log("recieved message",response)
+			if (response.sMessageObj.messageFromUserID == currentChatUser?.id) {
+				dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
+				socket.current.emit('updateMessageStatusV2', {
+					_ids: [response?.sMessageObj?._id],
+					currentStatus: 3
+				})
+				chatContainerRef?.current?.scrollIntoView();
+			} else {
+				const newOtherMessages = otherMessages?.filter((msg: any) => msg?._messageToUserID !== response.sMessageObj?.messageToUserID)
+				// dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: response.sMessageObj })
+				dispatch({ type: reducerCases.SET_OTHERS_MESSAGE, otherMessages: [...[response.sMessageObj], ...newOtherMessages] })
+			}
+		})
+		return () => {
+			if (socket.current) {
+				socket?.current?.off('clientToClientMessage');
+				dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: false })
+			}
+		};
+		// }
+	}, [socket.current, currentChatUser]);
 
 	return (
 		<Component pageProps={...pageProps} />

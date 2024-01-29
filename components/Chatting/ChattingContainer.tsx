@@ -86,11 +86,9 @@ export default memo(function ChattingContainer() {
 
     useEffect(() => {
         socket.current.on('updateReceiverMessageStatusV2', function (data: any) {
+            console.log("receiver status")
         });
 
-        return () => {
-            socket.current.off("updateReceiverMessageStatusV2")
-        }
     })
 
     const handleScroll = () => {
@@ -123,9 +121,9 @@ export default memo(function ChattingContainer() {
     }, []);
 
     useEffect(() => {
+        dispatch({ type: reducerCases.SET_CHAT_CONTAINER_REF, chatContainerRef: containerRef })
         setSkip(0)
         refetch()
-        setCurrentChatUserId(currentChatUser?.id)
         const timeoutId = setTimeout(() => {
             refetch()
         }, 30000);
@@ -160,31 +158,31 @@ export default memo(function ChattingContainer() {
         refetch()
     }, [skip])
 
-    useEffect(() => {
-        if (socket.current && socketEvent) {
-            socket.current.on('clientToClientMessage', (response: any) => {
+    // useEffect(() => {
+    //     if (socket.current && socketEvent) {
+    //         socket.current.on('clientToClientMessage', (response: any) => {
 
-                if (response.sMessageObj.messageFromUserID == currentChatUserId) {
-                    dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
-                    socket.current.emit('updateMessageStatusV2', {
-                        _ids: [response?.sMessageObj?._id],
-                        currentStatus: 3
-                    })
-                    containerRef?.current?.scrollIntoView();
-                } else {
-                    const newOtherMessages = otherMessages?.filter((msg: any) => msg?._messageToUserID !== response.sMessageObj?.messageToUserID)
-                    // dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: response.sMessageObj })
-                    dispatch({ type: reducerCases.SET_OTHERS_MESSAGE, otherMessages: [...[response.sMessageObj], ...newOtherMessages] })
-                }
-            })
-            return () => {
-                if (socket.current) {
-                    socket.current.off('clientToClientMessage');
-                    dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: false })
-                }
-            };
-        }
-    }, [socket.current, dispatch, socketEvent, currentChatUserId]);
+    //             if (response.sMessageObj.messageFromUserID == currentChatUserId) {
+    //                 dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
+    //                 socket.current.emit('updateMessageStatusV2', {
+    //                     _ids: [response?.sMessageObj?._id],
+    //                     currentStatus: 3
+    //                 })
+    //                 containerRef?.current?.scrollIntoView();
+    //             } else {
+    //                 const newOtherMessages = otherMessages?.filter((msg: any) => msg?._messageToUserID !== response.sMessageObj?.messageToUserID)
+    //                 // dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: response.sMessageObj })
+    //                 dispatch({ type: reducerCases.SET_OTHERS_MESSAGE, otherMessages: [...[response.sMessageObj], ...newOtherMessages] })
+    //             }
+    //         })
+    //         return () => {
+    //             if (socket.current) {
+    //                 socket.current.off('clientToClientMessage');
+    //                 dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: false })
+    //             }
+    //         };
+    //     }
+    // }, [socket.current, dispatch, socketEvent, currentChatUserId]);
 
 
 
@@ -226,14 +224,15 @@ export default memo(function ChattingContainer() {
     })
 
     const getMessageStatusRender = (status: any) => {
-        if (status === 1) {
-            return <span className='text-dark fs-6 me-1'><BsCheckLg /></span>
-        }
-        else if (status === 2) {
-            return <span className='text-dark fs-6 me-1'><BsCheckAll /></span>
-        }
-        else if (status === 3) {
-            return <span className='text-dark fs-6 brand-color me-1'><BsCheckAll /></span>
+        switch (status) {
+            case 1:
+                return <span className='text-dark fs-6 me-1'><BsCheckLg /></span>
+            case 2:
+                return <span className='text-dark fs-6 me-1'><BsCheckAll /></span>
+            case 3:
+                return <span className='text-dark fs-6 brand-color me-1'><BsCheckAll /></span>
+            default:
+                break;
         }
 
     }
@@ -251,12 +250,12 @@ export default memo(function ChattingContainer() {
                                     {
                                         userInfo.id === item.messageFromUserID
                                             ?
-                                            <SenderMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction}/>
+                                            <SenderMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction} />
                                             :
                                             <ReceiverMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction} />
                                     }
                                     <div className='d-flex justify-content-end'>
-                                        {isLastMessage ? getMessageStatusRender(parseInt(status)) : ""}
+                                        {isLastMessage ? getMessageStatusRender(parseInt(userInfo.id === item.messageFromUserID ? status : 3)) : ""}
                                     </div>
                                 </div>
                             </div>
