@@ -1,9 +1,9 @@
 import React from 'react'
 import { Image } from 'react-bootstrap'
 
-export default function UserInfoBox({ user, size, lastMessage }: any) {
+export default function UserInfoBox({ user, size, lastMessage, lastMessageSeenStatus }: any) {
     return (
-        <div className={`w-100 h-100 d-flex align-items-center text-body-emphasis ${lastMessage ? "unseen-last-message" : ""}`}>
+        <div className={`w-100 h-100 d-flex align-items-center text-body-emphasis ${lastMessage ? "unseen-last-message" : ""} `}>
             <div>
                 <div style={{ height: size, width: size, overflow: "hidden", borderRadius: "50%" }}>
                     <Image className='img-fluid' src={user?.image} />

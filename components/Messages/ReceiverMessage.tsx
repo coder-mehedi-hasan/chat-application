@@ -6,6 +6,8 @@ import FileContent from './FileContet';
 import { useStateProvider } from '../../context/StateContext';
 import { useQuery } from '@tanstack/react-query';
 import Reactions from './Reactions';
+import { OverlayTrigger } from 'react-bootstrap';
+import renderMessageTime from '../common/render-message-time';
 
 export default function ReceiverMessages({ data, handleReactionSend, isReaction }: any) {
     const [{ currentChatUser, userInfo, socket }, dispatch]: any = useStateProvider()
@@ -49,30 +51,36 @@ export default function ReceiverMessages({ data, handleReactionSend, isReaction 
                         <img src={currentChatUser?.image} alt={currentChatUser?.name} className='w-100 h-100' />
                     </div> : ""
                 }
-                {
-                    data?.cloudfrontUrl && !data?.message ?
-                        <div>
-                            <FileContent img={data?.cloudfrontUrl} />
-                            <div className='reaction'>
-                                {
-                                    reactionsAll?.length && Array.isArray(reactionsAll) ? reactionsAll?.map(item => {
-                                        return <Reactions reaction={item} handleReactionSend={handleReactionSend} />
-                                    }) : ""
-                                }
+                <OverlayTrigger
+                    placement="right"
+                    delay={{ show: 150, hide: 400 }}
+                    overlay={(props) => renderMessageTime(props, data)}
+                >
+                    {
+                        data?.cloudfrontUrl && !data?.message ?
+                            <div>
+                                <FileContent img={data?.cloudfrontUrl} />
+                                <div className='reaction'>
+                                    {
+                                        reactionsAll?.length && Array.isArray(reactionsAll) ? reactionsAll?.map(item => {
+                                            return <Reactions reaction={item} handleReactionSend={handleReactionSend} />
+                                        }) : ""
+                                    }
+                                </div>
                             </div>
-                        </div>
-                        :
-                        <div>
-                            <TextContent message={data} isSender={false} content={data?.message} />
-                            <div className='reaction'>
-                                {
-                                    reactionsAll?.length && Array.isArray(reactionsAll) ? reactionsAll?.map(item => {
-                                        return <Reactions reaction={item} handleReactionSend={handleReactionSend} />
-                                    }) : ""
-                                }
+                            :
+                            <div>
+                                <TextContent message={data} isSender={false} content={data?.message} />
+                                <div className='reaction'>
+                                    {
+                                        reactionsAll?.length && Array.isArray(reactionsAll) ? reactionsAll?.map(item => {
+                                            return <Reactions reaction={item} handleReactionSend={handleReactionSend} />
+                                        }) : ""
+                                    }
+                                </div>
                             </div>
-                        </div>
-                }
+                    }
+                </OverlayTrigger>
                 <MessageSideAction message={data} handleReactionSend={handleReactionSend} />
             </div>
         </>

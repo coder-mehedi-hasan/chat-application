@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query'
 import { handleMessageStatus } from '../../utils/functions/message'
 import { IoIosArrowDown } from "react-icons/io";
 import { BsCheckAll, BsCheckLg } from 'react-icons/bs'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 export default memo(function ChattingContainer() {
     const [{ currentChatUser, userInfo, socket, messages, socketEvent, otherMessages }, dispatch]: any = useStateProvider()
@@ -226,15 +227,29 @@ export default memo(function ChattingContainer() {
     const getMessageStatusRender = (status: any) => {
         switch (status) {
             case 1:
-                return <span className='text-dark fs-6 me-1'><BsCheckLg /></span>
+                return <BsCheckLg />
             case 2:
-                return <span className='text-dark fs-6 me-1'><BsCheckAll /></span>
+                return <BsCheckAll />
             case 3:
-                return <span className='text-dark fs-6 brand-color me-1'><BsCheckAll /></span>
+                return <BsCheckAll className="brand-color" />
             default:
                 break;
         }
 
+    }
+
+    const renderSeenByTooltip = (props: any, message: any, status: any) => {
+        if (status !== 3) {
+            return <></>
+        }
+        else {
+            return (
+                <Tooltip id="button-tooltip" {...props}>
+                    Seen by {
+                        message?.messageFromUserID === currentChatUser?.id ? userInfo?.name : currentChatUser?.name
+                    }
+                </Tooltip>)
+        }
     }
 
     return (
@@ -244,18 +259,31 @@ export default memo(function ChattingContainer() {
                     userInfo && messages?.length ? messages?.map((item: any, index: any) => {
                         const isLastMessage = (messages?.length - 1) === index
                         const status = getMessageStatus(item)
+                        const isSender = userInfo.id === item.messageFromUserID
                         return (
                             <div key={index} ref={messagesRef}>
                                 <div className="row my-3 w-100 message_content">
                                     {
-                                        userInfo.id === item.messageFromUserID
+                                        isSender
                                             ?
                                             <SenderMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction} />
                                             :
                                             <ReceiverMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction} />
                                     }
                                     <div className='d-flex justify-content-end'>
-                                        {isLastMessage ? getMessageStatusRender(parseInt(userInfo.id === item.messageFromUserID ? status : 3)) : ""}
+                                        {
+                                            isLastMessage ?
+                                                <OverlayTrigger
+                                                    placement="top"
+                                                    delay={{ show: 150, hide: 400 }}
+                                                    overlay={(props) => renderSeenByTooltip(props, item, parseInt(isSender ? status : 3))}
+                                                >
+                                                    <span className='text-dark fs-6 me-1F'>
+                                                        {getMessageStatusRender(parseInt(isSender ? status : 3))}
+                                                    </span>
+                                                </OverlayTrigger>
+                                                :
+                                                ""}
                                     </div>
                                 </div>
                             </div>
