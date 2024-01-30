@@ -137,8 +137,10 @@ export default memo(function ChattingContainer() {
             const reversed = [...allChattingMessages]?.reverse();
             const unseenMessages = reversed?.filter((item: any) => item?.messageStatus !== 3)
             const unseenIds = unseenMessages?.filter((item: any) => item?.messageFrom == currentChatUser?.id)?.map((item: any) => item?._id)
-            handleMessageStatus(unseenIds, socket, 3)
-            const newMessages = reversed?.map(item => {
+            if (unseenIds?.length) {
+                handleMessageStatus(unseenIds, socket, 3)
+            }
+            let newMessages = reversed?.map(item => {
                 return {
                     ...item,
                     message: item?.messageBody,
@@ -147,7 +149,29 @@ export default memo(function ChattingContainer() {
                 }
             })
             if (skip === 0) {
-                dispatch({ type: reducerCases.SET_MESSAGES, messages: newMessages })
+                const containerStoredMessage = otherMessages?.filter((item: any) => item?.messageFromUserID === currentChatUser?.id)
+                let unTrackedMessage: any = []
+                containerStoredMessage?.length && containerStoredMessage?.map((item: any) => {
+                    const unTrackedMessageUnSeenIds = unTrackedMessage?.filter((item: any) => item?.messageFrom == currentChatUser?.id)?.map((item: any) => item?._id)
+                    if (unTrackedMessageUnSeenIds?.length) {
+                        handleMessageStatus(unTrackedMessageUnSeenIds, socket, 3)
+                    }
+                    const find = newMessages?.find(msg => msg?._id === item?._id)
+                    // console.log("find", find)
+                    if (!find) {
+                        // newMessages = [...newMessages, [...[item]]]
+                        unTrackedMessage.push(item)
+                    }
+                })
+
+                // console.log("unTrackedMessage", unTrackedMessage)
+                if (unTrackedMessage?.length) {
+                    // const reverseUnTracked = unTrackedMessage.reverse()
+                    dispatch({ type: reducerCases.SET_MESSAGES, messages: [...newMessages, ...unTrackedMessage] })
+                }
+                else {
+                    dispatch({ type: reducerCases.SET_MESSAGES, messages: newMessages })
+                }
             }
             else {
                 dispatch({ type: reducerCases.SET_MESSAGES, messages: [...newMessages, ...messages] })

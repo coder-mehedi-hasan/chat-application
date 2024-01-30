@@ -112,9 +112,9 @@ export function Main({ Component, pageProps }: any) {
 				})
 				chatContainerRef?.current?.scrollIntoView();
 			} else {
-				const newOtherMessages = otherMessages?.filter((msg: any) => msg?._messageToUserID !== response.sMessageObj?.messageToUserID)
-				// dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: response.sMessageObj })
-				dispatch({ type: reducerCases.SET_OTHERS_MESSAGE, otherMessages: [...[response.sMessageObj], ...newOtherMessages] })
+				// const newOtherMessages = otherMessages?.filter((msg: any) => msg?._messageToUserID !== response.sMessageObj?.messageToUserID)
+				dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: response.sMessageObj })
+				// dispatch({ type: reducerCases.SET_OTHERS_MESSAGE, otherMessages: [...[response.sMessageObj], ...newOtherMessages] })
 			}
 		})
 		return () => {
