@@ -19,8 +19,6 @@ export default function Dashboard() {
     const handleBottomTab = (t: any) => {
         setTab(t)
     }
-    // console.log("draftMessages", draftMessages)
-    console.log("sendMessages", sendMessages)
 
     return (
         <div className='w-100 p-0 container-fluid' id='chat_bar' >

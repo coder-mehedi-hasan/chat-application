@@ -35,13 +35,13 @@ export default function ReceiverMessages({ data, handleReactionSend, isReaction 
         refetch()
     }, [isReaction])
 
-    useEffect(() => {
-        socket.current.on('updateReceiverMessageStatusV2', function (data: any) {
-        });
-        return () => {
-            socket.current.off("updateReceiverMessageStatusV2")
-        }
-    })
+    // useEffect(() => {
+    //     socket.current.on('updateReceiverMessageStatusV2', function (data: any) {
+    //     });
+    //     return () => {
+    //         socket.current.off("updateReceiverMessageStatusV2")
+    //     }
+    // })
 
     return (
         <>

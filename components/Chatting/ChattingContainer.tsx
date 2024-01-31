@@ -7,7 +7,7 @@ import { reducerCases } from '../../context/constant'
 import { useQuery } from '@tanstack/react-query'
 import { arrayIsEmpty, handleMessageStatus, handleSortByDateTime } from '../../utils/functions/message'
 import { IoIosArrowDown } from "react-icons/io";
-import { BsCheckAll, BsCheckLg } from 'react-icons/bs'
+import { BsCheckAll, BsCheckLg, BsUiChecksGrid } from 'react-icons/bs'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 export default memo(function ChattingContainer() {
@@ -20,7 +20,7 @@ export default memo(function ChattingContainer() {
     const [skip, setSkip] = useState<number>(0);
     const [perPage, setPerPage] = useState<number>(50)
     const [scrollBarPositionUp, setScrollBarPositionUp] = useState<boolean>(false)
-    const [statusLastMessage, setStatusLastMessage] = useState<any>([]);
+    const [statusLastMessage, setStatusLastMessage] = useState<any[]>([]);
     const [currentChatUserId, setCurrentChatUserId] = useState(null)
 
     const { isError, refetch, isSuccess, data: allChattingMessages, isFetching, isLoading, isRefetching } = useQuery({
@@ -85,12 +85,6 @@ export default memo(function ChattingContainer() {
         );
     }
 
-    useEffect(() => {
-        socket.current.on('updateReceiverMessageStatusV2', function (data: any) {
-            console.log("receiver status")
-        });
-
-    })
 
     const handleScroll = () => {
         const container: any = containerRef.current;
@@ -126,7 +120,7 @@ export default memo(function ChattingContainer() {
         setSkip(0)
         refetch()
         const timeoutId = setTimeout(() => {
-            // refetch()
+            refetch()
         }, 30000);
 
         return () => clearTimeout(timeoutId);
@@ -152,10 +146,11 @@ export default memo(function ChattingContainer() {
                 const containerStoredMessage = otherMessages?.filter((item: any) => item?.messageFromUserID === currentChatUser?.id)
                 let unTrackedMessage: any = []
                 containerStoredMessage?.length && containerStoredMessage?.map((item: any) => {
-                    const unTrackedMessageUnSeenIds = unTrackedMessage?.filter((item: any) => item?.messageFrom == currentChatUser?.id)?.map((item: any) => item?._id)
-                    if (unTrackedMessageUnSeenIds?.length) {
-                        handleMessageStatus(unTrackedMessageUnSeenIds, socket, 3)
-                    }
+                    // const unTrackedMessageUnSeenIds = unTrackedMessage?.filter((item: any) => item?.messageFromUserID == currentChatUser?.id)?.map((item: any) => item?._id)
+                    // console.log("unTrackedMessageUnSeenIds", unTrackedMessageUnSeenIds)
+                    // if (unTrackedMessageUnSeenIds?.length) {
+                    //     handleMessageStatus(unTrackedMessageUnSeenIds, socket, 3)
+                    // }
                     const find = newMessages?.find(msg => msg?._id === item?._id)
                     // console.log("find", find)
                     if (!find) {
@@ -168,6 +163,11 @@ export default memo(function ChattingContainer() {
                 if (unTrackedMessage?.length) {
                     // const reverseUnTracked = unTrackedMessage.reverse()
                     dispatch({ type: reducerCases.SET_MESSAGES, messages: [...newMessages, ...unTrackedMessage] })
+                    // const unTrackedMessageUnSeenIds = unTrackedMessage?.filter((item: any) => item?.messageFrom == currentChatUser?.id)?.map((item: any) => item?._id)
+                    // console.log("unTrackedMessageUnSeenIds", unTrackedMessageUnSeenIds)
+                    // if (unTrackedMessageUnSeenIds?.length) {
+                    //     handleMessageStatus(unTrackedMessageUnSeenIds, socket, 3)
+                    // }
                 }
                 else {
                     dispatch({ type: reducerCases.SET_MESSAGES, messages: newMessages })
@@ -183,34 +183,7 @@ export default memo(function ChattingContainer() {
         refetch()
     }, [skip])
 
-    // useEffect(() => {
-    //     if (socket.current && socketEvent) {
-    //         socket.current.on('clientToClientMessage', (response: any) => {
-
-    //             if (response.sMessageObj.messageFromUserID == currentChatUserId) {
-    //                 dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
-    //                 socket.current.emit('updateMessageStatusV2', {
-    //                     _ids: [response?.sMessageObj?._id],
-    //                     currentStatus: 3
-    //                 })
-    //                 containerRef?.current?.scrollIntoView();
-    //             } else {
-    //                 const newOtherMessages = otherMessages?.filter((msg: any) => msg?._messageToUserID !== response.sMessageObj?.messageToUserID)
-    //                 // dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: response.sMessageObj })
-    //                 dispatch({ type: reducerCases.SET_OTHERS_MESSAGE, otherMessages: [...[response.sMessageObj], ...newOtherMessages] })
-    //             }
-    //         })
-    //         return () => {
-    //             if (socket.current) {
-    //                 socket.current.off('clientToClientMessage');
-    //                 dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: false })
-    //             }
-    //         };
-    //     }
-    // }, [socket.current, dispatch, socketEvent, currentChatUserId]);
-
     // console.log("messages on parent container", messages)
-
     useEffect(() => {
         let unTrackedSendingMessages: any[] = []
         const sendingMessagesUnderCurrentUser = sendMessages?.filter((message: any) => message?.messageToUserID === currentChatUser?.id)
@@ -225,6 +198,13 @@ export default memo(function ChattingContainer() {
         if (!arrayIsEmpty(unTrackedSendingMessages)) {
             dispatch({ type: reducerCases.SET_MESSAGES, messages: [...messages, ...unTrackedSendingMessages] })
         }
+
+        const unSeenCurrentUserMessages = messages?.filter((item: any) => item?.messageStatus !== 3 && currentChatUser?.id === item?.messageFromUserID)
+        const unSeenIds = unSeenCurrentUserMessages?.map((item: any) => item?._id)
+        if (!arrayIsEmpty(unSeenIds)) {
+            handleMessageStatus(unSeenIds, socket, 3)
+        }
+
         if (socketEvent) {
             containerRef?.current?.scrollIntoView();
             messagesRef?.current?.scrollIntoView();
@@ -257,9 +237,33 @@ export default memo(function ChattingContainer() {
 
     useEffect(() => {
         socket.current.on('updateSenderMessageStatusV2', (data: any) => {
-            setStatusLastMessage(data)
+            if (data) {
+                handlStatusData(data)
+            }
         });
     })
+
+
+    useEffect(() => {
+        socket.current.on('updateReceiverMessageStatusV2', function (data: any) {
+            if (data) {
+                handlStatusData(data)
+            }
+        });
+    })
+
+    const handlStatusData = (data: any[]) => {
+        data?.map((item: any) => {
+            setStatusLastMessage(pre => {
+                const find = pre?.find(f => f?._id === item?._id)
+                if (find) {
+                    const filter = pre?.filter(f => f?._id !== item?._id)
+                    return [...filter, ...[item]]
+                }
+                return [...pre, ...[item]]
+            })
+        })
+    }
 
     const getMessageStatusRender = (status: any) => {
         switch (status) {
@@ -327,7 +331,7 @@ export default memo(function ChattingContainer() {
                                 </div>
                             </div>
                         )
-                    }) : <div>
+                    }) : <div className='text-center'>
                         YOU HAVE NO MESSAGE
                     </div>
                 }
