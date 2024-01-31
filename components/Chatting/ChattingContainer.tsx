@@ -5,13 +5,13 @@ import ReceiverMessages from '../Messages/ReceiverMessage'
 import { useStateProvider } from '../../context/StateContext'
 import { reducerCases } from '../../context/constant'
 import { useQuery } from '@tanstack/react-query'
-import { handleMessageStatus } from '../../utils/functions/message'
+import { arrayIsEmpty, handleMessageStatus, handleSortByDateTime } from '../../utils/functions/message'
 import { IoIosArrowDown } from "react-icons/io";
 import { BsCheckAll, BsCheckLg } from 'react-icons/bs'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 export default memo(function ChattingContainer() {
-    const [{ currentChatUser, userInfo, socket, messages, socketEvent, otherMessages }, dispatch]: any = useStateProvider()
+    const [{ currentChatUser, userInfo, socket, messages, socketEvent, otherMessages, sendMessages }, dispatch]: any = useStateProvider()
     const [senderReaction, setSenderReaction]: any = useState()
     const [receiverReaction, setReceiverReaction]: any = useState()
     const [messageReaction, setMessageReaction] = useState<Boolean>(false)
@@ -135,7 +135,7 @@ export default memo(function ChattingContainer() {
     useEffect(() => {
         if (isSuccess && allChattingMessages?.length) {
             const reversed = [...allChattingMessages]?.reverse();
-            const unseenMessages = reversed?.filter((item: any) => item?.messageStatus !== 3)
+            const unseenMessages = [...allChattingMessages]?.filter((item: any) => item?.messageStatus !== 3)
             const unseenIds = unseenMessages?.filter((item: any) => item?.messageFrom == currentChatUser?.id)?.map((item: any) => item?._id)
             if (unseenIds?.length) {
                 handleMessageStatus(unseenIds, socket, 3)
@@ -209,9 +209,22 @@ export default memo(function ChattingContainer() {
     //     }
     // }, [socket.current, dispatch, socketEvent, currentChatUserId]);
 
-
+    // console.log("messages on parent container", messages)
 
     useEffect(() => {
+        let unTrackedSendingMessages: any[] = []
+        const sendingMessagesUnderCurrentUser = sendMessages?.filter((message: any) => message?.messageToUserID === currentChatUser?.id)
+        if (!arrayIsEmpty(sendingMessagesUnderCurrentUser)) {
+            sendingMessagesUnderCurrentUser?.map((message: any) => {
+                const find = messages?.find((msg: any) => msg?._id === message?._id)
+                if (!find) {
+                    unTrackedSendingMessages.push(message)
+                }
+            })
+        }
+        if (!arrayIsEmpty(unTrackedSendingMessages)) {
+            dispatch({ type: reducerCases.SET_MESSAGES, messages: [...messages, ...unTrackedSendingMessages] })
+        }
         if (socketEvent) {
             containerRef?.current?.scrollIntoView();
             messagesRef?.current?.scrollIntoView();
@@ -275,13 +288,15 @@ export default memo(function ChattingContainer() {
                 </Tooltip>)
         }
     }
+    const sortedMessages = handleSortByDateTime(messages)
+    // console.log("sortedMessages", sortedMessages)
 
     return (
         <>
             <div style={{ height: "100%", padding: "", scrollBehavior: `${skip === 0 ? "auto" : "auto"}`, overflowY: "scroll" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll scrollbar_visible_y message-container-bg' ref={containerRef}>
                 {
-                    userInfo && messages?.length ? messages?.map((item: any, index: any) => {
-                        const isLastMessage = (messages?.length - 1) === index
+                    userInfo && messages?.length ? sortedMessages?.map((item: any, index: any) => {
+                        const isLastMessage = (sortedMessages?.length - 1) === index
                         const status = getMessageStatus(item)
                         const isSender = userInfo.id === item.messageFromUserID
                         return (

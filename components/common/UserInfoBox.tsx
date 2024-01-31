@@ -1,6 +1,8 @@
 import React from 'react'
 import { Image } from 'react-bootstrap'
 import { useStateProvider } from '../../context/StateContext'
+import { MdOutlineDrafts } from "react-icons/md";
+
 
 export default function UserInfoBox({ user, size, lastMessage, lastMessageSeenStatus, ...props }: any) {
     const [{ currentChatUser, draftMessages }, dispatch]: any = useStateProvider()
@@ -18,7 +20,9 @@ export default function UserInfoBox({ user, size, lastMessage, lastMessageSeenSt
                     draftMessage && currentChatUser?.id !== draftMessage?.messageToUserID ?
                         <p
                             style={{ fontSize: "12px", margin: "0" }}
-                            className='m-0 text-danger'>{draftMessage?.message}
+                            className='m-0 text-danger'>
+                            <MdOutlineDrafts />
+                            {" " + draftMessage?.message}
                         </p>
                         :
                         <p
