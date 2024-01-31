@@ -18,7 +18,7 @@ export default memo(function ChattingContainer() {
     const messagesRef: any = useRef(null)
     const containerRef: any = useRef(null)
     const [skip, setSkip] = useState<number>(0);
-    const [perPage, setPerPage] = useState<number>(50)
+    const [perPage, setPerPage] = useState<number>(500)
     const [scrollBarPositionUp, setScrollBarPositionUp] = useState<boolean>(false)
     const [statusLastMessage, setStatusLastMessage] = useState<any>([]);
     const [currentChatUserId, setCurrentChatUserId] = useState(null)
@@ -126,7 +126,7 @@ export default memo(function ChattingContainer() {
         setSkip(0)
         refetch()
         const timeoutId = setTimeout(() => {
-            refetch()
+            // refetch()
         }, 30000);
 
         return () => clearTimeout(timeoutId);

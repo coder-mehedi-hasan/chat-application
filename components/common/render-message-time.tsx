@@ -1,10 +1,15 @@
 import React from 'react'
 import { Tooltip } from 'react-bootstrap'
+import { isDateToday } from '../../utils/functions/times'
 
 export default function renderMessageTime(props: any, data: any) {
+    const checkDate: any = isDateToday(data?.messageSentTime)
+    // console.log(checkDate)
     return (
         <Tooltip Tooltip id="button-tooltip" {...props}>
-            {new Date(data?.messageSentTime)?.toDateString()}
+            {
+                checkDate?.time ?? ""
+            }
         </Tooltip>
     )
 

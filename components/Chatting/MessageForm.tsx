@@ -13,7 +13,7 @@ import { PiStickerFill } from "react-icons/pi";
 import useGenerateRandomColor from '../../utils/useRandomColorGenerate';
 import { apiUrl } from '../../utils/constant';
 import { isFileIsImage } from '../../utils/getFileType';
-import { handleMessageStatus } from '../../utils/functions/message';
+import { handleMessageStatus, handleSentMessage } from '../../utils/functions/message';
 
 
 function MessageForm() {
@@ -23,7 +23,7 @@ function MessageForm() {
     const [showEmoji, setShowEmoji] = useState(false)
     const emoji = useRef(null);
     const stickers = useRef(null);
-    const stickerCategoryRef = useRef(null);
+    const stickerCategoryRef: any = useRef(null);
     const gifs = useRef(null);
     const inputReference = useRef();
     const [message, setMessage] = useState<any>({ messageType: 1, messageFromUserID: "", messageToUserID: '', message: "" })
@@ -56,11 +56,12 @@ function MessageForm() {
                 body: file,
             });
             if (response) {
-                socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response: any) => {
-                    dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
-                    dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
-                    handleMessageStatus([response?._id], socket, 1)
-                })
+                // socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response: any) => {
+                //     dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
+                //     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
+                //     handleMessageStatus([response?._id], socket, 1)
+                // })
+                handleSentMessage({ ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, socket, dispatch)
             }
         } catch (err) {
             console.log(err)
@@ -130,36 +131,20 @@ function MessageForm() {
 
         if (message?.message !== "" && message?.message !== null) {
             // console.log("message",message)
-            socket.current.emit('messageFromClient', message, (response: any) => {
-                setMessage({ ...message, message: "" })
-                dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
-                dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
-                handleMessageStatus([response?._id], socket, 1)
-            })
+            // socket.current.emit('messageFromClient', message, (response: any) => {
+            //     setMessage({ ...message, message: "" })
+            //     dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
+            //     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
+            //     handleMessageStatus([response?._id], socket, 1)
+            // })
+            handleSentMessage(message, socket, dispatch)
+            setMessage({ ...message, message: "" })
         }
         // if (selectedFiles?.length) {
         //     uploadFilesForMessaging()
         // }
     }
-    // console.log
 
-    //handle send file message
-    const handleSendFileMessage = (url: any, index: any) => {
-        // console.log("url from submit file mesage ==>>", url)
-        // socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response) => {
-        //     console.log("response from client :", response)
-        //     dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
-        //     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
-        //     const uploadUrl = uploadUrls
-        //     uploadUrl.push({ ...url, messageId: response?.sMessageObj?._id })
-        //     setUploadUrls(uploadUrl)
-        // })
-        const tempUrl = previewFiles[index]
-        socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response: any) => {
-            dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: { ...response.sMessageObj, cloudfrontUrl: tempUrl } })
-            dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
-        })
-    }
 
     //add emoji in message
     const addEmoji = (emoji: any) => {
@@ -210,7 +195,7 @@ function MessageForm() {
 
             const jsonFiles = filesData?.map(item => JSON.stringify(item))
             const response = await fetch(`https://feed.kotha.im/app/feed/getS3FileUploadUrl?files=[${jsonFiles}]
-            &folder=messaging&uploaderId=${userInfo?.id}`, { method: 'GET' });
+                &folder=messaging&uploaderId=${userInfo?.id}`, { method: 'GET' });
             const data = await response.json();
             if (response) {
                 setShowVoiceForm(false)
@@ -222,12 +207,14 @@ function MessageForm() {
                         body: file,
                     });
                     if (response) {
-                        socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response: any) => {
-                            dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
-                            dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
-                            setSendEvent(null)
-                            handleMessageStatus([response?._id], socket, 1)
-                        })
+                        // socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response: any) => {
+                        //     dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
+                        //     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
+                        //     setSendEvent(null)
+                        //     handleMessageStatus([response?._id], socket, 1)
+                        // })
+                        handleSentMessage({ ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, socket, dispatch)
+                        setSendEvent(null)
                     }
                 })
             }
@@ -273,16 +260,15 @@ function MessageForm() {
     }
 
     const handlStickerClick = (sticker: any) => {
-        socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: sticker?.Url, message: "" }, (response: any) => {
-            dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
-            dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
-            setShowStickers(false)
-            handleMessageStatus([response?._id], socket, 1)
-        })
-
+        // socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: sticker?.Url, message: "" }, (response: any) => {
+        //     dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
+        //     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
+        //     setShowStickers(false)
+        //     handleMessageStatus([response?._id], socket, 1)
+        // })
+        handleSentMessage({ ...message, cloudfrontUrl: sticker?.Url, message: "" }, socket, dispatch)
+        setShowStickers(false)
     }
-
-
 
     return (
         <div className='position-relative border-top message-form'>
@@ -412,7 +398,7 @@ function MessageForm() {
                     <Tooltip id="overlay-example" {...props} className='inner_action_tooltip_emoji_picker' >
                         <Picker
                             data={data}
-                            onEmojiSelect={(emoji) => addEmoji(emoji.native)}
+                            onEmojiSelect={(emoji: any) => addEmoji(emoji.native)}
                             navPosition="bottom"
                             previewPosition="none"
                             skinTonePosition="none"
@@ -438,7 +424,7 @@ function MessageForm() {
                                 }
                                 <div className='d-flex px-1 w-100 justify-content-between align-items-center overflow-scroll' ref={stickerCategoryRef} style={{ scrollBehavior: "smooth", transition: ".4s" }}>
                                     {
-                                        stickersCategories?.map(item => {
+                                        stickersCategories?.map((item: any) => {
                                             return (
                                                 <div className={`m-1 cursor-pointer bg_gray px-2 py-1 rounded ${selectCategory === item ? "category-active" : ""}`} onClick={
                                                     (e) => {
@@ -450,7 +436,6 @@ function MessageForm() {
                                             )
                                         })
                                     }
-
                                 </div>
                             </div>
                             {
