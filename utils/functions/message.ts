@@ -7,7 +7,7 @@ export const handleMessageStatus = (ids: string[], socket: any, status: number) 
     })
 }
 
-export const handleSentMessage = (messageObj: any, socket: any, dispatch: any) => {
+export const handleSentMessage = (messageObj: any, socket: any, dispatch: any, drafts: []) => {
     let isSuccess = false
     socket.current.emit('messageFromClient', messageObj, (response: any) => {
         if (response?.status === "success") {
@@ -16,6 +16,12 @@ export const handleSentMessage = (messageObj: any, socket: any, dispatch: any) =
             dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
             isSuccess = true
             handleMessageStatus([response?._id], socket, 1)
+            dispatch({ type: reducerCases.ADD_SEND_MESSAGE, newMessage: { ...response.sMessageObj, messageSentTime: currentDate } })
+            if (drafts?.length) {
+                const filterDraftsWithoutThis = drafts?.filter((item: any) => item?.messageToUserID !== messageObj?.messageToUserID)
+                dispatch({ type: reducerCases.SET_DRAFT_MESSAGE, draftMessages: filterDraftsWithoutThis })
+            }
+
         }
     })
     return isSuccess

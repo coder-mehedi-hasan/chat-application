@@ -4,14 +4,14 @@ import { useStateProvider } from '../context/StateContext';
 
 
 export default function Chat() {
-   
+
 
     return (
         <>
             <Dashboard />
             {/* <StickersByCategory />
             <StickerCategories /> */}
-            
+
         </>
     )
 }

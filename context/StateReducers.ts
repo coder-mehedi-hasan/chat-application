@@ -7,11 +7,13 @@ export const initialState = {
     socket: undefined,
     messages: [],
     socketEvent: false,
-    otherMessages:[],
-    chatContainerRef:null
+    otherMessages: [],
+    chatContainerRef: null,
+    sendMessages: [],
+    draftMessages: [],
 }
 
-const reducer = (state:any, action:any) => {
+const reducer = (state: any, action: any) => {
     switch (action.type) {
         case reducerCases.CHANGE_CURRENT_CHAT_USER:
             return {
@@ -51,20 +53,40 @@ const reducer = (state:any, action:any) => {
         case reducerCases.ADD_OTHERS_MESSAGE:
             return {
                 ...state,
-                otherMessages: [...state.otherMessages,action?.newMessage]
+                otherMessages: [...state.otherMessages, action?.newMessage]
             }
         case reducerCases.SET_OTHERS_MESSAGE:
             return {
                 ...state,
                 otherMessages: action.otherMessages
             }
-         
+        case reducerCases.ADD_SEND_MESSAGE:
+            return {
+                ...state,
+                sendMessages: [...state.sendMessages, action?.newMessage]
+            }
+        case reducerCases.SET_SEND_MESSAGE:
+            return {
+                ...state,
+                sendMessages: action.sendMessages
+            }
+        case reducerCases.ADD_DRAFT_MESSAGE:
+            return {
+                ...state,
+                draftMessages: [...state.draftMessages, action?.newMessage]
+            }
+        case reducerCases.SET_DRAFT_MESSAGE:
+            return {
+                ...state,
+                draftMessages: action.draftMessages
+            }
+
         case reducerCases.SET_CHAT_CONTAINER_REF:
             return {
                 ...state,
                 chatContainerRef: action.chatContainerRef
             }
-            
+
         default:
             return state;
     }

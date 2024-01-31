@@ -27,7 +27,7 @@ function MessageForm() {
     const gifs = useRef(null);
     const inputReference = useRef();
     const [message, setMessage] = useState<any>({ messageType: 1, messageFromUserID: "", messageToUserID: '', message: "" })
-    const [{ currentChatUser, userInfo, socket }, dispatch]: any = useStateProvider()
+    const [{ currentChatUser, userInfo, socket, draftMessages }, dispatch]: any = useStateProvider()
     const recorderControls = useAudioRecorder()
     const [sendEvent, setSendEvent] = useState<any>(null)
     const [showStickers, setShowStickers] = useState(false);
@@ -61,7 +61,7 @@ function MessageForm() {
                 //     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
                 //     handleMessageStatus([response?._id], socket, 1)
                 // })
-                handleSentMessage({ ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, socket, dispatch)
+                handleSentMessage({ ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, socket, dispatch, draftMessages)
             }
         } catch (err) {
             console.log(err)
@@ -137,7 +137,7 @@ function MessageForm() {
             //     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
             //     handleMessageStatus([response?._id], socket, 1)
             // })
-            handleSentMessage(message, socket, dispatch)
+            handleSentMessage(message, socket, dispatch, draftMessages)
             setMessage({ ...message, message: "" })
         }
         // if (selectedFiles?.length) {
@@ -213,7 +213,7 @@ function MessageForm() {
                         //     setSendEvent(null)
                         //     handleMessageStatus([response?._id], socket, 1)
                         // })
-                        handleSentMessage({ ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, socket, dispatch)
+                        handleSentMessage({ ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, socket, dispatch, draftMessages)
                         setSendEvent(null)
                     }
                 })
@@ -241,7 +241,12 @@ function MessageForm() {
     }
 
     useEffect(() => {
-        setMessage({ ...message, message: "", messageToUserID: currentChatUser.id, messageFromUserID: userInfo?.id })
+        const findDraft = draftMessages?.find((draft: any) => draft?.messageToUserID === currentChatUser.id && draft?.messageFromUserID === userInfo?.id)
+        if (findDraft) {
+            setMessage({ ...message, message: findDraft?.message, messageToUserID: currentChatUser.id, messageFromUserID: userInfo?.id })
+        } else {
+            setMessage({ ...message, message: "", messageToUserID: currentChatUser.id, messageFromUserID: userInfo?.id })
+        }
         getStickersCategory()
     }, [currentChatUser])
 
@@ -266,9 +271,23 @@ function MessageForm() {
         //     setShowStickers(false)
         //     handleMessageStatus([response?._id], socket, 1)
         // })
-        handleSentMessage({ ...message, cloudfrontUrl: sticker?.Url, message: "" }, socket, dispatch)
+        handleSentMessage({ ...message, cloudfrontUrl: sticker?.Url, message: "" }, socket, dispatch, draftMessages)
         setShowStickers(false)
     }
+
+    useEffect(() => {
+        const findDraft = draftMessages?.find((draft: any) => draft?.messageToUserID === currentChatUser.id)
+        if (!findDraft) {
+            if (message?.message !== "") {
+                dispatch({ type: reducerCases.ADD_DRAFT_MESSAGE, newMessage: message })
+            }
+        } else {
+            if (message?.message !== "") {
+                const filterWithoutDraft = draftMessages?.filter((draft: any) => draft?.messageToUserID !== currentChatUser.id)
+                dispatch({ type: reducerCases.SET_DRAFT_MESSAGE, draftMessages: [...filterWithoutDraft, ...[message]] })
+            }
+        }
+    }, [message?.message])
 
     return (
         <div className='position-relative border-top message-form'>
@@ -373,7 +392,9 @@ function MessageForm() {
                                         value={message?.message}
                                         name="message"
                                         onKeyDown={handleKeyPress}
-                                        onChange={(e) => setMessage({ ...message, [e.target.name]: e.target.value })}
+                                        onChange={(e) => {
+                                            setMessage({ ...message, [e.target.name]: e.target.value })
+                                        }}
                                     />
                                 </Form>
                             </div >

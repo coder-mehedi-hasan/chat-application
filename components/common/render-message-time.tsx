@@ -4,7 +4,6 @@ import { isDateToday } from '../../utils/functions/times'
 
 export default function renderMessageTime(props: any, data: any) {
     const checkDate: any = isDateToday(data?.messageSentTime)
-    // console.log(checkDate)
     return (
         <Tooltip Tooltip id="button-tooltip" {...props}>
             {

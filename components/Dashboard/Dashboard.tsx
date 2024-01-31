@@ -14,11 +14,13 @@ export default function Dashboard() {
     const isMobileWidth = useMediaQuery({ maxWidth: 576 })
     const isMediumWidth = useMediaQuery({ maxWidth: 768 })
     const [tab, setTab] = useState("chats")
-    const [{ currentChatUser, messages }]: any = useStateProvider()
+    const [{ currentChatUser, messages, draftMessages, sendMessages }]: any = useStateProvider()
 
     const handleBottomTab = (t: any) => {
         setTab(t)
     }
+    console.log("draftMessages", draftMessages)
+    // console.log("sendMessages", sendMessages)
 
     return (
         <div className='w-100 p-0 container-fluid' id='chat_bar' >

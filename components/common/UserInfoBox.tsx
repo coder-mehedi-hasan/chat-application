@@ -1,7 +1,10 @@
 import React from 'react'
 import { Image } from 'react-bootstrap'
+import { useStateProvider } from '../../context/StateContext'
 
-export default function UserInfoBox({ user, size, lastMessage, lastMessageSeenStatus }: any) {
+export default function UserInfoBox({ user, size, lastMessage, lastMessageSeenStatus, ...props }: any) {
+    const [{ currentChatUser, draftMessages }, dispatch]: any = useStateProvider()
+    const draftMessage = draftMessages?.find((_: any) => _?.messageToUserID === user?.id)
     return (
         <div className={`w-100 h-100 d-flex align-items-center text-body-emphasis ${lastMessage ? "unseen-last-message" : ""} `}>
             <div>
@@ -10,8 +13,19 @@ export default function UserInfoBox({ user, size, lastMessage, lastMessageSeenSt
                 </div>
             </div>
             <div className='ms-3' >
-                <p style={{ fontSize: `${size / 3}px` }} className='m-0'>{user?.name}</p>
-                <p style={{ fontSize: "12px", margin: "0" }} className='m-o fw-light'>{lastMessage?.message}</p>
+                <p style={{ fontSize: `14px` }} className='m-0'>{user?.name}</p>
+                {
+                    draftMessage && currentChatUser?.id !== draftMessage?.messageToUserID ?
+                        <p
+                            style={{ fontSize: "12px", margin: "0" }}
+                            className='m-0 text-danger'>{draftMessage?.message}
+                        </p>
+                        :
+                        <p
+                            style={{ fontSize: "12px", margin: "0" }}
+                            className='m-0'>{lastMessage?.message}
+                        </p>
+                }
             </div>
         </div>
     )

@@ -18,7 +18,7 @@ export default memo(function ChattingContainer() {
     const messagesRef: any = useRef(null)
     const containerRef: any = useRef(null)
     const [skip, setSkip] = useState<number>(0);
-    const [perPage, setPerPage] = useState<number>(500)
+    const [perPage, setPerPage] = useState<number>(50)
     const [scrollBarPositionUp, setScrollBarPositionUp] = useState<boolean>(false)
     const [statusLastMessage, setStatusLastMessage] = useState<any>([]);
     const [currentChatUserId, setCurrentChatUserId] = useState(null)
