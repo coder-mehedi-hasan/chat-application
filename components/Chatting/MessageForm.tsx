@@ -290,7 +290,7 @@ function MessageForm() {
     }, [message?.message])
 
     return (
-        <div className={`position-relative border-top message-form ${isMobileWidth ? "fixed-bottom" : ""}`}>
+        <div className={`position-relative border-top message-form ${isMobileWidth ? "fixed-bottom" : ""}`}> 
             <div style={{ flex: 1, background: "#fff", height: "80px" }} className='position-relative w-100 h-100 text-white d-flex align-items-center justify-content-between px-lg-3 px-md-2 px-sm-1 px-xs-1'>
                 {
                     showVoiceForm ?
@@ -336,29 +336,31 @@ function MessageForm() {
                         </>
                         :
                         <>
-                            <div>
-                                <div className='text-dark side-action-form' onClick={() => setShowVoiceToast(!showVoiceToast)}>
-                                    <BsFillXCircleFill className="inner-btn brand-color" style={{ transform: showVoiceToast ? "rotate(90deg)" : "rotate(45deg)", transition: ".4s" }} />
-                                </div>
-                            </div>
-                            <div>
-                                <label htmlFor="share_gallery" style={{ cursor: "pointer" }}>
-                                    <div className='text-dark brand-color side-action-form'>
-                                        <BsImage className="inner-btn brand-color" />
+                            <div className='d-flex'
+                                style={{ width: message?.message !== "" ? "0%" : "initial",transition:"all 2s" }}>
+                                <div>
+                                    <div className='text-dark side-action-form' onClick={() => setShowVoiceToast(!showVoiceToast)}>
+                                        <BsFillXCircleFill className="inner-btn brand-color" style={{ transform: showVoiceToast ? "rotate(90deg)" : "rotate(45deg)", transition: ".4s" }} />
                                     </div>
-                                </label>
-                            </div>
-                            <div>
-                                <div className='text-dark side-action-form' onClick={() => {
-                                    setShowStickers(!showStickers)
-                                }} ref={stickers}>
-                                    <PiStickerFill className="brand-color" />
+                                </div>
+                                <div>
+                                    <label htmlFor="share_gallery" style={{ cursor: "pointer" }}>
+                                        <div className='text-dark brand-color side-action-form'>
+                                            <BsImage className="inner-btn brand-color" />
+                                        </div>
+                                    </label>
+                                </div>
+                                <div>
+                                    <div className='text-dark side-action-form' onClick={() => {
+                                        setShowStickers(!showStickers)
+                                    }} ref={stickers}>
+                                        <PiStickerFill className="brand-color" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <input multiple onChange={handleFileChange} type="file" className='d-none' id="share_gallery" onKeyDown={handleKeyPress} />
                                 </div>
                             </div>
-                            <div>
-                                <input multiple onChange={handleFileChange} type="file" className='d-none' id="share_gallery" onKeyDown={handleKeyPress} />
-                            </div>
-
                             <div size='sm' className="rounded d-flex w-100 position-relative bg_gray" >
                                 {
                                     previewFiles?.length ?
@@ -478,7 +480,7 @@ function MessageForm() {
                     </Tooltip>
                 )}
             </Overlay> */}
-        </div>
+        </div >
     )
 }
 
