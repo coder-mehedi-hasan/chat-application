@@ -290,7 +290,7 @@ function MessageForm() {
     }, [message?.message])
 
     return (
-        <div className='position-relative border-top message-form'>
+        <div className={`position-relative border-top message-form ${isMobileWidth ? "fixed-bottom" : ""}`}>
             <div style={{ flex: 1, background: "#fff", height: "80px" }} className='position-relative w-100 h-100 text-white d-flex align-items-center justify-content-between px-lg-3 px-md-2 px-sm-1 px-xs-1'>
                 {
                     showVoiceForm ?

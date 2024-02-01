@@ -10,7 +10,7 @@ import { reducerCases } from '../../context/constant';
 export default function ChattingInterFace() {
     const isMobileWidth = useMediaQuery({ maxWidth: 576 })
     const [show, setShow] = useState(false);
-    const [{ currentChatUser }, dispatch]:any = useStateProvider()
+    const [{ currentChatUser }, dispatch]: any = useStateProvider()
 
     const handleShow = () => {
         setShow(!show);
@@ -31,7 +31,7 @@ export default function ChattingInterFace() {
                     <Modal show={show} fullscreen={true}>
                         <div style={{ height: "100vh", display: "flex", flexDirection: "column", paddingLeft: "0.5px", width: "100%" }} className='chat-interface'>
                             <ChatHeader modal={handleShow} />
-                            <div style={{ height: "100%"}} className='position-relative overflow-hidden'>
+                            <div style={{ height: "100%", paddingTop: "80px" }} className='position-relative overflow-hidden'>
                                 <ChattingContainer />
                             </div>
                             <MessageForm />
@@ -40,7 +40,7 @@ export default function ChattingInterFace() {
                     :
                     <div style={{ height: "100vh", display: "flex", flexDirection: "column", paddingLeft: "0.5px", width: "100%" }} className='chat-interface'>
                         <ChatHeader modal={handleShow} />
-                        <div className='position-relative overflow-hidden' style={{ height: "100%"}}>
+                        <div className='position-relative overflow-hidden' style={{ height: "100%" }}>
                             <ChattingContainer />
                         </div>
                         <MessageForm />
