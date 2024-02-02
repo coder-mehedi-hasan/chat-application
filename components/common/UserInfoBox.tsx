@@ -17,22 +17,22 @@ export default function UserInfoBox({ user, size, lastMessage, lastMessageSeenSt
     // }
     // }
 
-    useEffect(() => {
-        socket?.current.on('updateSenderMessageStatusV2', (data: any) => {
-            if (data) {
-                handlStatusData(data)
-            }
-        });
-    })
+    // useEffect(() => {
+    //     socket?.current.on('updateSenderMessageStatusV2', (data: any) => {
+    //         if (data) {
+    //             handlStatusData(data)
+    //         }
+    //     });
+    // })
 
 
-    useEffect(() => {
-        socket?.current.on('updateReceiverMessageStatusV2', function (data: any) {
-            if (data) {
-                handlStatusData(data)
-            }
-        });
-    })
+    // useEffect(() => {
+    //     socket?.current.on('updateReceiverMessageStatusV2', function (data: any) {
+    //         if (data) {
+    //             handlStatusData(data)
+    //         }
+    //     });
+    // })
 
     const handlStatusData = (data: any[]) => {
         data?.map((item: any) => {

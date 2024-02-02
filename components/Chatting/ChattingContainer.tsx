@@ -185,6 +185,7 @@ export default memo(function ChattingContainer() {
 
     // console.log("messages on parent container", messages)
     useEffect(() => {
+
         let unTrackedSendingMessages: any[] = []
         const sendingMessagesUnderCurrentUser = sendMessages?.filter((message: any) => message?.messageToUserID === currentChatUser?.id)
         if (!arrayIsEmpty(sendingMessagesUnderCurrentUser)) {
@@ -227,30 +228,13 @@ export default memo(function ChattingContainer() {
         const find = statusLastMessage?.find((i: any) => i?._id === message?._id)
         if (find) {
             if (find?.currentStatus <= message?.messageStatus) {
-                return message?.messageStatus
+                return find?.currentStatus
             }
             return find?.currentStatus
         }
         return message?.messageStatus
     }
 
-
-    useEffect(() => {
-        socket.current.on('updateSenderMessageStatusV2', (data: any) => {
-            if (data) {
-                handlStatusData(data)
-            }
-        });
-    })
-
-
-    useEffect(() => {
-        socket.current.on('updateReceiverMessageStatusV2', function (data: any) {
-            if (data) {
-                handlStatusData(data)
-            }
-        });
-    })
 
     const handlStatusData = (data: any[]) => {
         data?.map((item: any) => {
@@ -263,7 +247,32 @@ export default memo(function ChattingContainer() {
                 return [...pre, ...[item]]
             })
         })
+
     }
+
+    useEffect(() => {
+		socket?.current?.on('updateSenderMessageStatusV2', (data: any) => {
+			console.log("updateSenderMessageStatusV2 09090", data)
+			if (data) {
+				handlStatusData(data)
+			}
+		});
+
+		socket?.current?.on('updateReceiverMessageStatusV2', function (data: any) {
+			console.log("updateReceiverMessageStatusV2rece 09090", data)
+			if (data) {
+				// handlStatusData(data)
+			}
+		});
+		
+		return () => {
+			if (socket.current) {
+				socket?.current?.off('updateSenderMessageStatusV2')
+				socket?.current?.off('updateReceiverMessageStatusV2')
+			}
+		};
+	}, [socket.current, currentChatUser]);
+
 
     const getMessageStatusRender = (status: any) => {
         switch (status) {
@@ -276,7 +285,6 @@ export default memo(function ChattingContainer() {
             default:
                 break;
         }
-
     }
 
     const renderSeenByTooltip = (props: any, message: any, status: any) => {

@@ -88,6 +88,11 @@ export function Main({ Component, pageProps }: any) {
 				// console.log({ onlineList })
 			})
 
+			socket?.current?.onAny((event, ...args) => {
+				console.log(`Received event: ${event}, with data:`, args);
+			});
+
+
 		}
 		return () => {
 			if (socket.current) {
@@ -99,6 +104,30 @@ export function Main({ Component, pageProps }: any) {
 
 
 	}, [userInfo, current_location, dispatch]);
+
+	// useEffect(() => {
+
+	// })
+
+
+	// useEffect(() => {
+	// 	socket?.current?.on('updateReceiverMessageStatusV2', function (data: any) {
+	// 		console.log("updateReceiverMessageStatusV2rece 09090", data)
+	// 		// if (data) {
+	// 		// 	// handlStatusData(data)
+	// 		// }
+	// 	});
+
+	// }, [])
+
+	// useEffect(() => {
+	// 	socket?.current?.on('updateSenderMessageStatusV2', (data: any) => {
+	// 		console.log("updateSenderMessageStatusV2 09090", data)
+	// 		// if (data) {
+	// 		// 	// handlStatusData(data)
+	// 		// }
+	// 	});
+	// }, [socket.current])
 
 	useEffect(() => {
 		// if (socket.current && socketEvent) {
@@ -116,10 +145,29 @@ export function Main({ Component, pageProps }: any) {
 				dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: response.sMessageObj })
 				// dispatch({ type: reducerCases.SET_OTHERS_MESSAGE, otherMessages: [...[response.sMessageObj], ...newOtherMessages] })
 			}
+
 		})
+
+		// socket?.current?.on('updateSenderMessageStatusV2', (data: any) => {
+		// 	console.log("updateSenderMessageStatusV2 09090", data)
+		// 	// if (data) {
+		// 	// 	// handlStatusData(data)
+		// 	// }
+		// });
+
+		// socket?.current?.on('updateReceiverMessageStatusV2', function (data: any) {
+		// 	console.log("updateReceiverMessageStatusV2rece 09090", data)
+		// 	// if (data) {
+		// 	// 	// handlStatusData(data)
+		// 	// }
+		// });
 		return () => {
 			if (socket.current) {
 				socket?.current?.off('clientToClientMessage');
+				// socket?.current?.off('updateSenderMessageStatusV2')
+
+				// socket?.current?.off('updateReceiverMessageStatusV2')
+
 				dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: false })
 			}
 		};

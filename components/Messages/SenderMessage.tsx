@@ -35,13 +35,13 @@ function SenderMessages({ data, handleReactionSend, isReaction, }: any) {
         refetch()
     }, [isReaction])
 
-    useEffect(() => {
-        socket.current.on('updateSenderMessageStatusV2', (data: any) => {
-        });
-        return () => {
-            socket.current.off("updateSenderMessageStatusV2")
-        }
-    })
+    // useEffect(() => {
+    //     socket.current.on('updateSenderMessageStatusV2', (data: any) => {
+    //     });
+    //     return () => {
+    //         socket.current.off("updateSenderMessageStatusV2")
+    //     }
+    // })
 
     // const renderMessageTime = (props: any, data: any) => {
     //     return (

@@ -9,13 +9,15 @@ export const handleMessageStatus = (ids: string[], socket: any, status: number) 
 
 export const handleSentMessage = (messageObj: any, socket: any, dispatch: any, drafts: []) => {
     let isSuccess = false
+    // dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: { ...response.sMessageObj, messageSentTime: currentDate } })
     socket.current.emit('messageFromClient', messageObj, (response: any) => {
         if (response?.status === "success") {
             const currentDate = new Date()?.toISOString()
             dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: { ...response.sMessageObj, messageSentTime: currentDate } })
             dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
             isSuccess = true
-            handleMessageStatus([response?._id], socket, 1)
+            // handleMessageStatus([response?._id], socket, 1)
+            // console.log(response)
             dispatch({ type: reducerCases.ADD_SEND_MESSAGE, newMessage: { ...response.sMessageObj, messageSentTime: currentDate } })
             if (drafts?.length) {
                 const filterDraftsWithoutThis = drafts?.filter((item: any) => item?.messageToUserID !== messageObj?.messageToUserID)
