@@ -11,6 +11,7 @@ export const initialState = {
     chatContainerRef: null,
     sendMessages: [],
     draftMessages: [],
+    users: [],
 }
 
 const reducer = (state: any, action: any) => {
@@ -80,11 +81,21 @@ const reducer = (state: any, action: any) => {
                 ...state,
                 draftMessages: action.draftMessages
             }
-
         case reducerCases.SET_CHAT_CONTAINER_REF:
             return {
                 ...state,
                 chatContainerRef: action.chatContainerRef
+            }
+        case reducerCases.SET_USERS:
+            return {
+                ...state,
+                users: action.users
+            }
+
+        case reducerCases.ADD_USERS:
+            return {
+                ...state,
+                users: [...state.users, action?.newUser]
             }
 
         default:
