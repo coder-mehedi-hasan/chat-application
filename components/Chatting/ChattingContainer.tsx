@@ -85,6 +85,7 @@ export default memo(function ChattingContainer() {
         );
     }
 
+    console.log("all messages",messages)
 
     const handleScroll = () => {
         const container: any = containerRef.current;
@@ -347,11 +348,11 @@ export default memo(function ChattingContainer() {
             {
                 scrollBarPositionUp && isLoading || isRefetching || isFetching || !isSuccess ?
                     <>
-                        <div className='messages-overlay-loading' style={{ height: "100% !important" }}>
+                        {/* <div className='messages-overlay-loading' style={{ height: "100% !important" }}>
                             <div className="spinner-border loading" role="status">
                                 <span className="visually-hidden"></span>
                             </div>
-                        </div>
+                        </div> */}
                     </>
                     : ""
             }

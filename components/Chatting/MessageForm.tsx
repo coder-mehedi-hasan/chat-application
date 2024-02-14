@@ -14,6 +14,7 @@ import useGenerateRandomColor from '../../utils/useRandomColorGenerate';
 import { apiUrl } from '../../utils/constant';
 import { isFileIsImage } from '../../utils/getFileType';
 import { handleMessageStatus, handleSentMessage } from '../../utils/functions/message';
+import { getFileType } from '../../utils/fileType';
 
 
 function MessageForm() {
@@ -61,7 +62,24 @@ function MessageForm() {
                 //     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
                 //     handleMessageStatus([response?._id], socket, 1)
                 // })
-                handleSentMessage({ ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, socket, dispatch, draftMessages)
+                // console.log("file messages go to transfer", { url, file })
+                const { message: msg, contentType } = getFileType(file)
+                handleSentMessage({
+                    ...message,
+                    cloudfrontUrl: url?.cloudfrontUrl, 
+                    message: msg,
+                    messageMeta: {
+                        contentType: contentType,
+                        privateSticker: false
+                    },
+                    messageFiles: [
+                        {
+                            filepath: url?.cloudfrontUrl,
+                            filename: file?.name,
+                            mimetype: fileType
+                        }
+                    ]
+                }, socket, dispatch, draftMessages)
             }
         } catch (err) {
             console.log(err)
@@ -90,7 +108,7 @@ function MessageForm() {
 
     //handle file change
     const handleFileChange = (event: any) => {
-
+        event.preventDefault()
         const files = Array.from(event.target.files);
         setSelectedFiles(files);
 
@@ -137,7 +155,13 @@ function MessageForm() {
             //     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
             //     handleMessageStatus([response?._id], socket, 1)
             // })
-            handleSentMessage(message, socket, dispatch, draftMessages)
+            handleSentMessage({
+                ...message,
+                messageMeta: {
+                    contentType: 1,
+                    privateSticker: false
+                },
+            }, socket, dispatch, draftMessages)
             setMessage({ ...message, message: "" })
         }
         // if (selectedFiles?.length) {
@@ -213,7 +237,22 @@ function MessageForm() {
                         //     setSendEvent(null)
                         //     handleMessageStatus([response?._id], socket, 1)
                         // })
-                        handleSentMessage({ ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, socket, dispatch, draftMessages)
+                        handleSentMessage({
+                            ...message,
+                            cloudfrontUrl: url?.cloudfrontUrl,
+                            message: "Audio",
+                            messageMeta: {
+                                contentType: 4,
+                                privateSticker: false
+                            },
+                            messageFiles: [
+                                {
+                                    filepath: url?.cloudfrontUrl,
+                                    filename: file?.name,
+                                    mimetype: file?.type
+                                }
+                            ]
+                        }, socket, dispatch, draftMessages)
                         setSendEvent(null)
                     }
                 })
@@ -265,13 +304,15 @@ function MessageForm() {
     }
 
     const handlStickerClick = (sticker: any) => {
-        // socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: sticker?.Url, message: "" }, (response: any) => {
-        //     dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
-        //     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
-        //     setShowStickers(false)
-        //     handleMessageStatus([response?._id], socket, 1)
-        // })
-        handleSentMessage({ ...message, cloudfrontUrl: sticker?.Url, message: "" }, socket, dispatch, draftMessages)
+        handleSentMessage({
+            ...message,
+            message: "Sticker",
+            messageMeta: {
+                contentType: 2,
+                privateSticker: false
+            },
+            messageHyperlink: sticker?.Url
+        }, socket, dispatch, draftMessages)
         setShowStickers(false)
     }
 
@@ -290,7 +331,7 @@ function MessageForm() {
     }, [message?.message])
 
     return (
-        <div className={`position-relative border-top message-form ${isMobileWidth ? "fixed-bottom" : ""}`}> 
+        <div className={`position-relative border-top message-form ${isMobileWidth ? "fixed-bottom" : ""}`}>
             <div style={{ flex: 1, background: "#fff", height: "80px" }} className='position-relative w-100 h-100 text-white d-flex align-items-center justify-content-between px-lg-3 px-md-2 px-sm-1 px-xs-1'>
                 {
                     showVoiceForm ?
@@ -337,7 +378,7 @@ function MessageForm() {
                         :
                         <>
                             <div className='d-flex'
-                                style={{ width: message?.message !== "" ? "0%" : "initial",transition:"all 2s" }}>
+                                style={{ width: message?.message !== "" ? "0%" : "initial", transition: "all 2s" }}>
                                 <div>
                                     <div className='text-dark side-action-form' onClick={() => setShowVoiceToast(!showVoiceToast)}>
                                         <BsFillXCircleFill className="inner-btn brand-color" style={{ transform: showVoiceToast ? "rotate(90deg)" : "rotate(45deg)", transition: ".4s" }} />
@@ -509,18 +550,18 @@ const StickerList = ({ category, handlStickerClick, ...props }: any) => {
 
 
     return (
-        <>
+        <div className=''>
             {
                 Array.isArray(stickers) && stickers?.length &&
                 stickers?.map(img => {
                     return <>
-                        <div className='w-100 cursor-pointer my-1' onClick={() => handlStickerClick(img)}>
+                        <div className='cursor-pointer my-1' onClick={() => handlStickerClick(img)} style={{ width: "30% !important" }}>
                             <img src={img?.Url} alt="" className='img-fluid' />
                         </div>
                     </>
                 })
             }
-        </>
+        </div>
     )
 
 }

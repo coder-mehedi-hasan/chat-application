@@ -6,27 +6,25 @@ import { useEffect, useState } from "react";
 import { getFileExtensionAndType } from '../../utils/getFileExtensionAndType';
 import { fileTypes } from "../../utils/constant";
 
-const CustomImageGallery = ({ onClick, image }:any) => {
+const CustomImageGallery = ({ onClick, image }: any) => {
     const [galleryImages, setGalleryImages] = useState<any>([])
-    const [{ messages }] :any= useStateProvider()
+    const [{ messages }]: any = useStateProvider()
 
     useEffect(() => {
-        const images = []
-        messages && messages?.map(item  => {
-            if (item?.cloudfrontUrl) {
-                const fileInfo = getFileExtensionAndType(item?.cloudfrontUrl)
-                if (fileInfo?.fileType === fileTypes?.image) {
-                    images.push({
-                        original: item?.cloudfrontUrl,
-                        thumbnail: item?.cloudfrontUrl,
-                    })
-
-                }
+        let images: any[] = []
+        const fillterdMessages = messages?.length && messages?.filter(mes => mes?.messageMeta?.contentType === 3)
+        fillterdMessages && fillterdMessages?.map(item => {
+            if (item?.messageFiles?.length) {
+                const url = item?.messageFiles[0]?.filepath
+                images.push({
+                    original: url,
+                    thumbnail: url,
+                })
             }
         })
         setGalleryImages(images)
-
     }, [messages])
+
     return (
         <div style={{ width: "100%", height: "100%", }}>
             <div style={{ padding: "10px 20px" }}>

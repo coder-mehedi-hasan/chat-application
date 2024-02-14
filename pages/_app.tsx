@@ -121,6 +121,7 @@ export function Main({ Component, pageProps }: any) {
 
 			// 	})
 			// }
+			console.log("clientToClientMessage",response)
 			if (response.sMessageObj.messageFromUserID == currentChatUser?.id) {
 				dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
 				socket.current.emit('updateMessageStatusV2', {

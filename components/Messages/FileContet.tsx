@@ -59,9 +59,9 @@ export default function FileContent({ img }:any) {
 
                 }
             </div>
-            <Modal show={gallery} className='image-content'>
+            {/* <Modal show={gallery} className='image-content'>
                 <CustomImageGallery onClick={setGallery} image={img} />
-            </Modal>
+            </Modal> */}
         </>
     )
 }

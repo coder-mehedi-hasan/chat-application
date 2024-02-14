@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import Reactions from './Reactions';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import renderMessageTime from '../common/render-message-time';
+import getContent from '../../utils/getContent';
 
 function SenderMessages({ data, handleReactionSend, isReaction, }: any) {
     const [{ userInfo, socket }, dispatch]: any = useStateProvider()
@@ -59,7 +60,7 @@ function SenderMessages({ data, handleReactionSend, isReaction, }: any) {
                     delay={{ show: 150, hide: 400 }}
                     overlay={(props) => renderMessageTime(props, data)}
                 >
-                    {
+                    {/* {
                         data?.cloudfrontUrl && !data?.message ?
                             <div>
                                 <FileContent img={data?.cloudfrontUrl} />
@@ -82,7 +83,17 @@ function SenderMessages({ data, handleReactionSend, isReaction, }: any) {
                                     }
                                 </div>
                             </div>
-                    }
+                    } */}
+                    <div>
+                        {getContent(data)}
+                        <div className='reaction'>
+                            {
+                                reactionsAll?.length && Array.isArray(reactionsAll) ? reactionsAll?.map(item => {
+                                    return <Reactions reaction={item} handleReactionSend={handleReactionSend} />
+                                }) : ""
+                            }
+                        </div>
+                    </div>
                 </OverlayTrigger>
             </div>
         </>
