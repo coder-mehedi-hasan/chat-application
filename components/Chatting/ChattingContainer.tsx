@@ -9,6 +9,7 @@ import { arrayIsEmpty, handleMessageStatus, handleSortByDateTime } from '../../u
 import { IoIosArrowDown } from "react-icons/io";
 import { BsCheckAll, BsCheckLg, BsUiChecksGrid } from 'react-icons/bs'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { updateMessage } from '../../utils/updateMessage';
 
 export default memo(function ChattingContainer() {
     const [{ currentChatUser, userInfo, socket, messages, socketEvent, otherMessages, sendMessages }, dispatch]: any = useStateProvider()
@@ -46,7 +47,7 @@ export default memo(function ChattingContainer() {
     useEffect(() => {
         socket.current.on("editMessage", (res: any) => {
             if (res) {
-                setMessageReaction(!messageReaction)
+                updateMessage(res?.meta, messages, dispatch)
             }
         })
         return () => {
@@ -85,7 +86,7 @@ export default memo(function ChattingContainer() {
         );
     }
 
-    console.log("all messages",messages)
+    // console.log("all messages",messages)
 
     const handleScroll = () => {
         const container: any = containerRef.current;
@@ -147,28 +148,14 @@ export default memo(function ChattingContainer() {
                 const containerStoredMessage = otherMessages?.filter((item: any) => item?.messageFromUserID === currentChatUser?.id)
                 let unTrackedMessage: any = []
                 containerStoredMessage?.length && containerStoredMessage?.map((item: any) => {
-                    // const unTrackedMessageUnSeenIds = unTrackedMessage?.filter((item: any) => item?.messageFromUserID == currentChatUser?.id)?.map((item: any) => item?._id)
-                    // console.log("unTrackedMessageUnSeenIds", unTrackedMessageUnSeenIds)
-                    // if (unTrackedMessageUnSeenIds?.length) {
-                    //     handleMessageStatus(unTrackedMessageUnSeenIds, socket, 3)
-                    // }
                     const find = newMessages?.find(msg => msg?._id === item?._id)
-                    // console.log("find", find)
                     if (!find) {
-                        // newMessages = [...newMessages, [...[item]]]
                         unTrackedMessage.push(item)
                     }
                 })
 
-                // console.log("unTrackedMessage", unTrackedMessage)
                 if (unTrackedMessage?.length) {
-                    // const reverseUnTracked = unTrackedMessage.reverse()
                     dispatch({ type: reducerCases.SET_MESSAGES, messages: [...newMessages, ...unTrackedMessage] })
-                    // const unTrackedMessageUnSeenIds = unTrackedMessage?.filter((item: any) => item?.messageFrom == currentChatUser?.id)?.map((item: any) => item?._id)
-                    // console.log("unTrackedMessageUnSeenIds", unTrackedMessageUnSeenIds)
-                    // if (unTrackedMessageUnSeenIds?.length) {
-                    //     handleMessageStatus(unTrackedMessageUnSeenIds, socket, 3)
-                    // }
                 }
                 else {
                     dispatch({ type: reducerCases.SET_MESSAGES, messages: newMessages })
@@ -252,28 +239,44 @@ export default memo(function ChattingContainer() {
     }
 
     useEffect(() => {
-		socket?.current?.on('updateSenderMessageStatusV2', (data: any) => {
-			console.log("updateSenderMessageStatusV2 09090", data)
-			if (data) {
-				handlStatusData(data)
-			}
-		});
+        socket?.current?.on('updateSenderMessageStatusV2', (data: any) => {
+            console.log("updateSenderMessageStatusV2 09090", data)
+            if (data) {
+                handlStatusData(data)
+            }
+        });
 
-		socket?.current?.on('updateReceiverMessageStatusV2', function (data: any) {
-			console.log("updateReceiverMessageStatusV2rece 09090", data)
-			if (data) {
-				// handlStatusData(data)
-			}
-		});
-		
-		return () => {
-			if (socket.current) {
-				socket?.current?.off('updateSenderMessageStatusV2')
-				socket?.current?.off('updateReceiverMessageStatusV2')
-			}
-		};
-	}, [socket.current, currentChatUser]);
+        socket?.current?.on('updateReceiverMessageStatusV2', function (data: any) {
+            console.log("updateReceiverMessageStatusV2rece 09090", data)
+            if (data) {
+                // handlStatusData(data)
+            }
+        });
 
+        return () => {
+            if (socket.current) {
+                socket?.current?.off('updateSenderMessageStatusV2')
+                socket?.current?.off('updateReceiverMessageStatusV2')
+            }
+        };
+    }, [socket.current, currentChatUser]);
+
+    const handleDeleteMessage = (messageId, score) => {
+        // return
+        const params = {
+            "_id": messageId,
+            "score": score,
+            "messageBody": "This message has been removed",
+        }
+        // console.log(message)
+        socket.current.emit("editMessage", params
+            , (err: any, res: any) => {
+                if (!err) {
+                    updateMessage({ _id: messageId, ...res, message: res?.messageBody }, messages, dispatch)
+                }
+            }
+        );
+    }
 
     const getMessageStatusRender = (status: any) => {
         switch (status) {
@@ -314,30 +317,37 @@ export default memo(function ChattingContainer() {
                         const isSender = userInfo.id === item.messageFromUserID
                         return (
                             <div key={index} ref={messagesRef}>
-                                <div className="row my-3 w-100 message_content">
-                                    {
-                                        isSender
-                                            ?
-                                            <SenderMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction} />
-                                            :
-                                            <ReceiverMessages data={item} handleReactionSend={handleReactionSend} isReaction={messageReaction} />
-                                    }
-                                    <div className='d-flex justify-content-end'>
+                                {
+                                    // item?.score !== 0 ?
+                                    <div className="row my-3 w-100 message_content">
                                         {
-                                            isLastMessage ?
-                                                <OverlayTrigger
-                                                    placement="top"
-                                                    delay={{ show: 150, hide: 400 }}
-                                                    overlay={(props) => renderSeenByTooltip(props, item, parseInt(isSender ? status : 3))}
-                                                >
-                                                    <span className='text-dark fs-6 me-1F'>
-                                                        {getMessageStatusRender(parseInt(isSender ? status : 3))}
-                                                    </span>
-                                                </OverlayTrigger>
+                                            isSender
+                                                ?
+                                                <SenderMessages data={item} handleReactionSend={handleReactionSend} handleDeleteMessage={handleDeleteMessage} />
                                                 :
-                                                ""}
+                                                <ReceiverMessages data={item} handleReactionSend={handleReactionSend} handleDeleteMessage={handleDeleteMessage} />
+                                        }
+                                        <div className='d-flex justify-content-end'>
+                                            {
+                                                isLastMessage ?
+                                                    <OverlayTrigger
+                                                        placement="top"
+                                                        delay={{ show: 150, hide: 400 }}
+                                                        overlay={(props) => renderSeenByTooltip(props, item, parseInt(isSender ? status : 3))}
+                                                    >
+                                                        <span className='text-dark fs-6 me-1F'>
+                                                            {getMessageStatusRender(parseInt(isSender ? status : 3))}
+                                                        </span>
+                                                    </OverlayTrigger>
+                                                    :
+                                                    ""}
+                                        </div>
                                     </div>
-                                </div>
+                                    // :
+                                    // <div className='my-3 d-flex justify-content-center'>
+                                    //     <span className='py-2 px-5 m-0 bg_gray text-center fs-7 text-dark rounded-pill'>{item?.messageBody}</span>
+                                    // </div>
+                                }
                             </div>
                         )
                     }) : <div className='text-center'>

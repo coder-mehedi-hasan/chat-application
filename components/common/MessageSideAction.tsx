@@ -1,10 +1,9 @@
 import React, { useState, useRef } from 'react'
-import {  Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { BsEmojiSmile, BsFillReplyFill, BsPlus, BsThreeDotsVertical } from 'react-icons/bs'
-import { useStateProvider } from '../../context/StateContext';
 import { reactionEmojis } from '../../utils/constant';
 
-export default function MessageSideAction({ message, handleReactionSend }: any) {
+export default function MessageSideAction({ message, handleReactionSend, handleDeleteMessage, isSend, ...props }: any) {
     const [showMore, setShowMore] = useState(false);
     const [showReaction, setShowReaction] = useState(false)
     const more = useRef(null);
@@ -28,6 +27,11 @@ export default function MessageSideAction({ message, handleReactionSend }: any) 
 
     const handleClick = (reaction) => {
         handleReactionSend(message?._id, reaction?.name, true)
+    };
+
+    const handleDelClick = () => {
+        // handleReactionSend(message?._id, reaction?.name, true)
+        handleDeleteMessage(message?._id, 0)
     };
 
     return (
@@ -84,13 +88,15 @@ export default function MessageSideAction({ message, handleReactionSend }: any) 
             <Overlay target={more.current} show={showMore} placement="top">
                 {(props) => (
                     <Tooltip id="overlay-example" {...props} className='inner_action_tooltip inner_action_tooltip_more' >
-                        <div>
-                            <div className='button'>
-                                <div>
-                                    Remove
+                        {
+                            isSend && <div>
+                                <div className='button' onClick={handleDelClick}>
+                                    <div>
+                                        Remove
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        }
                         <div className=''>
                             <div className='button'>
                                 <div>

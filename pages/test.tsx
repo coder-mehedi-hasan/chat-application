@@ -84,8 +84,10 @@ const Home = () => {
 
   return (
     <div>
-      <h1>Welcome to My Next.js App</h1>
-      <button onClick={() => showNotification()}>Show Notification</button>
+      {/* <h1>Welcome to My Next.js App</h1>
+      <button onClick={() => showNotification()}>Show Notification</button> */}
+      {/* <iframe width="560" height="315" src="https://www.youtube.com/embed/707roYCfOts?si=SNuy29cuZNuhmm8s" title="YouTube video player" allowFullScreen={true}  frameborder="0" allow='autoplay'></iframe> */}
+      <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/707roYCfOts?si=SNuy29cuZNuhmm8s" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
     </div>
 
   );

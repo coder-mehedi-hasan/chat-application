@@ -9,7 +9,7 @@ const LocationContent = ({ message }) => {
 
     const pattern = /loc\/([-+]?\d*\.\d+|\d+)\/([-+]?\d*\.\d+|\d+)/;
 
-``    const match = messageHyperlink?.match(pattern);
+    const match = messageHyperlink?.match(pattern);
     const latitude = match && parseFloat(match[1]);
     const longitude = match && parseFloat(match[2]);
     const mapUrl = `https://www.google.com/maps?q=${latitude},${longitude}`

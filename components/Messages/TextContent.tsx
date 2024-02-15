@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { useStateProvider } from '../../context/StateContext';
 import { identifyTextOrLink } from '../../utils/identifyTextOrLink';
 import Link from 'next/link';
+import { useStateProvider } from '../../context/StateContext';
 
-export default function TextContent({ content, isSender, message }:any) {
-
+export default function TextContent({ content, message }: any) {
+    const [{ userInfo }, dispatch]: any = useStateProvider()
+    const isSender = message?.messageFromUserID === userInfo?.id
     const containerStyle = {
         maxWidth: "564px",
         padding: "8px 12px",
@@ -23,11 +24,11 @@ export default function TextContent({ content, isSender, message }:any) {
 
     return (
         <>
-            <div style={containerStyle} className={isSender? "brand-bg":""}>
+            <div style={containerStyle} className={isSender ? "brand-bg" : ""}>
                 <div style={{ boxSizing: "border-box" }}>
                     <div className='m-0 w-100' style={textStyle}>
                         {
-                            identifyTextOrLink(content) === 'link' ? <Link target='_blank' href={content} style={{ color: isSender ? "#fff" : "#000" }}>{content}</Link> : content
+                            identifyTextOrLink(content) === 'link' ? <Link target='_blank' href={content} style={{ color: isSender ? "#fff" : "#000" }}>{message?.messageBody}</Link> : message?.messageBody
                         }
                     </div>
                 </div>

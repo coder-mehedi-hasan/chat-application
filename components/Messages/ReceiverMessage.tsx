@@ -10,13 +10,9 @@ import { OverlayTrigger } from 'react-bootstrap';
 import renderMessageTime from '../common/render-message-time';
 import getContent from '../../utils/getContent';
 
-export default function ReceiverMessages({ data, handleReactionSend, isReaction }: any) {
+export default function ReceiverMessages({ data, handleReactionSend, handleDeleteMessage }: any) {
     const [{ currentChatUser, userInfo, socket }, dispatch]: any = useStateProvider()
 
-    const { data: reactionsAll, isSuccess, refetch } = useQuery({
-        queryKey: [`${data?._id}`],
-        queryFn: () => getReactionsApi()
-    });
 
     const getReactionsApi = async () => {
         const response = await fetch(`https://messaging-dev.kotha.im/mobile/api/messages/reactions/${data?._id}?skip=0&limit=10`, {
@@ -32,9 +28,6 @@ export default function ReceiverMessages({ data, handleReactionSend, isReaction 
         return []
     }
 
-    useEffect(() => {
-        refetch()
-    }, [isReaction])
 
     // useEffect(() => {
     //     socket.current.on('updateReceiverMessageStatusV2', function (data: any) {
@@ -83,16 +76,16 @@ export default function ReceiverMessages({ data, handleReactionSend, isReaction 
                     } */}
                     <div>
                         {getContent(data)}
-                        <div className='reaction'>
+                        {/* <div className='reaction'>
                             {
                                 reactionsAll?.length && Array.isArray(reactionsAll) ? reactionsAll?.map(item => {
                                     return <Reactions reaction={item} handleReactionSend={handleReactionSend} />
                                 }) : ""
                             }
-                        </div>
+                        </div> */}
                     </div>
                 </OverlayTrigger>
-                <MessageSideAction message={data} handleReactionSend={handleReactionSend} />
+                <MessageSideAction message={data} handleReactionSend={handleReactionSend} handleDeleteMessage={handleDeleteMessage} isSend={false} />
             </div>
         </>
     )

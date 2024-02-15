@@ -11,7 +11,7 @@ const getContent = (message: any) => {
     const contentType = message?.messageMeta?.contentType
     switch (contentType) {
         case 1:
-            return <TextContent isSender={true} content={message?.message} message={message} />
+            return <TextContent content={message?.message} message={message} />
         case 2:
             return <StickerContent message={message} />
         case 3:

@@ -9,16 +9,16 @@ export const handleMessageStatus = (ids: string[], socket: any, status: number) 
 
 export const handleSentMessage = (messageObj: any, socket: any, dispatch: any, drafts: []) => {
     let isSuccess = false
-    // dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: { ...response.sMessageObj, messageSentTime: currentDate } })
+    if (!messageObj.score) {
+        messageObj.score = 1
+    }
     socket.current.emit('messageFromClient', messageObj, (response: any) => {
         if (response?.status === "success") {
             const currentDate = new Date()?.toISOString()
-            dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: { ...response.sMessageObj, messageSentTime: currentDate } })
+            dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: { ...response.sMessageObj, messageSentTime: currentDate, messageBody: response.sMessageObj?.message } })
             dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
             isSuccess = true
-            // handleMessageStatus([response?._id], socket, 1)
-            // console.log(response)
-            dispatch({ type: reducerCases.ADD_SEND_MESSAGE, newMessage: { ...response.sMessageObj, messageSentTime: currentDate } })
+            dispatch({ type: reducerCases.ADD_SEND_MESSAGE, newMessage: { ...response.sMessageObj, messageSentTime: currentDate, messageBody: response.sMessageObj?.message } })
             if (drafts?.length) {
                 const filterDraftsWithoutThis = drafts?.filter((item: any) => item?.messageToUserID !== messageObj?.messageToUserID)
                 dispatch({ type: reducerCases.SET_DRAFT_MESSAGE, draftMessages: filterDraftsWithoutThis })
@@ -30,7 +30,7 @@ export const handleSentMessage = (messageObj: any, socket: any, dispatch: any, d
 
 export const handleSortByDateTime = (arr: any[]) => {
     const compareDateTimesDesc = (a, b) => b?.messageSentTime - a?.messageSentTime;
-    const sortedArray = arr.sort(compareDateTimesDesc);
+    const sortedArray = arr?.sort(compareDateTimesDesc);
 
     return sortedArray
 }
