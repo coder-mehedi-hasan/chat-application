@@ -32,7 +32,7 @@ export default function App({ Component, pageProps }: AppProps) {
 export function Main({ Component, pageProps }: any) {
 	const [lat, setLat] = useState<any>()
 	const [lon, setLon] = useState<any>()
-	const [{ currentChatUser, userInfo, current_location, messages, socketEvent, otherMessages, chatContainerRef, users }, dispatch]: any = useStateProvider()
+	const [{ currentChatUser, userInfo, current_location, messages, socketEvent, otherMessages, chatContainerRef, users, editMessage, replayMessage }, dispatch]: any = useStateProvider()
 	const socket: any = useRef()
 
 	const getLocation = () => {
@@ -44,6 +44,8 @@ export function Main({ Component, pageProps }: any) {
 			})
 		}
 	}
+	// console.log("editMessage from _app", editMessage)
+	console.log("replayMessage from _app", replayMessage)
 
 
 	useEffect(() => {
@@ -108,22 +110,10 @@ export function Main({ Component, pageProps }: any) {
 
 	useEffect(() => {
 		socket?.current?.on('clientToClientMessage', (response: any) => {
-			// const find = users?.find((user: any) => user?.id === response?.sMessageObj?.messageFromUserID)
-			// if (!find) {
-			// 	dispatch({
-			// 		type: reducerCases.ADD_USERS, newUser:
-			// 		{
-			// 			"id": response?.sMessageObj?.messageFromUserID,
-			// 			"name": "Unknown User",
-			// 			"email": "tatorfun@gmail.com",
-			// 			"phone": "88099956234",
-			// 		},
-
-			// 	})
-			// }
 			console.log("clientToClientMessage",response)
+			const currentDate = new Date()?.toISOString()
 			if (response.sMessageObj.messageFromUserID == currentChatUser?.id) {
-				dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
+				dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: { ...response.sMessageObj, messageBody: response?.sMessageObj?.message, messageSentTime: currentDate } })
 				socket.current.emit('updateMessageStatusV2', {
 					_ids: [response?.sMessageObj?._id],
 					currentStatus: 3
@@ -132,7 +122,7 @@ export function Main({ Component, pageProps }: any) {
 			} else {
 				dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: response.sMessageObj })
 				const find = users?.find((user: any) => user?.id === response?.sMessageObj?.messageFromUserID)
-				if(!find){
+				if (!find) {
 					console.log("developer received", response.sMessageObj)
 				}
 			}

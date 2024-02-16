@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, memo } from 'react'
 import { Button, Form, Image, Overlay, Tooltip } from 'react-bootstrap'
 import { BsX, BsImage, BsEmojiSmile, BsMicFill, BsFillPlayFill, BsPauseFill, BsFillXCircleFill, BsChevronRight, BsChevronLeft } from "react-icons/bs";
 import Toast from 'react-bootstrap/Toast';
@@ -15,6 +15,8 @@ import { apiUrl } from '../../utils/constant';
 import { isFileIsImage } from '../../utils/getFileType';
 import { handleMessageStatus, handleSentMessage } from '../../utils/functions/message';
 import { getFileType } from '../../utils/fileType';
+import { useQuery } from '@tanstack/react-query';
+import { updateMessage } from '../../utils/updateMessage';
 
 
 function MessageForm() {
@@ -28,7 +30,7 @@ function MessageForm() {
     const gifs = useRef(null);
     const inputReference = useRef();
     const [message, setMessage] = useState<any>({ messageType: 1, messageFromUserID: "", messageToUserID: '', message: "" })
-    const [{ currentChatUser, userInfo, socket, draftMessages }, dispatch]: any = useStateProvider()
+    const [{ currentChatUser, userInfo, socket, draftMessages, editMessage, messages, replayMessage }, dispatch]: any = useStateProvider()
     const recorderControls = useAudioRecorder()
     const [sendEvent, setSendEvent] = useState<any>(null)
     const [showStickers, setShowStickers] = useState(false);
@@ -66,7 +68,7 @@ function MessageForm() {
                 const { message: msg, contentType } = getFileType(file)
                 handleSentMessage({
                     ...message,
-                    cloudfrontUrl: url?.cloudfrontUrl, 
+                    cloudfrontUrl: url?.cloudfrontUrl,
                     message: msg,
                     messageMeta: {
                         contentType: contentType,
@@ -155,14 +157,47 @@ function MessageForm() {
             //     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
             //     handleMessageStatus([response?._id], socket, 1)
             // })
-            handleSentMessage({
-                ...message,
-                messageMeta: {
+            if (editMessage && message?.isEditMessage) {
+                const params = {
+                    "_id": editMessage?._id,
+                    "messageBody": message?.message,
+                    "message": message?.message,
+                    // "messageMeta":{...editMessage?.messageMeta,contentInfo: ""}
+                }
+                socket.current.emit("editMessage", params
+                    , (err: any, res: any) => {
+                        if (!err) {
+                            updateMessage({ _id: editMessage?._id, ...res, message: res?.messageBody }, messages, dispatch)
+                            dispatch({ type: reducerCases.ADD_EDIT_MESSAGE, editMessage: null })
+                            setMessage({ ...message, message: "", isEditMessage: false })
+                        }
+                    }
+                );
+            } else {
+                let messageMeta: any = {
                     contentType: 1,
                     privateSticker: false
-                },
-            }, socket, dispatch, draftMessages)
-            setMessage({ ...message, message: "" })
+                }
+
+                if (replayMessage) {
+                    messageMeta.contentType = 14
+                    const value = {
+                        c: replayMessage?.messageMeta?.contentType === 3,
+                        i: replayMessage?._id,
+                        n: userInfo?.name,
+                        o: replayMessage?.messageMeta?.contentType === 3 ? replayMessage?.messageFiles[0]?.filepath : replayMessage?.messageBody,
+                        r: message?.message,
+                        rc: false
+                    }
+                    messageMeta.contentInfo = JSON.stringify(value)
+                }
+                handleSentMessage({
+                    ...message,
+                    messageMeta
+                }, socket, dispatch, draftMessages)
+                setMessage({ ...message, message: "" })
+                dispatch({ type: reducerCases.ADD_REPLAY_MESSAGE, replayMessage: null })
+            }
         }
         // if (selectedFiles?.length) {
         //     uploadFilesForMessaging()
@@ -280,6 +315,8 @@ function MessageForm() {
     }
 
     useEffect(() => {
+        dispatch({ type: reducerCases.ADD_EDIT_MESSAGE, editMessage: null })
+        dispatch({ type: reducerCases.ADD_REPLAY_MESSAGE, replayMessage: null })
         const findDraft = draftMessages?.find((draft: any) => draft?.messageToUserID === currentChatUser.id && draft?.messageFromUserID === userInfo?.id)
         if (findDraft) {
             setMessage({ ...message, message: findDraft?.message, messageToUserID: currentChatUser.id, messageFromUserID: userInfo?.id })
@@ -288,6 +325,8 @@ function MessageForm() {
         }
         getStickersCategory()
     }, [currentChatUser])
+
+
 
     const RenderPreviewImage = (src: string, index: number) => {
         const isImage = isFileIsImage(selectedFiles[index])
@@ -316,23 +355,95 @@ function MessageForm() {
         setShowStickers(false)
     }
 
-    useEffect(() => {
-        const findDraft = draftMessages?.find((draft: any) => draft?.messageToUserID === currentChatUser.id)
-        if (!findDraft) {
-            if (message?.message !== "") {
-                dispatch({ type: reducerCases.ADD_DRAFT_MESSAGE, newMessage: message })
-            }
-        } else {
-            if (message?.message !== "") {
-                const filterWithoutDraft = draftMessages?.filter((draft: any) => draft?.messageToUserID !== currentChatUser.id)
-                dispatch({ type: reducerCases.SET_DRAFT_MESSAGE, draftMessages: [...filterWithoutDraft, ...[message]] })
-            }
+    // useEffect(() => {
+    //     const findDraft = draftMessages?.find((draft: any) => draft?.messageToUserID === currentChatUser.id)
+    //     if (!findDraft) {
+    //         if (message?.message !== "") {
+    //             dispatch({ type: reducerCases.ADD_DRAFT_MESSAGE, newMessage: message })
+    //         }
+    //     } else {
+    //         if (message?.message !== "") {
+    //             const filterWithoutDraft = draftMessages?.filter((draft: any) => draft?.messageToUserID !== currentChatUser.id)
+    //             dispatch({ type: reducerCases.SET_DRAFT_MESSAGE, draftMessages: [...filterWithoutDraft, ...[message]] })
+    //         }
+    //     }
+    // }, [message?.message])
+
+    const { isSuccess, data, isLoading, isFetching } = useQuery({
+        queryKey: [],
+        queryFn: () => setMessage({ ...message, message: editMessage?.messageBody, isEditMessage: true }),
+        enabled: !!editMessage,
+        staleTime: 5,
+    })
+
+    const getContent = () => {
+        // if(replayMessage?.messageMeta?.contentType)
+        switch (replayMessage?.messageMeta?.contentType) {
+            case 1:
+                return (
+                    <div>
+                        <p className='rounded-pill my-2 p-2 bg_gray'>{replayMessage?.messageBody?.substring(0, 110)}{replayMessage?.messageBody?.length > 110 ? ".........." : ""}</p>
+                    </div>
+                )
+            case 3:
+                return (
+                    <div style={{ maxHeight: "50px", objectFit: 'contain', maxWidth: "70px" }} className='overflow-hidden my-1 rounded'>
+                        <img src={replayMessage?.messageFiles[0]?.filepath} alt="IMG" className='img-fluid' />
+                    </div>
+                )
+            default:
+                break;
         }
-    }, [message?.message])
+
+        // if (content?.c) {
+        //     return <div style={{ maxWidth: "140px", objectFit: "cover", overflow: "hidden", borderRadius: "12px", borderBottomRightRadius: isSender ? "0" : "12px", borderBottomLeftRadius: !isSender ? "0" : "12px", opacity: 0.6 }}>
+        //         <img src={content?.o} alt="" className='img-fluid' />
+        //     </div>
+        // } else {
+        //     return <>
+        //         <div className='bg-replay p-3 border' style={{ borderRadius: "12px", borderBottomRightRadius: isSender ? "0" : "12px", borderBottomLeftRadius: !isSender ? "0" : "12px", opacity: 0.6 }}>
+        //             <div className='text-dark fs-8'>
+        //                 <span> {content?.n}: {content?.o?.substring(0, 150)}</span>
+        //             </div>
+        //         </div>
+        //     </>
+        // }
+        return <></>
+    }
+
 
     return (
         <div className={`position-relative border-top message-form ${isMobileWidth ? "fixed-bottom" : ""}`}>
             <div style={{ flex: 1, background: "#fff", height: "80px" }} className='position-relative w-100 h-100 text-white d-flex align-items-center justify-content-between px-lg-3 px-md-2 px-sm-1 px-xs-1'>
+                {
+                    editMessage &&
+                    <div className='d-flex justify-content-between align-items-center position-absolute bg-danger w-100 p-2 bg_gray text-dark fw-bold' style={{ top: "-90%", left: 0 }}>
+                        <p className='m-0'>Edit Message</p>
+                        <div className='cross-button' onClick={() => {
+                            dispatch({ type: reducerCases.ADD_EDIT_MESSAGE, editMessage: null })
+                            setMessage({ ...message, message: '', isEditMessage: false })
+                        }}><BsX /></div>
+                    </div>
+                }
+                {
+                    replayMessage &&
+                    <div className='position-absolute  w-100 p-2 rounded-top text-dark bg-light border' style={{ top: "-100px", left: 0, height: "100px" }}>
+                        <div className='d-flex justify-content-between'>
+                            <p className='m-0 fs-7'>Replay to <span className='brand-color fw-medium'>{userInfo?.name}</span></p>
+                            <p className='m-0 brand-color fw-medium fs-7 cursor-pointer' onClick={() => {
+                                dispatch({ type: reducerCases.ADD_REPLAY_MESSAGE, replayMessage: null })
+                            }}>CANCEL</p>
+                        </div>
+                        <div>
+                            {getContent()}
+                        </div>
+                        {/* <p className='m-0'>Edit Message</p>
+                        <div className='cross-button' onClick={() => {
+                            dispatch({ type: reducerCases.ADD_EDIT_MESSAGE, editMessage: null })
+                            setMessage({ ...message, message: '', isEditMessage: false })
+                        }}><BsX /></div> */}
+                    </div>
+                }
                 {
                     showVoiceForm ?
                         <>
@@ -410,7 +521,7 @@ function MessageForm() {
                                                 previewFiles?.map((item, index) => {
                                                     return (
                                                         <div key={index} className='mx-2 my-3 position-relative'>
-                                                            <div style={{ height: isMobileWidth ? "16px" : "20px", width: isMobileWidth ? "16px" : "20px", borderRadius: "50%", position: "absolute", top: "-5px", right: "-5px", cursor: "pointer", fontSize: isMobileWidth ? "14px" : "18px" }} className='text-dark bg-white d-flex justify-content-center align-items-center' onClick={() => deletePreviewImage(index)}><BsX /></div>
+                                                            <div style={{ position: "absolute", top: "-5px", right: "-5px" }} className='text-dark cross-button' onClick={() => deletePreviewImage(index)}><BsX /></div>
                                                             <div style={{ height: isMobileWidth ? 65 : 80, width: isMobileWidth ? 65 : 80, overflow: "hidden" }} className='rounded'>
                                                                 {RenderPreviewImage(item, index)}
                                                             </div>
@@ -422,6 +533,7 @@ function MessageForm() {
                                         :
                                         ""
                                 }
+
                                 <div className='cursor-pointer p-1 text-dark' style={{ fontSize: "16px" }} ref={emoji} onClick={() => setShowEmoji(!showEmoji)}>
                                     <BsEmojiSmile className="brand-color" />
                                 </div>
@@ -567,4 +679,4 @@ const StickerList = ({ category, handlStickerClick, ...props }: any) => {
 }
 
 
-export default MessageForm;
+export default memo(MessageForm);

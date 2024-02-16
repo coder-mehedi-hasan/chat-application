@@ -28,14 +28,8 @@ export default function ReceiverMessages({ data, handleReactionSend, handleDelet
         return []
     }
 
+    const reactionsAll = data?.reactionCounts && Object.keys(data?.reactionCounts)
 
-    // useEffect(() => {
-    //     socket.current.on('updateReceiverMessageStatusV2', function (data: any) {
-    //     });
-    //     return () => {
-    //         socket.current.off("updateReceiverMessageStatusV2")
-    //     }
-    // })
 
     return (
         <>
@@ -76,13 +70,13 @@ export default function ReceiverMessages({ data, handleReactionSend, handleDelet
                     } */}
                     <div>
                         {getContent(data)}
-                        {/* <div className='reaction'>
+                        <div className='reaction'>
                             {
                                 reactionsAll?.length && Array.isArray(reactionsAll) ? reactionsAll?.map(item => {
-                                    return <Reactions reaction={item} handleReactionSend={handleReactionSend} />
+                                    return <Reactions reaction={item} handleReactionSend={handleReactionSend} messageId={data?._id}  />
                                 }) : ""
                             }
-                        </div> */}
+                        </div>
                     </div>
                 </OverlayTrigger>
                 <MessageSideAction message={data} handleReactionSend={handleReactionSend} handleDeleteMessage={handleDeleteMessage} isSend={false} />

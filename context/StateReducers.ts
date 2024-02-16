@@ -12,6 +12,8 @@ export const initialState = {
     sendMessages: [],
     draftMessages: [],
     users: [],
+    editMessage: null,
+    replayMessage: null
 }
 
 const reducer = (state: any, action: any) => {
@@ -91,13 +93,21 @@ const reducer = (state: any, action: any) => {
                 ...state,
                 users: action.users
             }
-
         case reducerCases.ADD_USERS:
             return {
                 ...state,
                 users: [...state.users, action?.newUser]
             }
-
+        case reducerCases.ADD_EDIT_MESSAGE:
+            return {
+                ...state,
+                editMessage: action.editMessage
+            }
+        case reducerCases.ADD_REPLAY_MESSAGE:
+            return {
+                ...state,
+                replayMessage: action.replayMessage
+            }
         default:
             return state;
     }

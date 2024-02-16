@@ -9,7 +9,7 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import renderMessageTime from '../common/render-message-time';
 import getContent from '../../utils/getContent';
 
-function SenderMessages({ data, handleReactionSend,  handleDeleteMessage }: any) {
+function SenderMessages({ data, handleReactionSend, handleDeleteMessage }: any) {
     const [{ userInfo, socket }, dispatch]: any = useStateProvider()
 
     // const { data: reactionsAll, isSuccess, refetch } = useQuery({
@@ -31,6 +31,7 @@ function SenderMessages({ data, handleReactionSend,  handleDeleteMessage }: any)
         }
         return []
     }
+    const reactionsAll = data?.reactionCounts && Object.keys(data?.reactionCounts)
 
 
     return (
@@ -44,13 +45,14 @@ function SenderMessages({ data, handleReactionSend,  handleDeleteMessage }: any)
                 >
                     <div>
                         {getContent(data)}
-                        {/* <div className='reaction'>
+                        <div className='reaction'>
                             {
                                 reactionsAll?.length && Array.isArray(reactionsAll) ? reactionsAll?.map(item => {
-                                    return <Reactions reaction={item} handleReactionSend={handleReactionSend} />
+                                    if (data?.reactionCounts[item] > 0)
+                                        return <Reactions reaction={item} handleReactionSend={handleReactionSend} messageId={data?._id} />
                                 }) : ""
                             }
-                        </div> */}
+                        </div>
                     </div>
                 </OverlayTrigger>
             </div>

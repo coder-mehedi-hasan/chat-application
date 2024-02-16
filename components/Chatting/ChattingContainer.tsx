@@ -79,14 +79,13 @@ export default memo(function ChattingContainer() {
         socket.current.emit("editMessage", params
             , (err: any, res: any) => {
                 if (!err) {
-                    setSenderReaction(res)
-                    setMessageReaction(!messageReaction)
+                    updateMessage(res, messages, dispatch)
                 }
             }
         );
     }
 
-    // console.log("all messages",messages)
+    console.log("all messages", messages)
 
     const handleScroll = () => {
         const container: any = containerRef.current;
@@ -259,10 +258,9 @@ export default memo(function ChattingContainer() {
                 socket?.current?.off('updateReceiverMessageStatusV2')
             }
         };
-    }, [socket.current, currentChatUser]);
+    }, [socket?.current, currentChatUser]);
 
     const handleDeleteMessage = (messageId, score) => {
-        // return
         const params = {
             "_id": messageId,
             "score": score,
@@ -350,7 +348,7 @@ export default memo(function ChattingContainer() {
                                 }
                             </div>
                         )
-                    }) : <div className='text-center'>
+                    }) : <div className='text-center text-dark'>
                         YOU HAVE NO MESSAGE
                     </div>
                 }

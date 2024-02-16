@@ -2,12 +2,16 @@ import React, { useState, useRef } from 'react'
 import { Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { BsEmojiSmile, BsFillReplyFill, BsPlus, BsThreeDotsVertical } from 'react-icons/bs'
 import { reactionEmojis } from '../../utils/constant';
+import { useStateProvider } from '../../context/StateContext';
+import { reducerCases } from '../../context/constant';
 
 export default function MessageSideAction({ message, handleReactionSend, handleDeleteMessage, isSend, ...props }: any) {
     const [showMore, setShowMore] = useState(false);
     const [showReaction, setShowReaction] = useState(false)
     const more = useRef(null);
     const emoji = useRef(null);
+    const [{ currentChatUser, userInfo, current_location, messages, socketEvent, otherMessages, chatContainerRef, users }, dispatch]: any = useStateProvider()
+
 
     const innerActions = (ac) => {
         if (ac === "more") {
@@ -34,6 +38,11 @@ export default function MessageSideAction({ message, handleReactionSend, handleD
         handleDeleteMessage(message?._id, 0)
     };
 
+    const handleEdit = () => {
+        // console.log("Edit",message)
+        dispatch({ type: reducerCases.ADD_EDIT_MESSAGE, editMessage: message })
+    }
+
     return (
         <>
             <div className='d-flex align=items-center mx-1 message_actions' onMouseLeave={onMouse}>
@@ -57,12 +66,12 @@ export default function MessageSideAction({ message, handleReactionSend, handleD
                     <OverlayTrigger
                         placement="top"
                         overlay={
-                            <Tooltip id="tooltip-top" className='action_tooltip_top'>
+                            <Tooltip id="tooltip-top" className='action_tooltip_top' >
                                 Replay
                             </Tooltip>
                         }
                     >
-                        <Button variant="" className="p-0 text-white" >
+                        <Button variant="" className="p-0 text-white" onClick={() => dispatch({ type: reducerCases.ADD_REPLAY_MESSAGE,replayMessage: message })}>
                             <span className='d-flex align-items-center justify-content-center hover_background action_tooltip_icon' style={{ fontSize: "15px", height: "24px", width: "24px", borderRadius: "50%", cursor: "pointer", margin: "auto" }}><BsFillReplyFill /></span >
                         </Button>
 
@@ -88,15 +97,7 @@ export default function MessageSideAction({ message, handleReactionSend, handleD
             <Overlay target={more.current} show={showMore} placement="top">
                 {(props) => (
                     <Tooltip id="overlay-example" {...props} className='inner_action_tooltip inner_action_tooltip_more' >
-                        {
-                            isSend && <div>
-                                <div className='button' onClick={handleDelClick}>
-                                    <div>
-                                        Remove
-                                    </div>
-                                </div>
-                            </div>
-                        }
+
                         <div className=''>
                             <div className='button'>
                                 <div>
@@ -104,13 +105,26 @@ export default function MessageSideAction({ message, handleReactionSend, handleD
                                 </div>
                             </div>
                         </div>
-                        <div className=''>
-                            <div className='button'>
+                        {
+                            isSend && <>
                                 <div>
-                                    Pin
+                                    <div className='button' onClick={handleDelClick}>
+                                        <div>
+                                            Remove
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
+                                {
+                                    // message?.messageMeta?.contentType === 1 &&
+                                    <div className='' onClick={handleEdit}>
+                                        <div className='button'>
+                                            <div>
+                                                Edit
+                                            </div>
+                                        </div>
+                                    </div>}
+                            </>
+                        }
                     </Tooltip>
                 )}
             </Overlay>

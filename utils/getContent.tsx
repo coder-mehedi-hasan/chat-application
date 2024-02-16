@@ -22,14 +22,12 @@ const getContent = (message: any) => {
             return <VideoContent message={message} />
         case 6:
             return <LocationContent message={message} />
-        case 8:
-            return <FilesContent message={message} />
         // case 7:
         //     return <TextContent isSender={true} content={message?.message} message={message} />
-        // case 8:
-        //     return <TextContent isSender={true} content={message?.message} message={message} />
-        // case 9:
-        //     return <TextContent isSender={true} content={message?.message} message={message} />
+        case 8:
+            return <FilesContent message={message} />
+        case 14:
+            return <TextContent isSender={true} content={message?.message} message={message} isReplay={true} />
         default:
             break;
     }

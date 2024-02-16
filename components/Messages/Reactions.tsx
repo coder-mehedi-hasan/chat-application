@@ -6,18 +6,18 @@ import { useStateProvider } from "../../context/StateContext"
 
 
 
-const Reactions = ({ reaction, handleReactionSend }: any) => {
+const Reactions = ({ reaction, handleReactionSend, messageId }: any) => {
     const [show, setShow] = useState(false)
 
     return (
         <>
             <div onClick={() => setShow(!show)} className='reaction-wrapper cursor-pointer'>
                 {
-                    getReactions(reaction?.reaction)
+                    getReactions(reaction)
                 }
             </div>
             <Modal show={show} className='reaction-modal' onHide={() => setShow(!show)}>
-                <ListOfReactions messageId={reaction?.messageId} handleReactionSend={handleReactionSend} />
+                <ListOfReactions messageId={messageId} handleReactionSend={handleReactionSend} setShow={setShow} />
             </Modal>
         </>
     )
@@ -32,7 +32,7 @@ const getReactions = (reactionName: any) => {
     )
 }
 
-const ListOfReactions = ({ messageId, handleReactionSend }: any) => {
+const ListOfReactions = ({ messageId, handleReactionSend, setShow }: any) => {
     const [{ userInfo, socket }, dispatch]: any = useStateProvider()
     const { refetch, isSuccess, data: reactions, isError }: any = useQuery({
         queryKey: ["reaction list for modal"],
@@ -55,12 +55,13 @@ const ListOfReactions = ({ messageId, handleReactionSend }: any) => {
 
     const handleDeleteReaction = () => {
         handleReactionSend(messageId, "", false)
+        setShow(false)
     }
 
 
     return <div>
         {
-            reactions?.map((item:any) => {
+            reactions?.map((item: any) => {
                 return (
                     <div key={item?._id}>
                         <div className="d-flex justify-content-between align-items-center">
