@@ -1,7 +1,6 @@
 import { reducerCases } from "../context/constant";
 
 export const updateMessage = (newObj, messages, dispatch) => {
-    console.log(newObj)
     const updatedMessages = updateNameByIdInPlace(messages, newObj?._id, newObj)
     dispatch({ type: reducerCases.SET_MESSAGES, messages: updatedMessages })
 }

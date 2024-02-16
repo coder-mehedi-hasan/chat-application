@@ -45,7 +45,7 @@ export function Main({ Component, pageProps }: any) {
 		}
 	}
 	// console.log("editMessage from _app", editMessage)
-	console.log("replayMessage from _app", replayMessage)
+	// console.log("replayMessage from _app", replayMessage)
 
 
 	useEffect(() => {
@@ -110,7 +110,7 @@ export function Main({ Component, pageProps }: any) {
 
 	useEffect(() => {
 		socket?.current?.on('clientToClientMessage', (response: any) => {
-			console.log("clientToClientMessage",response)
+			// console.log("clientToClientMessage",response)
 			const currentDate = new Date()?.toISOString()
 			if (response.sMessageObj.messageFromUserID == currentChatUser?.id) {
 				dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: { ...response.sMessageObj, messageBody: response?.sMessageObj?.message, messageSentTime: currentDate } })
@@ -120,11 +120,11 @@ export function Main({ Component, pageProps }: any) {
 				})
 				chatContainerRef?.current?.scrollIntoView();
 			} else {
-				dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: response.sMessageObj })
-				const find = users?.find((user: any) => user?.id === response?.sMessageObj?.messageFromUserID)
-				if (!find) {
-					console.log("developer received", response.sMessageObj)
-				}
+				dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: { ...response.sMessageObj, messageBody: response?.sMessageObj?.message, messageSentTime: currentDate } })
+				// const find = users?.find((user: any) => user?.id === response?.sMessageObj?.messageFromUserID)
+				// if (!find) {
+				// 	console.log("developer received", response.sMessageObj)
+				// }
 			}
 
 		})

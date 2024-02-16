@@ -67,13 +67,13 @@ export default function ChattingHistory() {
                     {
                         users?.map((item: any) => {
                             return (
-                                <>
+                                <span key={item?.id}>
                                     {
                                         userInfo?.id !== item?.id ?
                                             <ChatListItem user={item} key={item?.id} /> : ""
 
                                     }
-                                </>
+                                </span>
                             )
                         })
                     }

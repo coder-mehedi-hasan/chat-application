@@ -162,7 +162,6 @@ function MessageForm() {
                     "_id": editMessage?._id,
                     "messageBody": message?.message,
                     "message": message?.message,
-                    // "messageMeta":{...editMessage?.messageMeta,contentInfo: ""}
                 }
                 socket.current.emit("editMessage", params
                     , (err: any, res: any) => {

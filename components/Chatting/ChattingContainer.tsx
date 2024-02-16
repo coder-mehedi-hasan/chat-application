@@ -85,7 +85,7 @@ export default memo(function ChattingContainer() {
         );
     }
 
-    console.log("all messages", messages)
+    // console.log("all messages", messages)
 
     const handleScroll = () => {
         const container: any = containerRef.current;
@@ -235,18 +235,22 @@ export default memo(function ChattingContainer() {
             })
         })
 
+        // const updatedMessages = updateContainerMessageStatus(data, messages)
+        // if (updatedMessages?.length === messages?.length) {
+        //     dispatch({ type: reducerCases.SET_MESSAGES, messages: updatedMessages })
+        // }
     }
 
     useEffect(() => {
         socket?.current?.on('updateSenderMessageStatusV2', (data: any) => {
-            console.log("updateSenderMessageStatusV2 09090", data)
+            // console.log("updateSenderMessageStatusV2 09090", data)
             if (data) {
                 handlStatusData(data)
             }
         });
 
         socket?.current?.on('updateReceiverMessageStatusV2', function (data: any) {
-            console.log("updateReceiverMessageStatusV2rece 09090", data)
+            // console.log("updateReceiverMessageStatusV2rece 09090", data)
             if (data) {
                 // handlStatusData(data)
             }
@@ -302,8 +306,23 @@ export default memo(function ChattingContainer() {
                 </Tooltip>)
         }
     }
+
+    const updateContainerMessageStatus = (messageIds: any[], messages: any[]) => {
+        for (let index = 0; index < messageIds.length; index++) {
+            const element: any = messageIds[index];
+            for (let i = 0; i < messages.length; i++) {
+                if (messages[i]._id === element?._id) {
+                    messages[i] = { ...messages[i], messageStatus: element?.currentStatus };
+                    // break;
+                }
+            }
+        }
+        console.log(messageIds, messages)
+        return messages
+    }
+
     const sortedMessages = handleSortByDateTime(messages)
-    // console.log("sortedMessages", sortedMessages)
+    // console.log("^%$^%@&", messages)
 
     return (
         <>

@@ -41,7 +41,7 @@ export default function TextContent({ content, message, ...props }: any) {
             </div>
         } else {
             return <>
-                <div className='bg-replay p-3 border' style={{ borderRadius: "12px", borderBottomRightRadius: isSender ? "0" : "12px", borderBottomLeftRadius: !isSender ? "0" : "12px",opacity: 0.6  }}>
+                <div className='bg-replay p-3 border' style={{ borderRadius: "12px", borderBottomRightRadius: isSender ? "0" : "12px", borderBottomLeftRadius: !isSender ? "0" : "12px",opacity: 0.7  }}>
                     <div className='text-dark fs-8'>
                         <span> {content?.n}: {content?.o?.substring(0, 150)}</span>
                     </div>
