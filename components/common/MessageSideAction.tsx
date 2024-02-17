@@ -19,10 +19,10 @@ export default function MessageSideAction({ message }: any) {
 
     useEffect(() => {
         const handler = (e) => {
-            if (!moreContainer?.current?.contains(e.target)) {
+            if (!moreContainer?.current?.contains(e.target) && !more?.current?.contains(e.target) ) {
                 setShowMore(false);
             }
-            if (!emojiContainer?.current?.contains(e.target)) {
+            if (!emojiContainer?.current?.contains(e.target) && !emoji?.current?.contains(e.target) ) {
                 setShowReaction(false);
             }
         }
@@ -152,9 +152,9 @@ export default function MessageSideAction({ message }: any) {
                                     )
                                 })
                             }
-                            <div style={{ margin: "0 2px", cursor: "pointer", height: "32px", width: "32px", borderRadius: "50%", background: "#c4c4c7", display: "flex", justifyContent: "center", alignItems: "center" }} >
+                            {/* <div style={{ margin: "0 2px", cursor: "pointer", height: "32px", width: "32px", borderRadius: "50%", background: "#c4c4c7", display: "flex", justifyContent: "center", alignItems: "center" }} >
                                 <BsPlus style={{ fontSize: "15px" }} />
-                            </div>
+                            </div> */}
                         </div>
                     </Tooltip>
                 )}

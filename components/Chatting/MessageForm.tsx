@@ -378,10 +378,10 @@ function MessageForm() {
 
     useEffect(() => {
         let handler = (e) => {
-            if (!emojiContainerRef?.current?.contains(e.target)) {
+            if (!emojiContainerRef?.current?.contains(e.target) && !emoji?.current?.contains(e.target)) {
                 setShowEmoji(false);
             }
-            if (!stickerContainerRef?.current?.contains(e.target)) {
+            if (!stickerContainerRef?.current?.contains(e.target) && !stickers?.current?.contains(e.target)) {
                 setShowStickers(false);
             }
             if (!plusPopupContainerRef?.current?.contains(e.target)) {
@@ -469,7 +469,7 @@ function MessageForm() {
                             <div className='d-flex'
                                 style={{ width: message?.message !== "" ? "0%" : "initial", transition: "all 2s" }}>
                                 <div>
-                                    <div className='text-dark side-action-form' onClick={() => setShowVoiceToast(!showVoiceToast)}>
+                                    <div className='text-dark side-action-form' onClick={() => setShowVoiceToast(!showVoiceToast)} ref={plusPopupContainerRef}>
                                         <BsFillXCircleFill className="inner-btn brand-color" style={{ transform: showVoiceToast ? "rotate(90deg)" : "rotate(45deg)", transition: ".4s" }} />
                                     </div>
                                 </div>
@@ -556,6 +556,7 @@ function MessageForm() {
                             navPosition="bottom"
                             previewPosition="none"
                             skinTonePosition="none"
+                            theme="light"
                         />
                     </Tooltip>
                 )}
@@ -640,12 +641,12 @@ const StickerList = ({ category, handlStickerClick, ...props }: any) => {
 
 
     return (
-        <div className=''>
+        <div style={{ display: "flex", justifyContent: "space-between",flexWrap:"wrap" }}>
             {
                 Array.isArray(stickers) && stickers?.length &&
                 stickers?.map(img => {
                     return <>
-                        <div className='cursor-pointer my-1' onClick={() => handlStickerClick(img)} style={{ width: "30% !important" }}>
+                        <div className='cursor-pointer my-1' onClick={() => handlStickerClick(img)} style={{ width: "32%" }}>
                             <img src={img?.Url} alt="" className='img-fluid' />
                         </div>
                     </>
