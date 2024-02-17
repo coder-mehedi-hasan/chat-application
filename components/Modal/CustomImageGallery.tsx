@@ -1,10 +1,8 @@
+import { useEffect, useState } from "react";
 import { RxCross1 } from "react-icons/rx";
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
 import { useStateProvider } from "../../context/StateContext";
-import { useEffect, useState } from "react";
-import { getFileExtensionAndType } from '../../utils/getFileExtensionAndType';
-import { fileTypes } from "../../utils/constant";
 
 const CustomImageGallery = ({ onClick, image }: any) => {
     const [galleryImages, setGalleryImages] = useState<any>([])

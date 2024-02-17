@@ -1,14 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react'
-import type { AppProps } from 'next/app'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../style/main.css';
-import { StateProvider, useStateProvider } from '../context/StateContext';
+import type { AppProps } from 'next/app';
 import Head from 'next/head';
-import reducer, { initialState } from '../context/StateReducers';
+import React, { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
+import { StateProvider, useStateProvider } from '../context/StateContext';
+import reducer, { initialState } from '../context/StateReducers';
 import { reducerCases } from '../context/constant';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import fakeUsers from '../fake_data/user.json'
+import fakeUsers from '../fake_data/user.json';
+import '../style/main.css';
 
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -21,7 +21,6 @@ export default function App({ Component, pageProps }: AppProps) {
 					<title>Kotha App</title>
 					<link rel='shortcut icon' href='/favicon.png'></link>
 				</Head>
-				{/* <Component {...pageProps} /> */}
 				<Main Component={Component} pageProps={pageProps} />
 			</QueryClientProvider>
 		</StateProvider>
@@ -32,7 +31,7 @@ export default function App({ Component, pageProps }: AppProps) {
 export function Main({ Component, pageProps }: any) {
 	const [lat, setLat] = useState<any>()
 	const [lon, setLon] = useState<any>()
-	const [{ currentChatUser, userInfo, current_location, messages, socketEvent, otherMessages, chatContainerRef, users, editMessage, replayMessage }, dispatch]: any = useStateProvider()
+	const [{ currentChatUser, userInfo, current_location, chatContainerRef, }, dispatch]: any = useStateProvider()
 	const socket: any = useRef()
 
 	const getLocation = () => {
@@ -44,9 +43,6 @@ export function Main({ Component, pageProps }: any) {
 			})
 		}
 	}
-	// console.log("editMessage from _app", editMessage)
-	// console.log("replayMessage from _app", replayMessage)
-
 
 	useEffect(() => {
 		getLocation()
@@ -89,12 +85,6 @@ export function Main({ Component, pageProps }: any) {
 			})
 			socket.current.on('onlineClientList', (onlineList: any) => {
 			})
-
-			// socket?.current?.onAny((event, ...args) => {
-			// 	console.log(`Received event: ${event}, with data:`, args);
-			// });
-
-
 		}
 		return () => {
 			if (socket.current) {
@@ -121,38 +111,16 @@ export function Main({ Component, pageProps }: any) {
 				chatContainerRef?.current?.scrollIntoView();
 			} else {
 				dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: { ...response.sMessageObj, messageBody: response?.sMessageObj?.message, messageSentTime: currentDate } })
-				// const find = users?.find((user: any) => user?.id === response?.sMessageObj?.messageFromUserID)
-				// if (!find) {
-				// 	console.log("developer received", response.sMessageObj)
-				// }
 			}
 
 		})
 
-		// socket?.current?.on('updateSenderMessageStatusV2', (data: any) => {
-		// 	console.log("updateSenderMessageStatusV2 09090", data)
-		// 	// if (data) {
-		// 	// 	// handlStatusData(data)
-		// 	// }
-		// });
-
-		// socket?.current?.on('updateReceiverMessageStatusV2', function (data: any) {
-		// 	console.log("updateReceiverMessageStatusV2rece 09090", data)
-		// 	// if (data) {
-		// 	// 	// handlStatusData(data)
-		// 	// }
-		// });
 		return () => {
 			if (socket.current) {
 				socket?.current?.off('clientToClientMessage');
-				// socket?.current?.off('updateSenderMessageStatusV2')
-
-				// socket?.current?.off('updateReceiverMessageStatusV2')
-
-				dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: false })
+				dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: false });
 			}
 		};
-		// }
 	}, [socket.current, currentChatUser]);
 
 	return (

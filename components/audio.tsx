@@ -98,7 +98,7 @@
 // };
 
 // export default AudioRecorder;
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 // Import your CSS file
 
 const AutoWidthElement = () => {

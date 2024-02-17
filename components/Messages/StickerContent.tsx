@@ -7,9 +7,9 @@ const StickerContent = ({ message }) => {
     }
 
     return (
-        <>
-            const url = message?.messageFiles?.length && message?.messageFiles[0]?.filepath;
-        </>
+        <div className="" style={{maxWidth:"150px",}}>
+            <img src={messageHyperlink} alt="sticker" className="img-fluid" />
+        </div>
     );
 };
 

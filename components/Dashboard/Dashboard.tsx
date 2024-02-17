@@ -14,7 +14,7 @@ export default function Dashboard() {
     const isMobileWidth = useMediaQuery({ maxWidth: 576 })
     const isMediumWidth = useMediaQuery({ maxWidth: 768 })
     const [tab, setTab] = useState("chats")
-    const [{ currentChatUser, messages, draftMessages, sendMessages }]: any = useStateProvider()
+    const [{ currentChatUser, }]: any = useStateProvider()
 
     const handleBottomTab = (t: any) => {
         setTab(t)

@@ -1,43 +1,19 @@
-import React, { useEffect } from 'react'
-import TextContent from './TextContent';
-import MessageSideAction from '../common/MessageSideAction';
-import FileContent from './FileContet';
-import { useStateProvider } from '../../context/StateContext';
-import { useQuery } from '@tanstack/react-query';
-import Reactions from './Reactions';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import renderMessageTime from '../common/render-message-time';
+import { OverlayTrigger } from 'react-bootstrap';
 import getContent from '../../utils/getContent';
+import MessageSideAction from '../common/MessageSideAction';
+import renderMessageTime from '../common/render-message-time';
+import Reactions from './Reactions';
 
-function SenderMessages({ data, handleReactionSend, handleDeleteMessage }: any) {
-    const [{ userInfo, socket }, dispatch]: any = useStateProvider()
-
-    // const { data: reactionsAll, isSuccess, refetch } = useQuery({
-    //     queryKey: [`${data?._id}`],
-    //     queryFn: () => getReactionsApi()
-    // });
-
-
-    const getReactionsApi = async () => {
-        const response = await fetch(`https://messaging-dev.kotha.im/mobile/api/messages/reactions/${data?._id}?skip=0&limit=10`, {
-            method: 'GET',
-            headers: {
-                'Authorization': userInfo?.messageToken
-            }
-        })
-        const json = await response.json()
-        if (response) {
-            return json
-        }
-        return []
-    }
+function SenderMessages({ data }: any) {
     const reactionsAll = data?.reactionCounts && Object.keys(data?.reactionCounts)
-
 
     return (
         <>
             <div className="d-flex align-items-center justify-content-end">
-                <MessageSideAction message={data} handleReactionSend={handleReactionSend} handleDeleteMessage={handleDeleteMessage} isSend={true} />
+                {
+                    data?.messageMeta?.contentType !== 14 &&
+                    <MessageSideAction message={data} />
+                }
                 <OverlayTrigger
                     placement="left"
                     delay={{ show: 150, hide: 400 }}
@@ -49,7 +25,7 @@ function SenderMessages({ data, handleReactionSend, handleDeleteMessage }: any) 
                             {
                                 reactionsAll?.length && Array.isArray(reactionsAll) ? reactionsAll?.map(item => {
                                     if (data?.reactionCounts[item] > 0)
-                                        return <Reactions reaction={item} handleReactionSend={handleReactionSend} messageId={data?._id} message={data} />
+                                        return <Reactions reaction={item} messageId={data?._id} message={data} />
                                 }) : ""
                             }
                         </div>
@@ -59,7 +35,5 @@ function SenderMessages({ data, handleReactionSend, handleDeleteMessage }: any) 
         </>
     )
 }
-
-
 
 export default SenderMessages;

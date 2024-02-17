@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Modal } from 'react-bootstrap'
 import { BsDownload } from 'react-icons/bs'
-import CustomImageGallery from '../Modal/CustomImageGallery';
 import { getFileExtensionAndType } from '../../utils/getFileExtensionAndType';
 import { fileTypes } from '../../utils/constant';
 import ReactAudioPlayer from 'react-audio-player';
@@ -41,11 +39,6 @@ export default function FileContent({ img }:any) {
                                         <source src={img} type={`video/${fileInfo?.extension}`} />
                                     </video>
                                 </div> :
-                                // <DownloadLink
-                                //     label="download"
-                                //     filename={img}
-                                //     exportFile={() => "My cached data"}
-                                // />
                                 <a
                                     href={img}
                                     download={fileInfo?.fileName}
@@ -54,14 +47,8 @@ export default function FileContent({ img }:any) {
                                 >
                                     <button style={{ border: "none", padding: "20px 30px" }} className='rounded-pill text-dark'><BsDownload /> {fileInfo?.fileName}.{fileInfo?.extension}</button>
                                 </a>
-                    // <Link href={img} target="_blank">save {fileInfo?.fileName}</Link>
-
-
                 }
             </div>
-            {/* <Modal show={gallery} className='image-content'>
-                <CustomImageGallery onClick={setGallery} image={img} />
-            </Modal> */}
         </>
     )
 }

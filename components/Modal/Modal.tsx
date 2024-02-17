@@ -1,6 +1,5 @@
-import React from "react";
-import styles from "./Modal.module.css";
 import { RiCloseLine } from "react-icons/ri";
+import styles from "./Modal.module.css";
 
 const Modal = ({ setIsOpen, children }:any) => {
     return (

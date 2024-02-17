@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { useStateProvider } from '../context/StateContext';
-import { io } from 'socket.io-client';
-import { reducerCases } from '../context/constant';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
 import { Button, ButtonGroup, Card, CardGroup } from 'react-bootstrap';
-import user from '../fake_data/user.json'
-import { Router, useRouter } from 'next/router';
-import { useMutation } from '@tanstack/react-query';
+import { useStateProvider } from '../context/StateContext';
+import { reducerCases } from '../context/constant';
+import user from '../fake_data/user.json';
 
 export default function Home() {
 	const [{ userInfo }, dispatch]: any = useStateProvider()

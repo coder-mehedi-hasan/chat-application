@@ -1,21 +1,19 @@
-import React, { useEffect, useState, useRef, memo } from 'react'
-import { Button, Form, Image, Overlay, Tooltip } from 'react-bootstrap'
-import { BsX, BsImage, BsEmojiSmile, BsMicFill, BsFillPlayFill, BsPauseFill, BsFillXCircleFill, BsChevronRight, BsChevronLeft } from "react-icons/bs";
+import Picker from '@emoji-mart/react';
+import { useQuery } from '@tanstack/react-query';
+import { memo, useEffect, useRef, useState } from 'react';
+import { AudioRecorder, useAudioRecorder } from 'react-audio-voice-recorder';
+import { Button, Form, Image, Overlay, Tooltip } from 'react-bootstrap';
 import Toast from 'react-bootstrap/Toast';
+import { AiOutlineSend } from "react-icons/ai";
+import { BsChevronLeft, BsChevronRight, BsEmojiSmile, BsFillPlayFill, BsFillXCircleFill, BsImage, BsMicFill, BsPauseFill, BsX } from "react-icons/bs";
+import { PiStickerFill } from "react-icons/pi";
 import { useMediaQuery } from 'react-responsive';
-import data from '@emoji-mart/data'
-import Picker from '@emoji-mart/react'
 import { useStateProvider } from '../../context/StateContext';
 import { reducerCases } from '../../context/constant';
-import { AudioRecorder, useAudioRecorder } from 'react-audio-voice-recorder';
-import { AiOutlineSend } from "react-icons/ai";
-import { PiStickerFill } from "react-icons/pi";
-import useGenerateRandomColor from '../../utils/useRandomColorGenerate';
 import { apiUrl } from '../../utils/constant';
-import { isFileIsImage } from '../../utils/getFileType';
-import { handleMessageStatus, handleSentMessage } from '../../utils/functions/message';
 import { getFileType } from '../../utils/fileType';
-import { useQuery } from '@tanstack/react-query';
+import { handleSentMessage } from '../../utils/functions/message';
+import { isFileIsImage } from '../../utils/getFileType';
 import { updateMessage } from '../../utils/updateMessage';
 
 
@@ -59,12 +57,6 @@ function MessageForm() {
                 body: file,
             });
             if (response) {
-                // socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response: any) => {
-                //     dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
-                //     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
-                //     handleMessageStatus([response?._id], socket, 1)
-                // })
-                // console.log("file messages go to transfer", { url, file })
                 const { message: msg, contentType } = getFileType(file)
                 handleSentMessage({
                     ...message,
@@ -354,25 +346,11 @@ function MessageForm() {
         setShowStickers(false)
     }
 
-    // useEffect(() => {
-    //     const findDraft = draftMessages?.find((draft: any) => draft?.messageToUserID === currentChatUser.id)
-    //     if (!findDraft) {
-    //         if (message?.message !== "") {
-    //             dispatch({ type: reducerCases.ADD_DRAFT_MESSAGE, newMessage: message })
-    //         }
-    //     } else {
-    //         if (message?.message !== "") {
-    //             const filterWithoutDraft = draftMessages?.filter((draft: any) => draft?.messageToUserID !== currentChatUser.id)
-    //             dispatch({ type: reducerCases.SET_DRAFT_MESSAGE, draftMessages: [...filterWithoutDraft, ...[message]] })
-    //         }
-    //     }
-    // }, [message?.message])
-
-    const { isSuccess, data, isLoading, isFetching } = useQuery({
+    const { data } = useQuery({
         queryKey: [],
         queryFn: () => setMessage({ ...message, message: editMessage?.messageBody, isEditMessage: true }),
         enabled: !!editMessage,
-        staleTime: 5,
+        staleTime: 0,
     })
 
     const getReplayContent = () => {
@@ -394,7 +372,6 @@ function MessageForm() {
         }
     }
 
-    // Click Outside closed
     const emojiContainerRef = useRef(null);
     const stickerContainerRef = useRef(null);
     const plusPopupContainerRef = useRef(null);
@@ -443,11 +420,6 @@ function MessageForm() {
                         <div>
                             {getReplayContent()}
                         </div>
-                        {/* <p className='m-0'>Edit Message</p>
-                        <div className='cross-button' onClick={() => {
-                            dispatch({ type: reducerCases.ADD_EDIT_MESSAGE, editMessage: null })
-                            setMessage({ ...message, message: '', isEditMessage: false })
-                        }}><BsX /></div> */}
                     </div>
                 }
                 {
@@ -644,7 +616,7 @@ function MessageForm() {
 }
 
 const StickerList = ({ category, handlStickerClick, ...props }: any) => {
-    const [{ currentChatUser, userInfo, socket }, dispatch]: any = useStateProvider()
+    const [{ userInfo, }, dispatch]: any = useStateProvider()
     const [stickers, setStickers] = useState<any>([])
 
     const getStickers = async () => {

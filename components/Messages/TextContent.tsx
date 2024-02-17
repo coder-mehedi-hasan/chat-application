@@ -1,18 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { identifyTextOrLink } from '../../utils/identifyTextOrLink';
 import Link from 'next/link';
 import { useStateProvider } from '../../context/StateContext';
+import MessageSideAction from '../common/MessageSideAction';
 
 export default function TextContent({ content, message, ...props }: any) {
     const [{ userInfo }, dispatch]: any = useStateProvider()
     const isSender = message?.messageFromUserID === userInfo?.id
     let containerStyle: any = {
-        // maxWidth: "564px",
         padding: "8px 12px",
         wordWrap: "break-word",
         borderRadius: "18px",
-        // width: "max-content"
-        // background: isSender && "brand-bg"
         color: isSender ? "#fff" : "#000",
         whiteSpace: "pre-wrap",
         lineHeight: "20px",
@@ -30,12 +28,7 @@ export default function TextContent({ content, message, ...props }: any) {
         containerStyle.borderTopLeftRadius = !isSender ? 0 : "18px"
     }
     containerStyle.borderRadius = "18px";
-
-    // console.log("this message is from replied message", repliedMessageContent)
-
-
-    const getContent = (content: any) => {
-
+    const getRepliedContent = (content: any) => {
         if (content?.c) {
             return <div style={{ maxWidth: "140px", objectFit: "cover", overflow: "hidden", borderRadius: "12px", borderBottomRightRadius: isSender ? "0" : "12px", borderBottomLeftRadius: !isSender ? "0" : "12px", opacity: 0.6 }}>
                 <img src={content?.o} alt="" className='img-fluid' />
@@ -56,13 +49,16 @@ export default function TextContent({ content, message, ...props }: any) {
             {
                 props?.isReplay &&
                 <div className='cursor-pointer'>
-                    {getContent(repliedMessageContent)}
+                    {getRepliedContent(repliedMessageContent)}
                 </div>
-
             }
             <div>
                 <div style={{ boxSizing: "border-box" }} >
-                    <div className={`m-0 w-100 d-flex ${isSender ? "justify-content-end" : "justify-content-start"} text-dark`}>
+                    <div className={`m-0 w-100 d-flex align-items-center ${isSender ? "justify-content-end" : "justify-content-start"} text-dark`}>
+                        {
+                            message?.messageMeta?.contentType === 14 &&
+                            <MessageSideAction message={message} />
+                        }
                         <div style={containerStyle} className={isSender ? "brand-bg" : "bg-receiver"} >
                             {
                                 identifyTextOrLink(content) === 'link' ? <Link target='_blank' href={content} style={{ color: isSender ? "#fff" : "#000" }}>{message?.messageBody}</Link> : message?.messageBody

@@ -1,19 +1,18 @@
+import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 import { Modal } from "react-bootstrap"
-import { reactionEmojis } from "../../utils/constant"
-import { useQuery } from "@tanstack/react-query"
 import { useStateProvider } from "../../context/StateContext"
+import { reactionEmojis } from "../../utils/constant"
+import handleReactionSend from "../../utils/functions/handleReactionSend"
 
-
-
-const Reactions = ({ reaction, handleReactionSend, messageId, message }: any) => {
+const Reactions = ({ reaction, messageId, message }: any) => {
     const [show, setShow] = useState(false)
     const [{ userInfo, socket }, dispatch]: any = useStateProvider()
-    let style:any = {}
+    let style: any = {}
     if (message?.messageFromUserID === userInfo?.id) {
-        style.right = "10px"
-    }else{
-        style.left = "10px"
+        style.right = "15px"
+    } else {
+        style.left = "15px"
     }
     return (
         <>
@@ -23,7 +22,7 @@ const Reactions = ({ reaction, handleReactionSend, messageId, message }: any) =>
                 }
             </div>
             <Modal show={show} className='reaction-modal' onHide={() => setShow(!show)}>
-                <ListOfReactions messageId={messageId} handleReactionSend={handleReactionSend} setShow={setShow} />
+                <ListOfReactions messageId={messageId} setShow={setShow} />
             </Modal>
         </>
     )
@@ -38,8 +37,8 @@ const getReactions = (reactionName: any) => {
     )
 }
 
-const ListOfReactions = ({ messageId, handleReactionSend, setShow }: any) => {
-    const [{ userInfo, socket }, dispatch]: any = useStateProvider()
+const ListOfReactions = ({ messageId, setShow }: any) => {
+    const [{ userInfo, socket, messages }, dispatch]: any = useStateProvider()
     const { refetch, isSuccess, data: reactions, isError }: any = useQuery({
         queryKey: ["reaction list for modal"],
         queryFn: () => getReactionsApi()
@@ -60,7 +59,7 @@ const ListOfReactions = ({ messageId, handleReactionSend, setShow }: any) => {
     }
 
     const handleDeleteReaction = () => {
-        handleReactionSend(messageId, "", false)
+        handleReactionSend(messageId, "", false, socket, userInfo, messages, dispatch)
         setShow(false)
     }
 

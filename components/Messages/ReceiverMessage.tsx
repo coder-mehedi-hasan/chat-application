@@ -1,35 +1,13 @@
-import React from 'react'
-import { useEffect } from 'react';
-import MessageSideAction from '../common/MessageSideAction';
-import TextContent from './TextContent';
-import FileContent from './FileContet';
-import { useStateProvider } from '../../context/StateContext';
-import { useQuery } from '@tanstack/react-query';
-import Reactions from './Reactions';
 import { OverlayTrigger } from 'react-bootstrap';
-import renderMessageTime from '../common/render-message-time';
+import { useStateProvider } from '../../context/StateContext';
 import getContent from '../../utils/getContent';
+import MessageSideAction from '../common/MessageSideAction';
+import renderMessageTime from '../common/render-message-time';
+import Reactions from './Reactions';
 
-export default function ReceiverMessages({ data, handleReactionSend, handleDeleteMessage }: any) {
-    const [{ currentChatUser, userInfo, socket }, dispatch]: any = useStateProvider()
-
-
-    const getReactionsApi = async () => {
-        const response = await fetch(`https://messaging-dev.kotha.im/mobile/api/messages/reactions/${data?._id}?skip=0&limit=10`, {
-            method: 'GET',
-            headers: {
-                'Authorization': userInfo?.messageToken
-            }
-        })
-        const json = await response.json()
-        if (response) {
-            return json
-        }
-        return []
-    }
-
-    const reactionsAll = data?.reactionCounts && Object.keys(data?.reactionCounts)
-
+export default function ReceiverMessages({ data }: any) {
+    const [{ currentChatUser, }, dispatch]: any = useStateProvider();
+    const reactionsAll = data?.reactionCounts && Object.keys(data?.reactionCounts);
 
     return (
         <>
@@ -44,42 +22,21 @@ export default function ReceiverMessages({ data, handleReactionSend, handleDelet
                     delay={{ show: 150, hide: 400 }}
                     overlay={(props) => renderMessageTime(props, data)}
                 >
-                    {/* {
-                        data?.cloudfrontUrl && !data?.message ?
-                            <div>
-                                <FileContent img={data?.cloudfrontUrl} />
-                                <div className='reaction'>
-                                    {
-                                        reactionsAll?.length && Array.isArray(reactionsAll) ? reactionsAll?.map(item => {
-                                            return <Reactions reaction={item} handleReactionSend={handleReactionSend} />
-                                        }) : ""
-                                    }
-                                </div>
-                            </div>
-                            :
-                            <div>
-                                <TextContent message={data} isSender={false} content={data?.message} />
-                                <div className='reaction'>
-                                    {
-                                        reactionsAll?.length && Array.isArray(reactionsAll) ? reactionsAll?.map(item => {
-                                            return <Reactions reaction={item} handleReactionSend={handleReactionSend} />
-                                        }) : ""
-                                    }
-                                </div>
-                            </div>
-                    } */}
                     <div>
                         {getContent(data)}
                         <div className='reaction'>
                             {
                                 reactionsAll?.length && Array.isArray(reactionsAll) ? reactionsAll?.map((item, index) => {
-                                    return <Reactions reaction={item} handleReactionSend={handleReactionSend} messageId={data?._id} message={data} />
+                                    return <Reactions reaction={item} messageId={data?._id} message={data} />
                                 }) : ""
                             }
                         </div>
                     </div>
                 </OverlayTrigger>
-                <MessageSideAction message={data} handleReactionSend={handleReactionSend} handleDeleteMessage={handleDeleteMessage} isSend={false} />
+                {
+                    data?.messageMeta?.contentType !== 14 &&
+                    <MessageSideAction message={data} />
+                }
             </div>
         </>
     )

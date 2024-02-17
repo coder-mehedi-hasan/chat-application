@@ -1,5 +1,3 @@
-import React from 'react'
-import { Image } from 'react-bootstrap'
 import { useStateProvider } from '../context/StateContext'
 import { reducerCases } from '../context/constant'
 

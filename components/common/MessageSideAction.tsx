@@ -4,16 +4,18 @@ import { BsEmojiSmile, BsFillReplyFill, BsPlus, BsThreeDotsVertical } from 'reac
 import { reactionEmojis } from '../../utils/constant';
 import { useStateProvider } from '../../context/StateContext';
 import { reducerCases } from '../../context/constant';
+import handleReactionSend from '../../utils/functions/handleReactionSend';
+import handleDeleteMessage from '../../utils/functions/handleDeleteMessage';
 
-export default function MessageSideAction({ message, handleReactionSend, handleDeleteMessage, isSend, ...props }: any) {
+export default function MessageSideAction({ message }: any) {
     const [showMore, setShowMore] = useState(false);
     const [showReaction, setShowReaction] = useState(false)
     const more = useRef(null);
     const emoji = useRef(null);
     const moreContainer = useRef(null);
     const emojiContainer = useRef(null);
-    const [{ currentChatUser, userInfo, current_location, messages, socketEvent, otherMessages, chatContainerRef, users }, dispatch]: any = useStateProvider()
-
+    const [{ userInfo, messages, socket }, dispatch]: any = useStateProvider()
+    const isSend = message?.messageFromUserID === userInfo?.id
 
     useEffect(() => {
         const handler = (e) => {
@@ -40,29 +42,22 @@ export default function MessageSideAction({ message, handleReactionSend, handleD
         }
     }
 
-    const onMouse = () => {
-        // setShowReaction(false)
-        // setShowMore(false)
-    }
 
-
-    const handleClick = (reaction) => {
-        handleReactionSend(message?._id, reaction?.name, true)
+    const handleClick = (reaction: any) => {
+        handleReactionSend(message?._id, reaction?.name, true, socket, userInfo, messages, dispatch)
     };
 
     const handleDelClick = () => {
-        // handleReactionSend(message?._id, reaction?.name, true)
-        handleDeleteMessage(message?._id, 0)
+        handleDeleteMessage(message?._id, 0, socket, messages, dispatch)
     };
 
     const handleEdit = () => {
-        // console.log("Edit",message)
         dispatch({ type: reducerCases.ADD_EDIT_MESSAGE, editMessage: message })
     }
 
     return (
         <>
-            <div className='d-flex align=items-center mx-1 message_actions' onMouseLeave={onMouse}>
+            <div className='d-flex align=items-center mx-1 message_actions'>
                 <div>
                     <OverlayTrigger
                         placement="top"
@@ -114,14 +109,13 @@ export default function MessageSideAction({ message, handleReactionSend, handleD
             <Overlay target={more.current} show={showMore} placement="top" ref={moreContainer}>
                 {(props) => (
                     <Tooltip id="overlay-example" {...props} className='inner_action_tooltip inner_action_tooltip_more' >
-
-                        <div className=''>
+                        {/* <div className=''>
                             <div className='button'>
                                 <div>
                                     Forword
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                         {
                             isSend && <>
                                 <div>

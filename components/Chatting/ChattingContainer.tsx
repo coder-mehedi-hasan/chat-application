@@ -7,22 +7,18 @@ import { reducerCases } from '../../context/constant'
 import { useQuery } from '@tanstack/react-query'
 import { arrayIsEmpty, handleMessageStatus, handleSortByDateTime } from '../../utils/functions/message'
 import { IoIosArrowDown } from "react-icons/io";
-import { BsCheckAll, BsCheckLg, BsUiChecksGrid } from 'react-icons/bs'
+import { BsCheckAll, BsCheckLg } from 'react-icons/bs'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { updateMessage } from '../../utils/updateMessage';
 
 export default memo(function ChattingContainer() {
     const [{ currentChatUser, userInfo, socket, messages, socketEvent, otherMessages, sendMessages }, dispatch]: any = useStateProvider()
-    const [senderReaction, setSenderReaction]: any = useState()
-    const [receiverReaction, setReceiverReaction]: any = useState()
-    const [messageReaction, setMessageReaction] = useState<Boolean>(false)
     const messagesRef: any = useRef(null)
     const containerRef: any = useRef(null)
     const [skip, setSkip] = useState<number>(0);
     const [perPage, setPerPage] = useState<number>(50)
     const [scrollBarPositionUp, setScrollBarPositionUp] = useState<boolean>(false)
     const [statusLastMessage, setStatusLastMessage] = useState<any[]>([]);
-    const [currentChatUserId, setCurrentChatUserId] = useState(null)
 
     const { isError, refetch, isSuccess, data: allChattingMessages, isFetching, isLoading, isRefetching } = useQuery({
         queryKey: ["fetch latest messages"],
@@ -37,7 +33,6 @@ export default memo(function ChattingContainer() {
                 "Authorization": userInfo?.messageToken
             }
         })
-
         const data = await response?.json()
         if (data?.length) {
             return data
@@ -54,38 +49,6 @@ export default memo(function ChattingContainer() {
             socket.current.off("editMessage")
         }
     })
-
-    const handleReactionSend = (messageId: string, reactionName: string, sendingType: boolean) => {
-        let params: any = {
-            "_id": messageId,
-            "react": true,
-            "reactionParams": {
-                "score": 1,
-                "reaction": reactionName,
-                "reactedBy": userInfo?.id,
-                "cancel": false
-            }
-        }
-        if (!sendingType) {
-            params = {
-                "_id": messageId,
-                "react": true,
-                "reactionParams": {
-                    "reactedBy": userInfo?.id,
-                    "cancel": true
-                }
-            }
-        }
-        socket.current.emit("editMessage", params
-            , (err: any, res: any) => {
-                if (!err) {
-                    updateMessage(res, messages, dispatch)
-                }
-            }
-        );
-    }
-
-    // console.log("all messages", messages)
 
     const handleScroll = () => {
         const container: any = containerRef.current;
@@ -123,7 +86,6 @@ export default memo(function ChattingContainer() {
         const timeoutId = setTimeout(() => {
             refetch()
         }, 30000);
-
         return () => clearTimeout(timeoutId);
     }, [currentChatUser?.id])
 
@@ -170,9 +132,7 @@ export default memo(function ChattingContainer() {
         refetch()
     }, [skip])
 
-    // console.log("messages on parent container", messages)
     useEffect(() => {
-
         let unTrackedSendingMessages: any[] = []
         const sendingMessagesUnderCurrentUser = sendMessages?.filter((message: any) => message?.messageToUserID === currentChatUser?.id)
         if (!arrayIsEmpty(sendingMessagesUnderCurrentUser)) {
@@ -234,11 +194,6 @@ export default memo(function ChattingContainer() {
                 return [...pre, ...[item]]
             })
         })
-
-        // const updatedMessages = updateContainerMessageStatus(data, messages)
-        // if (updatedMessages?.length === messages?.length) {
-        //     dispatch({ type: reducerCases.SET_MESSAGES, messages: updatedMessages })
-        // }
     }
 
     useEffect(() => {
@@ -263,22 +218,6 @@ export default memo(function ChattingContainer() {
             }
         };
     }, [socket?.current, currentChatUser]);
-
-    const handleDeleteMessage = (messageId, score) => {
-        const params = {
-            "_id": messageId,
-            "score": score,
-            "messageBody": "This message has been removed",
-        }
-        // console.log(message)
-        socket.current.emit("editMessage", params
-            , (err: any, res: any) => {
-                if (!err) {
-                    updateMessage({ _id: messageId, ...res, message: res?.messageBody }, messages, dispatch)
-                }
-            }
-        );
-    }
 
     const getMessageStatusRender = (status: any) => {
         switch (status) {
@@ -322,8 +261,6 @@ export default memo(function ChattingContainer() {
     }
 
     const sortedMessages = handleSortByDateTime(messages)
-    // console.log("^%$^%@&", messages)
-
     return (
         <>
             <div style={{ height: "100%", padding: "", scrollBehavior: `${skip === 0 ? "auto" : "auto"}`, overflowY: "scroll" }} className='px-lg-4 px-md-2 px-sm-1 px-xs-1 text-white overflow-scroll scrollbar_visible_y message-container-bg' ref={containerRef}>
@@ -335,14 +272,13 @@ export default memo(function ChattingContainer() {
                         return (
                             <div key={index} ref={messagesRef}>
                                 {
-                                    // item?.score !== 0 ?
                                     <div className="row my-3 w-100 message_content">
                                         {
                                             isSender
                                                 ?
-                                                <SenderMessages data={item} handleReactionSend={handleReactionSend} handleDeleteMessage={handleDeleteMessage} />
+                                                <SenderMessages data={item} />
                                                 :
-                                                <ReceiverMessages data={item} handleReactionSend={handleReactionSend} handleDeleteMessage={handleDeleteMessage} />
+                                                <ReceiverMessages data={item} />
                                         }
                                         <div className='d-flex justify-content-end'>
                                             {

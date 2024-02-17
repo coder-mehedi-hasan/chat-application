@@ -1,12 +1,9 @@
 import Link from 'next/link';
-import React from 'react';
 import { SlDirections } from "react-icons/sl";
-
 
 const LocationContent = ({ message }) => {
     const url = message?.messageFiles?.length && message?.messageFiles[0]?.filepath;
     const messageHyperlink = message?.messageHyperlink;
-
     const pattern = /loc\/([-+]?\d*\.\d+|\d+)\/([-+]?\d*\.\d+|\d+)/;
 
     const match = messageHyperlink?.match(pattern);

@@ -1,6 +1,5 @@
 "use client"
-import { useQuery } from '@tanstack/react-query';
-import React, { useState, useEffect, useRef } from 'react';
+import { useRef, useState } from 'react';
 
 const Home = () => {
   const [loading, setLoading] = useState(false);
