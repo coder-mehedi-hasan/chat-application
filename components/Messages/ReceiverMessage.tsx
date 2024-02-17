@@ -26,8 +26,9 @@ export default function ReceiverMessages({ data }: any) {
                         {getContent(data)}
                         <div className='reaction'>
                             {
-                                reactionsAll?.length && Array.isArray(reactionsAll) ? reactionsAll?.map((item, index) => {
-                                    return <Reactions reaction={item} messageId={data?._id} message={data} />
+                                reactionsAll?.length && Array.isArray(reactionsAll) ? reactionsAll?.map(item => {
+                                    if (data?.reactionCounts[item] > 0)
+                                        return <Reactions reaction={item} messageId={data?._id} message={data} />
                                 }) : ""
                             }
                         </div>

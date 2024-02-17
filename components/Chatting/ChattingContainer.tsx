@@ -171,16 +171,6 @@ export default memo(function ChattingContainer() {
         return
     }, [messages]);
 
-    const getMessageStatus = (message: any) => {
-        const find = statusLastMessage?.find((i: any) => i?._id === message?._id)
-        if (find) {
-            if (find?.currentStatus <= message?.messageStatus) {
-                return find?.currentStatus
-            }
-            return find?.currentStatus
-        }
-        return message?.messageStatus
-    }
 
     useEffect(() => {
         if (statusLastMessage?.length) {
@@ -224,7 +214,7 @@ export default memo(function ChattingContainer() {
         })
     }
 
-    // console.log(messages)
+    console.log(messages)
     useEffect(() => {
         socket?.current?.on('updateSenderMessageStatusV2', (data: any) => {
             if (data) {
@@ -281,7 +271,6 @@ export default memo(function ChattingContainer() {
                 {
                     userInfo && messages?.length ? sortedMessages?.map((item: any, index: any) => {
                         const isLastMessage = (sortedMessages?.length - 1) === index
-                        // const status = getMessageStatus(item)
                         const status = item?.messageStatus;
                         const isSender = userInfo.id === item.messageFromUserID
                         return (
