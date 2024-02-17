@@ -49,7 +49,7 @@ function SenderMessages({ data, handleReactionSend, handleDeleteMessage }: any) 
                             {
                                 reactionsAll?.length && Array.isArray(reactionsAll) ? reactionsAll?.map(item => {
                                     if (data?.reactionCounts[item] > 0)
-                                        return <Reactions reaction={item} handleReactionSend={handleReactionSend} messageId={data?._id} />
+                                        return <Reactions reaction={item} handleReactionSend={handleReactionSend} messageId={data?._id} message={data} />
                                 }) : ""
                             }
                         </div>

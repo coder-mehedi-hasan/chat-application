@@ -6,12 +6,18 @@ import { useStateProvider } from "../../context/StateContext"
 
 
 
-const Reactions = ({ reaction, handleReactionSend, messageId }: any) => {
+const Reactions = ({ reaction, handleReactionSend, messageId, message }: any) => {
     const [show, setShow] = useState(false)
-
+    const [{ userInfo, socket }, dispatch]: any = useStateProvider()
+    let style:any = {}
+    if (message?.messageFromUserID === userInfo?.id) {
+        style.right = "10px"
+    }else{
+        style.left = "10px"
+    }
     return (
         <>
-            <div onClick={() => setShow(!show)} className='reaction-wrapper cursor-pointer'>
+            <div onClick={() => setShow(!show)} className='reaction-wrapper cursor-pointer' style={style}>
                 {
                     getReactions(reaction)
                 }

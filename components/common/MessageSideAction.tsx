@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Button, Overlay, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { BsEmojiSmile, BsFillReplyFill, BsPlus, BsThreeDotsVertical } from 'react-icons/bs'
 import { reactionEmojis } from '../../utils/constant';
@@ -10,8 +10,25 @@ export default function MessageSideAction({ message, handleReactionSend, handleD
     const [showReaction, setShowReaction] = useState(false)
     const more = useRef(null);
     const emoji = useRef(null);
+    const moreContainer = useRef(null);
+    const emojiContainer = useRef(null);
     const [{ currentChatUser, userInfo, current_location, messages, socketEvent, otherMessages, chatContainerRef, users }, dispatch]: any = useStateProvider()
 
+
+    useEffect(() => {
+        const handler = (e) => {
+            if (!moreContainer?.current?.contains(e.target)) {
+                setShowMore(false);
+            }
+            if (!emojiContainer?.current?.contains(e.target)) {
+                setShowReaction(false);
+            }
+        }
+        document.addEventListener("mousedown", handler);
+        return () => {
+            document.addEventListener("mousedown", handler);
+        }
+    })
 
     const innerActions = (ac) => {
         if (ac === "more") {
@@ -71,7 +88,7 @@ export default function MessageSideAction({ message, handleReactionSend, handleD
                             </Tooltip>
                         }
                     >
-                        <Button variant="" className="p-0 text-white" onClick={() => dispatch({ type: reducerCases.ADD_REPLAY_MESSAGE,replayMessage: message })}>
+                        <Button variant="" className="p-0 text-white" onClick={() => dispatch({ type: reducerCases.ADD_REPLAY_MESSAGE, replayMessage: message })}>
                             <span className='d-flex align-items-center justify-content-center hover_background action_tooltip_icon' style={{ fontSize: "15px", height: "24px", width: "24px", borderRadius: "50%", cursor: "pointer", margin: "auto" }}><BsFillReplyFill /></span >
                         </Button>
 
@@ -94,7 +111,7 @@ export default function MessageSideAction({ message, handleReactionSend, handleD
                     </OverlayTrigger>
                 </div>
             </div >
-            <Overlay target={more.current} show={showMore} placement="top">
+            <Overlay target={more.current} show={showMore} placement="top" ref={moreContainer}>
                 {(props) => (
                     <Tooltip id="overlay-example" {...props} className='inner_action_tooltip inner_action_tooltip_more' >
 
@@ -128,7 +145,7 @@ export default function MessageSideAction({ message, handleReactionSend, handleD
                     </Tooltip>
                 )}
             </Overlay>
-            <Overlay target={emoji.current} show={showReaction} placement="top">
+            <Overlay target={emoji.current} show={showReaction} placement="top" ref={emojiContainer}>
                 {(props) => (
                     <Tooltip id="overlay-example" className='inner_action_tooltip inner_action_tooltip_emoji' {...props}>
                         <div className='d-flex justify-content-center align-items-center' style={{ padding: "5px" }}>

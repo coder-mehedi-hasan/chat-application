@@ -73,7 +73,7 @@ export default function ReceiverMessages({ data, handleReactionSend, handleDelet
                         <div className='reaction'>
                             {
                                 reactionsAll?.length && Array.isArray(reactionsAll) ? reactionsAll?.map((item, index) => {
-                                    return <span key={index}><Reactions reaction={item} handleReactionSend={handleReactionSend} messageId={data?._id} /></span>
+                                    return <Reactions reaction={item} handleReactionSend={handleReactionSend} messageId={data?._id} message={data} />
                                 }) : ""
                             }
                         </div>

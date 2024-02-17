@@ -29,6 +29,7 @@ export default function TextContent({ content, message, ...props }: any) {
         containerStyle.borderTopRightRadius = isSender ? 0 : "18px"
         containerStyle.borderTopLeftRadius = !isSender ? 0 : "18px"
     }
+    containerStyle.borderRadius = "18px";
 
     // console.log("this message is from replied message", repliedMessageContent)
 
@@ -41,7 +42,7 @@ export default function TextContent({ content, message, ...props }: any) {
             </div>
         } else {
             return <>
-                <div className='bg-replay p-3 border' style={{ borderRadius: "12px", borderBottomRightRadius: isSender ? "0" : "12px", borderBottomLeftRadius: !isSender ? "0" : "12px",opacity: 0.7  }}>
+                <div className='bg-replay p-3 border' style={{ borderRadius: "12px", borderBottomRightRadius: isSender ? "0" : "12px", borderBottomLeftRadius: !isSender ? "0" : "12px", opacity: 0.7 }}>
                     <div className='text-dark fs-8'>
                         <span> {content?.n}: {content?.o?.substring(0, 150)}</span>
                     </div>

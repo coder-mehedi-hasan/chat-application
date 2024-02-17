@@ -575,9 +575,9 @@ function MessageForm() {
                     </div>
                 </div>
             </Toast>
-            <Overlay target={emoji.current} show={showEmoji} placement="top" ref={emojiContainerRef}>
+            <Overlay target={emoji.current} show={showEmoji} placement="top" ref={emojiContainerRef} >
                 {(props) => (
-                    <Tooltip id="overlay-example" {...props} className='inner_action_tooltip_emoji_picker' >
+                    <Tooltip id="overlay-example" {...props} className='inner_action_tooltip_emoji_picker'  >
                         <Picker
                             data={data}
                             onEmojiSelect={(emoji: any) => addEmoji(emoji.native)}
