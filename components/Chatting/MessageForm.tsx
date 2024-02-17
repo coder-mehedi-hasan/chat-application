@@ -375,8 +375,7 @@ function MessageForm() {
         staleTime: 5,
     })
 
-    const getContent = () => {
-        // if(replayMessage?.messageMeta?.contentType)
+    const getReplayContent = () => {
         switch (replayMessage?.messageMeta?.contentType) {
             case 1:
                 return (
@@ -393,22 +392,30 @@ function MessageForm() {
             default:
                 break;
         }
-
-        // if (content?.c) {
-        //     return <div style={{ maxWidth: "140px", objectFit: "cover", overflow: "hidden", borderRadius: "12px", borderBottomRightRadius: isSender ? "0" : "12px", borderBottomLeftRadius: !isSender ? "0" : "12px", opacity: 0.6 }}>
-        //         <img src={content?.o} alt="" className='img-fluid' />
-        //     </div>
-        // } else {
-        //     return <>
-        //         <div className='bg-replay p-3 border' style={{ borderRadius: "12px", borderBottomRightRadius: isSender ? "0" : "12px", borderBottomLeftRadius: !isSender ? "0" : "12px", opacity: 0.6 }}>
-        //             <div className='text-dark fs-8'>
-        //                 <span> {content?.n}: {content?.o?.substring(0, 150)}</span>
-        //             </div>
-        //         </div>
-        //     </>
-        // }
-        return <></>
     }
+
+    // Click Outside closed
+    const emojiContainerRef = useRef(null);
+    const stickerContainerRef = useRef(null);
+    const plusPopupContainerRef = useRef(null);
+
+    useEffect(() => {
+        let handler = (e) => {
+            if (!emojiContainerRef?.current?.contains(e.target)) {
+                setShowEmoji(false);
+            }
+            if (!stickerContainerRef?.current?.contains(e.target)) {
+                setShowStickers(false);
+            }
+            if (!plusPopupContainerRef?.current?.contains(e.target)) {
+                setShowVoiceToast(false);
+            }
+        };
+        document.addEventListener("mousedown", handler);
+        return () => {
+            document.removeEventListener("mousedown", handler);
+        }
+    });
 
 
     return (
@@ -434,7 +441,7 @@ function MessageForm() {
                             }}>CANCEL</p>
                         </div>
                         <div>
-                            {getContent()}
+                            {getReplayContent()}
                         </div>
                         {/* <p className='m-0'>Edit Message</p>
                         <div className='cross-button' onClick={() => {
@@ -558,7 +565,7 @@ function MessageForm() {
                         </>
                 }
             </div >
-            <Toast show={showVoiceToast} animation={true} className='position-absolute rounded' style={{ top: "-46px", left: 0, border: 'none', width: "220px", height: "44px", padding: "4px", transition: ".2s", display: showVoiceToast ? 'block' : "none" }}>
+            <Toast show={showVoiceToast} animation={true} className='position-absolute rounded' style={{ top: "-46px", left: 0, border: 'none', width: "220px", height: "44px", padding: "4px", transition: ".2s", display: showVoiceToast ? 'block' : "none" }} ref={plusPopupContainerRef}>
                 <div className="w-100 h-100 d-flex justify-content-center align-items-center send-voice-clip-btn rounded" style={{ padding: "0 8px", }} onClick={handleVoiceMessage}>
                     <div style={{ paddingRight: "8px" }}>
                         <BsMicFill style={{ height: "20px", width: "20px" }} className="brand-color" />
@@ -568,7 +575,7 @@ function MessageForm() {
                     </div>
                 </div>
             </Toast>
-            <Overlay target={emoji.current} show={showEmoji} placement="top">
+            <Overlay target={emoji.current} show={showEmoji} placement="top" ref={emojiContainerRef}>
                 {(props) => (
                     <Tooltip id="overlay-example" {...props} className='inner_action_tooltip_emoji_picker' >
                         <Picker
@@ -581,7 +588,7 @@ function MessageForm() {
                     </Tooltip>
                 )}
             </Overlay>
-            <Overlay target={stickers.current} show={showStickers} placement="top">
+            <Overlay target={stickers.current} show={showStickers} placement="top" ref={stickerContainerRef}>
                 {(props) => (
                     <Tooltip {...props} className='inner_action_tooltip_sticker'>
                         <div className='inner_tooltip_sticker w-100' style={{ padding: "0" }}>
