@@ -7,7 +7,7 @@ import handleReactionSend from "../../utils/functions/handleReactionSend"
 
 const Reactions = ({ reaction, messageId, message }: any) => {
     const [show, setShow] = useState(false)
-    const [{ userInfo, socket }, dispatch]: any = useStateProvider()
+    const [{ userInfo, }, dispatch]: any = useStateProvider()
     let style: any = {}
     if (message?.messageFromUserID === userInfo?.id) {
         style.right = "15px"

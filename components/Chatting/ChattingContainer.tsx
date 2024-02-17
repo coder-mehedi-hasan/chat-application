@@ -9,7 +9,7 @@ import { arrayIsEmpty, handleMessageStatus, handleSortByDateTime } from '../../u
 import { IoIosArrowDown } from "react-icons/io";
 import { BsCheckAll, BsCheckLg } from 'react-icons/bs'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
-import { updateMessage } from '../../utils/updateMessage';
+import { updateMessage, updateMessageStatus, updateOtherMessageStatus, updateSendMessagesStatus } from '../../utils/updateMessage';
 
 export default memo(function ChattingContainer() {
     const [{ currentChatUser, userInfo, socket, messages, socketEvent, otherMessages, sendMessages }, dispatch]: any = useStateProvider()
@@ -182,6 +182,34 @@ export default memo(function ChattingContainer() {
         return message?.messageStatus
     }
 
+    useEffect(() => {
+        if (statusLastMessage?.length) {
+            statusLastMessage?.map(item => {
+                const find = messages?.find(f => f?._id === item?._id);
+                if (find && item?.messageStatus !== find?.messageStatus) {
+                    updateMessageStatus({ _id: item?._id, messageStatus: item?.currentStatus }, messages, dispatch)
+                }
+            })
+        }
+        if (statusLastMessage?.length) {
+            statusLastMessage?.map(item => {
+                const find = sendMessages?.find(f => f?._id === item?._id);
+                if (find && item?.messageStatus !== find?.messageStatus) {
+                    updateSendMessagesStatus({ _id: item?._id, messageStatus: item?.currentStatus }, sendMessages, dispatch)
+                }
+            })
+        }
+        if (statusLastMessage?.length) {
+            statusLastMessage?.map(item => {
+                const find = otherMessages?.find(f => f?._id === item?._id);
+                if (find && item?.messageStatus !== find?.messageStatus) {
+                    updateOtherMessageStatus({ _id: item?._id, messageStatus: item?.currentStatus }, otherMessages, dispatch)
+                }
+            })
+        }
+    }, [messages, statusLastMessage, sendMessages, otherMessages])
+
+
 
     const handlStatusData = (data: any[]) => {
         data?.map((item: any) => {
@@ -196,9 +224,9 @@ export default memo(function ChattingContainer() {
         })
     }
 
+    // console.log(messages)
     useEffect(() => {
         socket?.current?.on('updateSenderMessageStatusV2', (data: any) => {
-            // console.log("updateSenderMessageStatusV2 09090", data)
             if (data) {
                 handlStatusData(data)
             }
@@ -217,7 +245,7 @@ export default memo(function ChattingContainer() {
                 socket?.current?.off('updateReceiverMessageStatusV2')
             }
         };
-    }, [socket?.current, currentChatUser]);
+    }, [socket?.current]);
 
     const getMessageStatusRender = (status: any) => {
         switch (status) {
@@ -246,20 +274,6 @@ export default memo(function ChattingContainer() {
         }
     }
 
-    const updateContainerMessageStatus = (messageIds: any[], messages: any[]) => {
-        for (let index = 0; index < messageIds.length; index++) {
-            const element: any = messageIds[index];
-            for (let i = 0; i < messages.length; i++) {
-                if (messages[i]._id === element?._id) {
-                    messages[i] = { ...messages[i], messageStatus: element?.currentStatus };
-                    // break;
-                }
-            }
-        }
-        console.log(messageIds, messages)
-        return messages
-    }
-
     const sortedMessages = handleSortByDateTime(messages)
     return (
         <>
@@ -267,7 +281,8 @@ export default memo(function ChattingContainer() {
                 {
                     userInfo && messages?.length ? sortedMessages?.map((item: any, index: any) => {
                         const isLastMessage = (sortedMessages?.length - 1) === index
-                        const status = getMessageStatus(item)
+                        // const status = getMessageStatus(item)
+                        const status = item?.messageStatus;
                         const isSender = userInfo.id === item.messageFromUserID
                         return (
                             <div key={index} ref={messagesRef}>

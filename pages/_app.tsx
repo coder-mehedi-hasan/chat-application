@@ -9,6 +9,7 @@ import reducer, { initialState } from '../context/StateReducers';
 import { reducerCases } from '../context/constant';
 import fakeUsers from '../fake_data/user.json';
 import '../style/main.css';
+import { handleMessageStatus } from '../utils/functions/message';
 
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -104,10 +105,11 @@ export function Main({ Component, pageProps }: any) {
 			const currentDate = new Date()?.toISOString()
 			if (response.sMessageObj.messageFromUserID == currentChatUser?.id) {
 				dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: { ...response.sMessageObj, messageBody: response?.sMessageObj?.message, messageSentTime: currentDate } })
-				socket.current.emit('updateMessageStatusV2', {
-					_ids: [response?.sMessageObj?._id],
-					currentStatus: 3
-				})
+				// socket.current.emit('updateMessageStatusV2', {
+				// 	_ids: [response?.sMessageObj?._id],
+				// 	currentStatus: 3
+				// })
+				handleMessageStatus([response?.sMessageObj?._id],socket,3)
 				chatContainerRef?.current?.scrollIntoView();
 			} else {
 				dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: { ...response.sMessageObj, messageBody: response?.sMessageObj?.message, messageSentTime: currentDate } })
