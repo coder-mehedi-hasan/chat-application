@@ -8,6 +8,8 @@ export const handleMessageStatus = (ids: string[], socket: any, status: number) 
 }
 
 export const handleSentMessage = (messageObj: any, socket: any, dispatch: any, drafts: []) => {
+    console.log("from handleSentMessage", messageObj)
+    messageObj.messageFiles = { ...messageObj.messageFiles[0] }
     let isSuccess = false
     if (!messageObj.score) {
         messageObj.score = 1
@@ -15,14 +17,14 @@ export const handleSentMessage = (messageObj: any, socket: any, dispatch: any, d
     socket.current.emit('messageFromClient', messageObj, (response: any) => {
         if (response?.status === "success") {
             const currentDate = new Date()?.toISOString()
-            dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: { ...response.sMessageObj, messageSentTime: currentDate, messageBody: response.sMessageObj?.message } })
+            dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: { ...response.sMessageObj, messageSentTime: currentDate, messageBody: response.sMessageObj?.message, messageFiles: [response.sMessageObj?.messageFiles] } })
             dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
             isSuccess = true
-            dispatch({ type: reducerCases.ADD_SEND_MESSAGE, newMessage: { ...response.sMessageObj, messageSentTime: currentDate, messageBody: response.sMessageObj?.message } })
-            if (drafts?.length) {
-                const filterDraftsWithoutThis = drafts?.filter((item: any) => item?.messageToUserID !== messageObj?.messageToUserID)
-                dispatch({ type: reducerCases.SET_DRAFT_MESSAGE, draftMessages: filterDraftsWithoutThis })
-            }
+            dispatch({ type: reducerCases.ADD_SEND_MESSAGE, newMessage: { ...response.sMessageObj, messageSentTime: currentDate, messageBody: response.sMessageObj?.message, messageFiles: [response.sMessageObj?.messageFiles] } })
+            // if (drafts?.length) {
+            //     const filterDraftsWithoutThis = drafts?.filter((item: any) => item?.messageToUserID !== messageObj?.messageToUserID)
+            //     dispatch({ type: reducerCases.SET_DRAFT_MESSAGE, draftMessages: filterDraftsWithoutThis })
+            // }
         }
     })
     return isSuccess

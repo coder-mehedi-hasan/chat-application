@@ -101,18 +101,19 @@ export function Main({ Component, pageProps }: any) {
 
 	useEffect(() => {
 		socket?.current?.on('clientToClientMessage', (response: any) => {
-			// console.log("clientToClientMessage",response)
+			console.log("clientToClientMessage", response)
 			const currentDate = new Date()?.toISOString()
 			if (response.sMessageObj.messageFromUserID == currentChatUser?.id) {
-				dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: { ...response.sMessageObj, messageBody: response?.sMessageObj?.message, messageSentTime: currentDate } })
+				dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: { ...response.sMessageObj, messageBody: response?.sMessageObj?.message, messageSentTime: currentDate, isLoading: true } })
 				// socket.current.emit('updateMessageStatusV2', {
 				// 	_ids: [response?.sMessageObj?._id],
 				// 	currentStatus: 3
 				// })
-				handleMessageStatus([response?.sMessageObj?._id],socket,3)
+				handleMessageStatus([response?.sMessageObj?._id], socket, 3)
 				chatContainerRef?.current?.scrollIntoView();
 			} else {
 				dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: { ...response.sMessageObj, messageBody: response?.sMessageObj?.message, messageSentTime: currentDate } })
+				handleMessageStatus([response?.sMessageObj?._id], socket, 2)
 			}
 
 		})

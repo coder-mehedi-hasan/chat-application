@@ -214,7 +214,7 @@ export default memo(function ChattingContainer() {
         })
     }
 
-    console.log(messages)
+    // console.log(messages)
     useEffect(() => {
         socket?.current?.on('updateSenderMessageStatusV2', (data: any) => {
             if (data) {
