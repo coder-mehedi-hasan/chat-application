@@ -4,6 +4,10 @@ export const updateMessage = (newObj, messages, dispatch) => {
     const updatedMessages = updateByIdInPlace(messages, newObj?._id, newObj)
     dispatch({ type: reducerCases.SET_MESSAGES, messages: updatedMessages })
 }
+export const updateTempMessage = (newObj, messages, dispatch) => {
+    const updatedMessages = updateByTempId(messages, newObj?.tempId, newObj)
+    dispatch({ type: reducerCases.SET_MESSAGES, messages: updatedMessages })
+}
 
 export const updateMessageStatus = (newObj, messages, dispatch) => {
     const updatedMessages = updateByIdInPlace(messages, newObj?._id, newObj)
@@ -24,6 +28,16 @@ function updateByIdInPlace(arr: any[], idToUpdate: string, newObj: any) {
     for (let i = 0; i < arr.length; i++) {
         if (arr[i]._id === idToUpdate) {
             arr[i] = { ...arr[i], ...newObj };
+            break;
+        }
+    }
+    return arr
+}
+
+function updateByTempId(arr: any[], idToUpdate: string, newObj: any) {
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i].tempId === idToUpdate) {
+            arr[i] = newObj
             break;
         }
     }

@@ -7,6 +7,7 @@ import VideoContent from '../components/Messages/VideoContent';
 import FilesContent from '../components/Messages/FilesContent';
 import LocationContent from '../components/Messages/LocationContent';
 import ShimmerEffectComponent from '../components/ShimmerEffectComponent';
+import Skeleton from 'react-loading-skeleton';
 
 const getContent = (message: any) => {
     const contentType = message?.messageMeta?.contentType
@@ -31,6 +32,9 @@ const getContent = (message: any) => {
             return <FilesContent message={message} />
         case 14:
             return <TextContent isSender={true} content={message?.message} message={message} isReplay={true} />
+        case 99:
+            console.log("shiimer done")
+            return <Skeleton highlightColor='#c5c5c5' style={{ height: "200px", width: "200px", borderRadius: "20px" }} />
         default:
             break;
     }

@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
-import React, { useState } from 'react'
-import { Offcanvas } from 'react-bootstrap'
-import { BsFillXCircleFill, BsPencilFill } from 'react-icons/bs'
-import { FaBars, FaHome } from 'react-icons/fa'
+import { useState } from 'react';
+import { Offcanvas } from 'react-bootstrap';
+import { BsFillXCircleFill } from 'react-icons/bs';
+import { FaBars, FaHome } from 'react-icons/fa';
 
 export default function TopNavBar({ type }: any) {
     const router = useRouter()

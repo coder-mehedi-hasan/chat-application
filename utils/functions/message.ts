@@ -1,4 +1,5 @@
 import { reducerCases } from "../../context/constant"
+import { updateTempMessage } from "../updateMessage"
 
 export const handleMessageStatus = (ids: string[], socket: any, status: number) => {
     socket.current.emit('updateMessageStatusV2', {
@@ -7,8 +8,7 @@ export const handleMessageStatus = (ids: string[], socket: any, status: number) 
     })
 }
 
-export const handleSentMessage = (messageObj: any, socket: any, dispatch: any, drafts: []) => {
-    // console.log("from handleSentMessage", messageObj)
+export const handleSentMessage = (messageObj: any, socket: any, dispatch: any, drafts: [], tempId: any = null, messages: any = []) => {
     if (messageObj.messageFiles) {
         messageObj.messageFiles = { ...messageObj?.messageFiles[0] }
     }
@@ -19,7 +19,22 @@ export const handleSentMessage = (messageObj: any, socket: any, dispatch: any, d
     socket.current.emit('messageFromClient', messageObj, (response: any) => {
         if (response?.status === "success") {
             const currentDate = new Date()?.toISOString()
-            dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: { ...response.sMessageObj, messageSentTime: currentDate, messageBody: response.sMessageObj?.message, messageFiles: [response.sMessageObj?.messageFiles] } })
+            if (response.sMessageObj?.messageFiles && tempId) {
+                updateTempMessage(
+                    {
+                        ...response.sMessageObj,
+                        messageSentTime: currentDate,
+                        messageBody: response.sMessageObj?.message,
+                        messageFiles: [response.sMessageObj?.messageFiles],
+                        tempId: tempId
+                    },
+                    messages,
+                    dispatch
+                )
+            }
+            else {
+                dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: { ...response.sMessageObj, messageSentTime: currentDate, messageBody: response.sMessageObj?.message, messageFiles: [response.sMessageObj?.messageFiles] } })
+            }
             dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
             isSuccess = true
             dispatch({ type: reducerCases.ADD_SEND_MESSAGE, newMessage: { ...response.sMessageObj, messageSentTime: currentDate, messageBody: response.sMessageObj?.message, messageFiles: [response.sMessageObj?.messageFiles] } })

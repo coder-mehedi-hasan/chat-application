@@ -45,6 +45,11 @@ const reducer = (state: any, action: any) => {
                 ...state,
                 messages: [...state.messages, action.newMessage]
             }
+        case reducerCases.ADD_MULTIPLE_MESSAGE:
+            return {
+                ...state,
+                messages: [...state.messages, ...action.newMessages]
+            }
         case reducerCases.SET_SOCKET:
             return {
                 ...state,

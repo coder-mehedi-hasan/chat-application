@@ -15,6 +15,7 @@ import { getFileType } from '../../utils/fileType';
 import { handleSentMessage } from '../../utils/functions/message';
 import { isFileIsImage } from '../../utils/getFileType';
 import { updateMessage } from '../../utils/updateMessage';
+import { v4 as uuidv4 } from 'uuid';
 
 
 function MessageForm() {
@@ -34,6 +35,7 @@ function MessageForm() {
     const [showStickers, setShowStickers] = useState(false);
     const [stickersCategories, setStickersCategory] = useState<any>([])
     const [selectCategory, setSelectCategory] = useState<any>(null);
+
 
     //preview files
     const [previewFiles, setPreviewFiles] = useState([])
@@ -58,22 +60,26 @@ function MessageForm() {
             });
             if (response) {
                 const { message: msg, contentType } = getFileType(file)
-                handleSentMessage({
-                    ...message,
-                    cloudfrontUrl: url?.cloudfrontUrl,
-                    message: msg,
-                    messageMeta: {
-                        contentType: contentType,
-                        privateSticker: false
+                handleSentMessage(
+                    {
+                        ...message,
+                        cloudfrontUrl: url?.cloudfrontUrl,
+                        message: msg,
+                        messageMeta: {
+                            contentType: contentType,
+                            privateSticker: false
+                        },
+                        messageFiles: [
+                            {
+                                filepath: url?.cloudfrontUrl,
+                                filename: file?.name,
+                                mimetype: fileType
+                            }
+                        ]
                     },
-                    messageFiles: [
-                        {
-                            filepath: url?.cloudfrontUrl,
-                            filename: file?.name,
-                            mimetype: fileType
-                        }
-                    ]
-                }, socket, dispatch, draftMessages)
+                    socket,
+                    dispatch,
+                    draftMessages, `temp-${Number(index) + 1}`, messages)
             }
         } catch (err) {
             console.log(err)
@@ -139,6 +145,24 @@ function MessageForm() {
         }
         if (selectedFiles?.length && previewFiles?.length) {
             fetchSignedUrlsForMessaging()
+            selectedFiles?.map((item, index) => {
+                dispatch({
+                    type: reducerCases.ADD_MESSAGE,
+                    newMessage: {
+                        ...message,
+                        _id: uuidv4(),
+                        tempId: `temp-${index + 1}`,
+                        messageMeta: {
+                            contentType: 99,
+                            privateSticker: false
+                        },
+                        isLoading: true
+                    }
+                })
+            })
+            // console.log("testing sign in url file message")
+
+
         }
 
         if (message?.message !== "" && message?.message !== null) {
