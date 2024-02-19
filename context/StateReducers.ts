@@ -1,4 +1,5 @@
 import { reducerCases } from "./constant";
+import users from "../fake_data/user.json"
 
 export const initialState = {
     current_location: undefined,
@@ -13,7 +14,8 @@ export const initialState = {
     draftMessages: [],
     users: [],
     editMessage: null,
-    replayMessage: null
+    replayMessage: null,
+    chatHistoryUsers: users
 }
 
 const reducer = (state: any, action: any) => {
@@ -107,6 +109,11 @@ const reducer = (state: any, action: any) => {
             return {
                 ...state,
                 replayMessage: action.replayMessage
+            }
+        case reducerCases.SET_HISTORY_USERS:
+            return {
+                ...state,
+                chatHistoryUsers: action.users
             }
         default:
             return state;

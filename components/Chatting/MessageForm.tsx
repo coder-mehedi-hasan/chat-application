@@ -341,7 +341,7 @@ function MessageForm() {
                 contentType: 2,
                 privateSticker: false
             },
-            messageHyperlink: sticker?.Url
+            messageHyperlink: `data:sticker/${sticker?.Url}`
         }, socket, dispatch, draftMessages)
         setShowStickers(false)
     }
@@ -641,10 +641,11 @@ const StickerList = ({ category, handlStickerClick, ...props }: any) => {
 
 
     return (
-        <div style={{ display: "flex", justifyContent: "space-between",flexWrap:"wrap" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap" }}>
             {
                 Array.isArray(stickers) && stickers?.length &&
                 stickers?.map(img => {
+                    console.log("sticker image", img)
                     return <>
                         <div className='cursor-pointer my-1' onClick={() => handlStickerClick(img)} style={{ width: "32%" }}>
                             <img src={img?.Url} alt="" className='img-fluid' />

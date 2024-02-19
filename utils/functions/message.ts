@@ -8,8 +8,10 @@ export const handleMessageStatus = (ids: string[], socket: any, status: number) 
 }
 
 export const handleSentMessage = (messageObj: any, socket: any, dispatch: any, drafts: []) => {
-    console.log("from handleSentMessage", messageObj)
-    messageObj.messageFiles = { ...messageObj.messageFiles[0] }
+    // console.log("from handleSentMessage", messageObj)
+    if (messageObj.messageFiles) {
+        messageObj.messageFiles = { ...messageObj?.messageFiles[0] }
+    }
     let isSuccess = false
     if (!messageObj.score) {
         messageObj.score = 1

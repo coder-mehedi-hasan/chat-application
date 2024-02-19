@@ -11,8 +11,9 @@ import { useStateProvider } from '../../context/StateContext';
 
 export default function ChattingHistory() {
     const [users, setUsers] = useState<any>(user)
-    const [{ userInfo, otherMessages }, dispatch]: any = useStateProvider()
+    const [{ userInfo, otherMessages, chatHistoryUsers }, dispatch]: any = useStateProvider()
     const activeUserRef = useRef(null)
+    console.log("chatHistoryUsers", chatHistoryUsers)
 
     const handleGrabbing = (e: any) => {
     }
@@ -29,6 +30,12 @@ export default function ChattingHistory() {
             })
         }
     }, [otherMessages])
+
+    useEffect(() => {
+        setUsers(chatHistoryUsers)
+    }, [chatHistoryUsers])
+
+    // console.log("from chat history",users)
 
     return (
         <>
@@ -66,12 +73,12 @@ export default function ChattingHistory() {
                 <div>
                     {
                         users?.map((item: any) => {
+                            // console.log("from history map",item)
                             return (
                                 <span key={item?.id}>
                                     {
                                         userInfo?.id !== item?.id ?
                                             <ChatListItem user={item} key={item?.id} /> : ""
-
                                     }
                                 </span>
                             )

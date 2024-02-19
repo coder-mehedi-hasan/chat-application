@@ -5,10 +5,11 @@ import { reducerCases } from '../../context/constant'
 
 export default function ChatListItem({ user }: any) {
     const [lastMessageSeen, setLastMessageSeen] = useState(false)
-
     const [{ currentChatUser, otherMessages }, dispatch]: any = useStateProvider()
-
+    
     const handleClickContact = () => {
+        // console.log("user", user)
+        // return
         dispatch({ type: reducerCases.CHANGE_CURRENT_CHAT_USER, user: user })
         setLastMessageSeen(true)
     }

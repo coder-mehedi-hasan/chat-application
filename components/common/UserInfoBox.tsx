@@ -58,6 +58,8 @@ export default function UserInfoBox({ user, size, lastMessage, lastMessageSeenSt
         return message?.messageStatus
     }
 
+    const renderLastMessage = lastMessage?.messageBody ?? singleLastMessage?.messageBody
+
     return (
         <div className={`w-100 h-100 d-flex align-items-center text-body-emphasis `}>
             <div>
@@ -83,7 +85,7 @@ export default function UserInfoBox({ user, size, lastMessage, lastMessageSeenSt
                             style={{ fontSize: "12px", margin: "0" }}
                             className={`m-0 ${lastMessage && getMessageStatus(lastMessage) !== 3 ? "unseen-last-message" : ""}`}
 
-                        >{lastMessage?.message ?? user?.id === singleLastMessage?.messageToUserID && singleLastMessage?.message}
+                        >{renderLastMessage?.substring(0, 40)}
                         </p>
                 }
             </div>

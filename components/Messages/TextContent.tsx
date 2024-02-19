@@ -56,7 +56,7 @@ export default function TextContent({ content, message, ...props }: any) {
                 <div style={{ boxSizing: "border-box" }} >
                     <div className={`m-0 w-100 d-flex align-items-center ${isSender ? "justify-content-end" : "justify-content-start"} text-dark`}>
                         {
-                            message?.messageMeta?.contentType === 14 &&
+                            message?.messageMeta?.contentType === 14 && isSender &&
                             <MessageSideAction message={message} />
                         }
                         <div style={containerStyle} className={isSender ? "brand-bg" : "bg-receiver"} >
@@ -64,6 +64,10 @@ export default function TextContent({ content, message, ...props }: any) {
                                 identifyTextOrLink(content) === 'link' ? <Link target='_blank' href={content} style={{ color: isSender ? "#fff" : "#000" }}>{message?.messageBody}</Link> : message?.messageBody
                             }
                         </div>
+                        {
+                            message?.messageMeta?.contentType === 14 && !isSender &&
+                            <MessageSideAction message={message} />
+                        }
                     </div>
                 </div>
             </div>

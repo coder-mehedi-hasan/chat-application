@@ -32,7 +32,7 @@ export default function App({ Component, pageProps }: AppProps) {
 export function Main({ Component, pageProps }: any) {
 	const [lat, setLat] = useState<any>()
 	const [lon, setLon] = useState<any>()
-	const [{ currentChatUser, userInfo, current_location, chatContainerRef, }, dispatch]: any = useStateProvider()
+	const [{ currentChatUser, userInfo, current_location, chatContainerRef, chatHistoryUsers }, dispatch]: any = useStateProvider()
 	const socket: any = useRef()
 
 	const getLocation = () => {
@@ -101,17 +101,21 @@ export function Main({ Component, pageProps }: any) {
 
 	useEffect(() => {
 		socket?.current?.on('clientToClientMessage', (response: any) => {
-			console.log("clientToClientMessage", response)
+			// console.log("clientToClientMessage", response)
+			if (response.sMessageObj.messageFiles) {
+				response.sMessageObj.messageFiles = [response.sMessageObj.messageFiles]
+			}
 			const currentDate = new Date()?.toISOString()
 			if (response.sMessageObj.messageFromUserID == currentChatUser?.id) {
 				dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: { ...response.sMessageObj, messageBody: response?.sMessageObj?.message, messageSentTime: currentDate, isLoading: true } })
-				// socket.current.emit('updateMessageStatusV2', {
-				// 	_ids: [response?.sMessageObj?._id],
-				// 	currentStatus: 3
-				// })
 				handleMessageStatus([response?.sMessageObj?._id], socket, 3)
 				chatContainerRef?.current?.scrollIntoView();
 			} else {
+				const find = chatHistoryUsers?.find(user => user?.id == response.sMessageObj?.messageToUserID)
+				console.log(find)
+				if (find) {
+					dispatch({ type: reducerCases.SET_HISTORY_USERS, users: [...chatHistoryUsers, ...[{ id: response.sMessageObj?.messageFromUserID, name: `Unknown User-${chatHistoryUsers?.length}`, image: "https://picsum.photos/200" }]] })
+				}
 				dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: { ...response.sMessageObj, messageBody: response?.sMessageObj?.message, messageSentTime: currentDate } })
 				handleMessageStatus([response?.sMessageObj?._id], socket, 2)
 			}

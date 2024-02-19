@@ -1,16 +1,23 @@
-import { OverlayTrigger } from 'react-bootstrap';
+import { Accordion, OverlayTrigger } from 'react-bootstrap';
 import { useStateProvider } from '../../context/StateContext';
 import getContent from '../../utils/getContent';
 import MessageSideAction from '../common/MessageSideAction';
 import renderMessageTime from '../common/render-message-time';
 import Reactions from './Reactions';
+import { useState } from 'react';
+import AccordionCollapse from './AccordionCollapse';
 
 export default function ReceiverMessages({ data }: any) {
     const [{ currentChatUser, }, dispatch]: any = useStateProvider();
     const reactionsAll = data?.reactionCounts && Object.keys(data?.reactionCounts);
+    const [activeKey, setActiveKey] = useState(null);
+
+    const handleAccordionButtonClick = (eventKey) => {
+        setActiveKey(activeKey === eventKey ? null : eventKey);
+    };
 
     return (
-        <>
+        <Accordion activeKey={activeKey} >
             <div className="d-flex align-items-center justify-content-start">
                 {currentChatUser?.image ?
                     <div style={{ height: "30px", width: "30px", borderRadius: "50%", overflow: "hidden", marginRight: "5px" }}>
@@ -22,7 +29,7 @@ export default function ReceiverMessages({ data }: any) {
                     delay={{ show: 150, hide: 400 }}
                     overlay={(props) => renderMessageTime(props, data)}
                 >
-                    <div>
+                    <div onClick={() => handleAccordionButtonClick(data?._id)}>
                         {getContent(data)}
                         <div className='reaction'>
                             {
@@ -32,6 +39,7 @@ export default function ReceiverMessages({ data }: any) {
                                 }) : ""
                             }
                         </div>
+                        {AccordionCollapse(data)}
                     </div>
                 </OverlayTrigger>
                 {
@@ -39,6 +47,6 @@ export default function ReceiverMessages({ data }: any) {
                     <MessageSideAction message={data} />
                 }
             </div>
-        </>
+        </Accordion>
     )
 }
