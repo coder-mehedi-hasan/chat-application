@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal } from 'react-bootstrap';
 import CustomImageGallery from '../Modal/CustomImageGallery';
 import { useQuery } from '@tanstack/react-query';
+import { ShimmerThumbnail } from "react-shimmer-effects";
 
 const ImageContent = ({ message }) => {
     const [gallery, setGallery] = useState(false);
@@ -54,7 +55,8 @@ const ImageContent = ({ message }) => {
                 <div style={{ position: "absolute", top: "0", left: "0", height: "100%", width: "100%", cursor: "pointer", zIndex: 1, background: "none" }} onClick={() => setGallery(!gallery)} ></div>
                 {
                     loading ?
-                        "Loading ...." :
+                        <ShimmerThumbnail height={200} rounded width={200} />
+                        :
                         <img src={url} alt="img" style={{ maxWidth: "100%", maxHeight: "220px" }} />
                 }
             </div>
