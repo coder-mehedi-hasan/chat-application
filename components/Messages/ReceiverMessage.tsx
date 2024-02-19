@@ -29,7 +29,7 @@ export default function ReceiverMessages({ data }: any) {
                     delay={{ show: 150, hide: 400 }}
                     overlay={(props) => renderMessageTime(props, data)}
                 >
-                    <div onClick={() => handleAccordionButtonClick(data?._id)}>
+                    <div onMouseEnter={() => handleAccordionButtonClick(data?._id)} onMouseLeave={() => handleAccordionButtonClick(null)}>
                         {getContent(data)}
                         <div className='reaction'>
                             {
