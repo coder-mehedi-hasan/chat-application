@@ -156,6 +156,9 @@ export default memo(function ChattingContainer() {
         if (socketEvent) {
             containerRef?.current?.scrollIntoView();
             messagesRef?.current?.scrollIntoView();
+        } else if (skip === 0) {
+            containerRef?.current?.scrollIntoView();
+            messagesRef?.current?.scrollIntoView();
         }
         else if (skip !== 0) {
             if (containerRef) {
@@ -313,13 +316,16 @@ export default memo(function ChattingContainer() {
                 }
             </div>
             {
-                scrollBarPositionUp && isLoading || isRefetching || isFetching || !isSuccess ?
+                // scrollBarPositionUp && 
+                isLoading
+                    // || isRefetching || isFetching || !isSuccess
+                    ?
                     <>
-                        {/* <div className='messages-overlay-loading' style={{ height: "100% !important" }}>
+                        <div className='messages-overlay-loading' style={{ height: "100% !important" }}>
                             <div className="spinner-border loading" role="status">
                                 <span className="visually-hidden"></span>
                             </div>
-                        </div> */}
+                        </div>
                     </>
                     : ""
             }

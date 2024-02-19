@@ -4,10 +4,10 @@ export const getFileExtensionAndType = (link: any) => {
     const url = new URL(link);
     const pathname = url.pathname;
     const filename = pathname.split('/').pop();
-    const filenameParts = filename.split('.');
+    const filenameParts = filename?.split('.');
 
-    if (filenameParts.length > 1) {
-        const extension = filenameParts.pop();
+    if (filenameParts?.length > 1) {
+        const extension = filenameParts?.pop();
         const fileType = getFileType(extension)
 
         return {

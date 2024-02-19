@@ -6,6 +6,7 @@ import StickerContent from '../components/Messages/StickerContent';
 import VideoContent from '../components/Messages/VideoContent';
 import FilesContent from '../components/Messages/FilesContent';
 import LocationContent from '../components/Messages/LocationContent';
+import ShimmerEffectComponent from '../components/ShimmerEffectComponent';
 
 const getContent = (message: any) => {
     const contentType = message?.messageMeta?.contentType
@@ -15,7 +16,9 @@ const getContent = (message: any) => {
         case 2:
             return <StickerContent message={message} />
         case 3:
-            return <ImageContent message={message} />
+            return <ShimmerEffectComponent message={message}>
+                <ImageContent message={message} />
+            </ShimmerEffectComponent>
         case 4:
             return <VoiceContent message={message} />
         case 5:

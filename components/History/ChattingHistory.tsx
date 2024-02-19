@@ -13,7 +13,7 @@ export default function ChattingHistory() {
     const [users, setUsers] = useState<any>(user)
     const [{ userInfo, otherMessages, chatHistoryUsers }, dispatch]: any = useStateProvider()
     const activeUserRef = useRef(null)
-    console.log("chatHistoryUsers", chatHistoryUsers)
+    // console.log("chatHistoryUsers", chatHistoryUsers)
 
     const handleGrabbing = (e: any) => {
     }

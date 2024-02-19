@@ -102,6 +102,9 @@ export function Main({ Component, pageProps }: any) {
 	useEffect(() => {
 		socket?.current?.on('clientToClientMessage', (response: any) => {
 			// console.log("clientToClientMessage", response)
+			if (response.sMessageObj?.messageMeta?.contentType === 3) {
+				response.sMessageObj = { ...response.sMessageObj, isLoading: true }
+			}
 			if (response.sMessageObj.messageFiles) {
 				response.sMessageObj.messageFiles = [response.sMessageObj.messageFiles]
 			}

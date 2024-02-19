@@ -587,11 +587,13 @@
     justify-content: center;
     align-items: center;
 }
+
 .bg-replay {
     background-color: rgba(60, 178, 156, 0.2);
     position: relative;
     overflow: hidden;
 }
-.bg-receiver{
+
+.bg-receiver {
     background: #e6e7d7;
 }

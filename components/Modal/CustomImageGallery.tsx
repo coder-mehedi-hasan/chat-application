@@ -4,9 +4,10 @@ import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
 import { useStateProvider } from "../../context/StateContext";
 
-const CustomImageGallery = ({ onClick, image }: any) => {
+const CustomImageGallery = ({ onClick, imageId }: any) => {
     const [galleryImages, setGalleryImages] = useState<any>([])
     const [{ messages }]: any = useStateProvider()
+    const [startAt, setStartAt] = useState(0)
 
     useEffect(() => {
         let images: any[] = []
@@ -18,6 +19,9 @@ const CustomImageGallery = ({ onClick, image }: any) => {
                     original: url,
                     thumbnail: url,
                 })
+                if (item?._id === imageId) {
+                    setStartAt(images?.length - 1)
+                }
             }
         })
         setGalleryImages(images)
@@ -35,6 +39,7 @@ const CustomImageGallery = ({ onClick, image }: any) => {
                     showPlayButton={false}
                     useBrowserFullscreen={true}
                     showFullscreenButton={false}
+                    startIndex={startAt}
                 />
             </div>
         </div>
