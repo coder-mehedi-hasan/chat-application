@@ -54,7 +54,7 @@ function formatDayAndTime(date, otherOutput) {
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
     if (date >= sevenDaysAgo && date <= now) {
-        const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+        const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
         const formattedTime = formatTime(date)
         return `${formattedTime} ${dayName}`;
     } else {

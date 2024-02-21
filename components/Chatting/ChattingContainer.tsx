@@ -10,6 +10,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { BsCheckAll, BsCheckLg } from 'react-icons/bs'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { updateMessage, updateMessageStatus, updateOtherMessageStatus, updateSendMessagesStatus } from '../../utils/updateMessage';
+import { isDateToday } from '../../utils/functions/times';
 
 export default memo(function ChattingContainer() {
     const [{ currentChatUser, userInfo, socket, messages, socketEvent, otherMessages, sendMessages }, dispatch]: any = useStateProvider()
@@ -217,7 +218,7 @@ export default memo(function ChattingContainer() {
         })
     }
 
-    console.log("messages from container",messages)
+    // console.log("messages from container", messages)
     useEffect(() => {
         socket?.current?.on('updateSenderMessageStatusV2', (data: any) => {
             if (data) {
@@ -240,14 +241,15 @@ export default memo(function ChattingContainer() {
         };
     }, [socket?.current]);
 
-    const getMessageStatusRender = (status: any) => {
+    const getMessageStatusRender = (status: any, sendTime: any) => {
+        const date = isDateToday(sendTime)
         switch (status) {
             case 1:
-                return <BsCheckLg />
+                return <>{date?.time} <BsCheckLg /></>
             case 2:
-                return <BsCheckAll />
+                return <>{date?.time} <BsCheckAll /></>
             case 3:
-                return <BsCheckAll className="brand-color" />
+                return <>{date?.time} <BsCheckAll className="brand-color" /></>
             default:
                 break;
         }
@@ -296,7 +298,7 @@ export default memo(function ChattingContainer() {
                                                         overlay={(props) => renderSeenByTooltip(props, item, parseInt(isSender ? status : 3))}
                                                     >
                                                         <span className='text-dark fs-6 me-1F'>
-                                                            {getMessageStatusRender(parseInt(isSender ? status : 3))}
+                                                            {getMessageStatusRender(parseInt(isSender ? status : 3), item?.messageSentTime)}
                                                         </span>
                                                     </OverlayTrigger>
                                                     :
