@@ -101,7 +101,7 @@ export function Main({ Component, pageProps }: any) {
 
 	useEffect(() => {
 		socket?.current?.on('clientToClientMessage', (response: any) => {
-			// console.log("clientToClientMessage", response)
+			console.log("clientToClientMessage", response)
 			if (response.sMessageObj?.messageMeta?.contentType === 3) {
 				response.sMessageObj = { ...response.sMessageObj, isLoading: true }
 			}
@@ -115,11 +115,12 @@ export function Main({ Component, pageProps }: any) {
 				chatContainerRef?.current?.scrollIntoView();
 			} else {
 				const find = chatHistoryUsers?.find(user => user?.id == response.sMessageObj?.messageToUserID)
-				console.log(find)
-				if (find) {
+				// console.log(find)
+				if (!find) {
 					dispatch({ type: reducerCases.SET_HISTORY_USERS, users: [...chatHistoryUsers, ...[{ id: response.sMessageObj?.messageFromUserID, name: `Unknown User-${chatHistoryUsers?.length}`, image: "https://picsum.photos/200" }]] })
+				} else {
+					dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: { ...response.sMessageObj, messageBody: response?.sMessageObj?.message, messageSentTime: currentDate } })
 				}
-				dispatch({ type: reducerCases.ADD_OTHERS_MESSAGE, newMessage: { ...response.sMessageObj, messageBody: response?.sMessageObj?.message, messageSentTime: currentDate } })
 				handleMessageStatus([response?.sMessageObj?._id], socket, 2)
 			}
 
