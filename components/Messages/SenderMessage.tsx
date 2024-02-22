@@ -1,13 +1,10 @@
-import { OverlayTrigger } from 'react-bootstrap';
+import { useRef, useState } from 'react';
+import { Accordion, OverlayTrigger } from 'react-bootstrap';
 import getContent from '../../utils/getContent';
 import MessageSideAction from '../common/MessageSideAction';
 import renderMessageTime from '../common/render-message-time';
-import Reactions from './Reactions';
-import { Accordion, Card, Button } from 'react-bootstrap';
-import { useEffect, useRef, useState } from 'react';
-import { BsCheckAll, BsCheckLg } from 'react-icons/bs';
-import renderMessageStatus from './renderMessageStatus';
 import AccordionCollapse from './AccordionCollapse';
+import Reactions from './Reactions';
 
 function SenderMessages({ data }: any) {
     const reactionsAll = data?.reactionCounts && Object.keys(data?.reactionCounts)
@@ -19,6 +16,7 @@ function SenderMessages({ data }: any) {
     };
 
 
+
     return (
         <Accordion activeKey={activeKey} >
             <div className="d-flex align-items-center justify-content-end">
@@ -28,11 +26,11 @@ function SenderMessages({ data }: any) {
                 }
                 <OverlayTrigger
                     placement="left"
-                    delay={{ show: 100, hide: 100 }}
+                    delay={{ show: 150, hide: 150 }}
                     overlay={(props) => renderMessageTime(props, data)}
                 >
                     <div
-                        onMouseEnter={() => handleAccordionButtonClick(data?._id)} onMouseLeave={() => handleAccordionButtonClick(null)}
+                        // onMouseEnter={() => handleAccordionButtonClick(data?._id)} onMouseLeave={() => handleAccordionButtonClick(null)}
                         ref={contentRef}
                     >
                         {getContent(data)}

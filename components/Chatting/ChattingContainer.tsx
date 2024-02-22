@@ -304,7 +304,8 @@ export default memo(function ChattingContainer() {
                                                         </span>
                                                     </OverlayTrigger>
                                                     :
-                                                    ""}
+                                                    ""
+                                            }
                                         </div>
                                     </div>
                                     // :
