@@ -634,3 +634,20 @@
 .selected-new-user {
     border-color: #3cb29d !important;
 }
+
+audio::-webkit-media-controls-play-button,
+audio::-webkit-media-controls-panel {
+    background-color: #c6c6c6;
+    color: #c6c6c6;
+}
+
+.sender-voice-content::-webkit-media-controls-play-button,
+.sender-voice-content::-webkit-media-controls-panel {
+    background-color: #3cb29d !important;
+    color: #fff !important;
+}
+
+.sender-voice-content::-webkit-media-controls-play-button {
+    background-color: #3cb29d !important;
+    color: #3cb29d !important;
+}
