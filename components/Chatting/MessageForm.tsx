@@ -2,7 +2,7 @@ import Picker from '@emoji-mart/react';
 import { useQuery } from '@tanstack/react-query';
 import { memo, useEffect, useRef, useState } from 'react';
 import { AudioRecorder, useAudioRecorder } from 'react-audio-voice-recorder';
-import { Button, Form, Image, Overlay, Tooltip } from 'react-bootstrap';
+import { Button, Form, Image, Modal, Overlay, Tooltip } from 'react-bootstrap';
 import Toast from 'react-bootstrap/Toast';
 import { AiOutlineSend } from "react-icons/ai";
 import { BsChevronLeft, BsChevronRight, BsEmojiSmile, BsFillPlayFill, BsFillXCircleFill, BsImage, BsMicFill, BsPauseFill, BsX } from "react-icons/bs";
@@ -12,9 +12,8 @@ import { useStateProvider } from '../../context/StateContext';
 import { reducerCases } from '../../context/constant';
 import { apiUrl } from '../../utils/constant';
 import { getFileType } from '../../utils/fileType';
-import { handleSentMessage } from '../../utils/functions/message';
 import { isFileIsImage } from '../../utils/getFileType';
-import { updateMessage } from '../../utils/updateMessage';
+import { updateMessage, updateTempMessage } from '../../utils/updateMessage';
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -35,6 +34,18 @@ function MessageForm() {
     const [showStickers, setShowStickers] = useState(false);
     const [stickersCategories, setStickersCategory] = useState<any>([])
     const [selectCategory, setSelectCategory] = useState<any>(null);
+    const [error, setError] = useState(null)
+
+    const useFocus = () => {
+        const htmlElRef = useRef(null)
+        const setFocus = () => { htmlElRef.current && htmlElRef.current.focus() }
+
+        return [htmlElRef, setFocus]
+    }
+
+
+    const [inputRef, setInputFocus] = useFocus()
+
 
 
     //preview files
@@ -123,6 +134,7 @@ function MessageForm() {
         //set preview images base64 url only for preview 
         setPreviewFiles(showSelectedFiles);
         /******** show preview image **********/
+        setInputFocus()
     };
 
     //delete preview image  
@@ -137,6 +149,10 @@ function MessageForm() {
         setPreviewFiles(newArray)
     }
 
+    const handleError = () => {
+        console.log("Something is Wrong Message send Failed")
+    }
+
     //handle submit message
     const handleSubmitMessage = (e: any) => {
         e.preventDefault()
@@ -146,33 +162,32 @@ function MessageForm() {
         if (selectedFiles?.length && previewFiles?.length) {
             fetchSignedUrlsForMessaging()
             selectedFiles?.map((item, index) => {
+                const { message: msg, contentType } = getFileType(item)
                 dispatch({
                     type: reducerCases.ADD_MESSAGE,
                     newMessage: {
                         ...message,
                         _id: uuidv4(),
                         tempId: `temp-${index + 1}`,
+                        isLoading: true,
+                        message: msg,
                         messageMeta: {
-                            contentType: 99,
+                            contentType: contentType,
                             privateSticker: false
                         },
-                        isLoading: true
+                        messageFiles: [
+                            {
+                                filepath: URL.createObjectURL(item),
+                                filename: item?.name,
+                                mimetype: item?.type
+                            }
+                        ]
                     }
                 })
             })
-            // console.log("testing sign in url file message")
-
-
         }
 
         if (message?.message !== "" && message?.message !== null) {
-            // console.log("message",message)
-            // socket.current.emit('messageFromClient', message, (response: any) => {
-            //     setMessage({ ...message, message: "" })
-            //     dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
-            //     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
-            //     handleMessageStatus([response?._id], socket, 1)
-            // })
             if (editMessage && message?.isEditMessage) {
                 const params = {
                     "_id": editMessage?._id,
@@ -188,6 +203,7 @@ function MessageForm() {
                         }
                     }
                 );
+                setInputFocus()
             } else {
                 let messageMeta: any = {
                     contentType: 1,
@@ -212,12 +228,12 @@ function MessageForm() {
                 }, socket, dispatch, draftMessages)
                 setMessage({ ...message, message: "" })
                 dispatch({ type: reducerCases.ADD_REPLAY_MESSAGE, replayMessage: null })
+                setInputFocus()
             }
         }
-        // if (selectedFiles?.length) {
-        //     uploadFilesForMessaging()
-        // }
     }
+
+
 
 
     //add emoji in message
@@ -339,8 +355,10 @@ function MessageForm() {
             setMessage({ ...message, message: "", messageToUserID: currentChatUser.id, messageFromUserID: userInfo?.id })
         }
         getStickersCategory()
+        setInputFocus()
     }, [currentChatUser])
 
+    console.log("Error", error)
 
 
     const RenderPreviewImage = (src: string, index: number) => {
@@ -418,6 +436,46 @@ function MessageForm() {
         }
     });
 
+    const handleSentMessage = (messageObj: any, socket: any, dispatch: any, drafts: [], tempId: any = null, messages: any = []) => {
+        if (messageObj.messageFiles) {
+            messageObj.messageFiles = { ...messageObj?.messageFiles[0] }
+        }
+        let isSuccess = false
+        if (!messageObj.score) {
+            messageObj.score = 1
+        }
+        socket.current.emit('messageFromClient', messageObj, (response: any) => {
+            if (response?.status === "success") {
+                const currentDate = new Date()?.toISOString()
+                if (response.sMessageObj?.messageFiles && tempId) {
+                    updateTempMessage(
+                        {
+                            ...response.sMessageObj,
+                            messageSentTime: currentDate,
+                            messageBody: response.sMessageObj?.message,
+                            messageFiles: [response.sMessageObj?.messageFiles],
+                            tempId: tempId
+                        },
+                        messages,
+                        dispatch
+                    )
+                }
+                else {
+                    dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: { ...response.sMessageObj, messageSentTime: currentDate, messageBody: response.sMessageObj?.message, messageFiles: [response.sMessageObj?.messageFiles] } })
+                }
+                dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
+
+                dispatch({ type: reducerCases.ADD_SEND_MESSAGE, newMessage: { ...response.sMessageObj, messageSentTime: currentDate, messageBody: response.sMessageObj?.message, messageFiles: [response.sMessageObj?.messageFiles] } })
+                // if (drafts?.length) {
+                //     const filterDraftsWithoutThis = drafts?.filter((item: any) => item?.messageToUserID !== messageObj?.messageToUserID)
+                //     dispatch({ type: reducerCases.SET_DRAFT_MESSAGE, draftMessages: filterDraftsWithoutThis })
+                // }
+            } else {
+                setError("Message Sending Failed")
+            }
+        })
+    }
+
 
     return (
         <div className={`position-relative border-top message-form ${isMobileWidth ? "fixed-bottom" : ""}`}>
@@ -476,6 +534,7 @@ function MessageForm() {
                                                         noiseSuppression: true,
                                                         echoCancellation: true,
                                                     }}
+                                                    downloadFileExtension="webm"
                                                 />
                                             </div>
                                         </div>
@@ -541,7 +600,7 @@ function MessageForm() {
                                 </div>
                                 <Form className='w-100'>
                                     <Form.Control
-                                        ref={inputReference}
+                                        ref={inputRef}
                                         autoFocus={true}
                                         style={{ paddingLeft: "2px", paddingRight: "2px", textAlign: "start", background: "none", border: "none", color: "#000", overflowY: "scroll", scrollBehavior: "smooth", resize: "none", height: "15px", fontSize: "15px" }}
                                         className='scrollbar_visible_x'
@@ -552,6 +611,7 @@ function MessageForm() {
                                         onChange={(e) => {
                                             setMessage({ ...message, [e.target.name]: e.target.value })
                                         }}
+
                                     />
                                 </Form>
                             </div >
@@ -627,15 +687,20 @@ function MessageForm() {
                     </Tooltip>
                 )}
             </Overlay>
-            {/* <Overlay target={gifs.current} show={showGifs} placement="top">
-                {(props) => (
-                    <Tooltip {...props} className='inner_action_tooltip_sticker' >
-                        <div className='inner_tooltip_sticker'>
-                            There are all gifs
-                        </div>
-                    </Tooltip>
-                )}
-            </Overlay> */}
+            <Modal
+                size="sm"
+                show={!!error}
+                onHide={() => setError(null)}
+                aria-labelledby="example-modal-sizes-title-sm"
+
+            >
+                <Modal.Header className='bg-danger' closeButton></Modal.Header>
+                <Modal.Body className='bg-danger'>
+                    <h3 className='h5 text-light'>
+                        {error}
+                    </h3>
+                </Modal.Body>
+            </Modal>
         </div >
     )
 }

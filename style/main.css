@@ -80,7 +80,7 @@
     padding: 5px;
     border-radius: 50%;
     border: 5px solid #fff;
-    background: #3cb29d;
+    background: #3cbba3;
     position: absolute;
     right: 0px;
     bottom: 0px;
@@ -218,7 +218,7 @@
 }
 
 #chat_bar .active {
-    color: #3cb29d !important;
+    color: #3cbba3 !important;
 }
 
 .current_user_active {
@@ -279,7 +279,7 @@
 }
 
 .image-content .image-gallery-icon {
-    color: #3cb29d !important;
+    color: #3cbba3 !important;
     height: 60px;
     width: 60px;
     background-color: rgb(214, 213, 213);
@@ -294,7 +294,7 @@
 }
 
 .image-content .image-gallery-thumbnail.active {
-    border-color: #3cb29d !important;
+    border-color: #3cbba3 !important;
 }
 
 .image-content .cancel-btn {
@@ -304,7 +304,7 @@
     width: 50px;
     border-radius: 50%;
     border: 1px ridge;
-    color: #3cb29d;
+    color: #3cbba3;
     transition: all 0.25s ease;
     font-size: large;
     background: rgb(214, 213, 213);
@@ -335,11 +335,11 @@
 }
 
 .brand-color {
-    color: #3cb29d !important;
+    color: #3cbba3 !important;
 }
 
 .brand-bg {
-    background-color: #3cb29d !important;
+    background-color: #3cbba3 !important;
 }
 
 .voice-form .audio-recorder-mic {
@@ -370,7 +370,7 @@
     width: 22px;
     background: #fff;
     border-radius: 50%;
-    color: #3cb29d;
+    color: #3cbba3;
 }
 
 .recorder-timer {
@@ -433,12 +433,12 @@
 .inner_action_tooltip_sticker .sticker-scroll-btn-top {
     height: 20px;
     width: 20px;
-    background-color: #3cb29d;
+    background-color: #3cbba3;
     color: #fff !important;
 }
 
 .inner_action_tooltip_sticker .category-active {
-    background: #3cb29d !important;
+    background: #3cbba3 !important;
     color: #fff !important;
     transition: .3s;
     border-radius: 0px 15px 0px 15px !important;
@@ -526,7 +526,7 @@
 }
 
 .messages-overlay-loading .loading.spinner-border {
-    border-color: #3cb29d;
+    border-color: #3cbba3;
     border-right-color: transparent;
 }
 
@@ -632,7 +632,7 @@
 }
 
 .selected-new-user {
-    border-color: #3cb29d !important;
+    border-color: #3cbba3 !important;
 }
 
 audio::-webkit-media-controls-play-button,
@@ -643,14 +643,15 @@ audio::-webkit-media-controls-panel {
 
 .sender-voice-content::-webkit-media-controls-play-button,
 .sender-voice-content::-webkit-media-controls-panel {
-    background-color: #3cb29d !important;
+    background-color: #3cbba3 !important;
     color: #fff !important;
 }
 
 .sender-voice-content::-webkit-media-controls-play-button {
-    background-color: #3cb29d !important;
-    color: #3cb29d !important;
+    background-color: #3cbba3 !important;
+    color: #3cbba3 !important;
 }
-.message_content .tooltip-inner{
+
+.message_content .tooltip-inner {
     background-color: #fff !important;
 }

@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Modal } from 'react-bootstrap';
+import 'react-loading-skeleton/dist/skeleton.css';
+import { useMediaQuery } from 'react-responsive';
 import CustomImageGallery from '../Modal/CustomImageGallery';
-import { useQuery } from '@tanstack/react-query';
-import Skeleton from 'react-loading-skeleton'
-import 'react-loading-skeleton/dist/skeleton.css'
-import { useMediaQuery } from 'react-responsive'
 
 
 const ImageContent = ({ message }) => {
@@ -20,7 +18,7 @@ const ImageContent = ({ message }) => {
                     setGallery(!gallery)
                     setSelectedImage(message?._id)
                 }} ></div>
-                <img src={url} alt="img" style={{ maxWidth: "100%", maxHeight: "220px" }} />
+                <img loading="lazy" src={url} alt="img" style={{ maxWidth: "100%", maxHeight: "220px" }} />
             </div>
             <Modal show={gallery} className='image-content'>
                 <CustomImageGallery onClick={setGallery} imageId={selectedImage} />

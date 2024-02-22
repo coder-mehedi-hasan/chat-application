@@ -299,7 +299,7 @@ export default memo(function ChattingContainer() {
                                                         delay={{ show: 150, hide: 150 }}
                                                         overlay={(props) => renderSeenByTooltip(props, item, parseInt(isSender ? status : 3))}
                                                     >
-                                                        <span className='text-dark fs-6 me-1F'>
+                                                        <span className='text-dark fs-6 me-1 my-3'>
                                                             {getMessageStatusRender(parseInt(isSender ? status : 3), item?.messageSentTime)}
                                                         </span>
                                                     </OverlayTrigger>

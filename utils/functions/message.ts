@@ -8,7 +8,7 @@ export const handleMessageStatus = (ids: string[], socket: any, status: number) 
     })
 }
 
-export const handleSentMessage = (messageObj: any, socket: any, dispatch: any, drafts: [], tempId: any = null, messages: any = []) => {
+export const handleSentMessage = (messageObj: any, socket: any, dispatch: any, drafts: [], tempId: any = null, messages: any = [], setError?: any) => {
     if (messageObj.messageFiles) {
         messageObj.messageFiles = { ...messageObj?.messageFiles[0] }
     }
@@ -36,15 +36,16 @@ export const handleSentMessage = (messageObj: any, socket: any, dispatch: any, d
                 dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: { ...response.sMessageObj, messageSentTime: currentDate, messageBody: response.sMessageObj?.message, messageFiles: [response.sMessageObj?.messageFiles] } })
             }
             dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
-            isSuccess = true
+
             dispatch({ type: reducerCases.ADD_SEND_MESSAGE, newMessage: { ...response.sMessageObj, messageSentTime: currentDate, messageBody: response.sMessageObj?.message, messageFiles: [response.sMessageObj?.messageFiles] } })
             // if (drafts?.length) {
             //     const filterDraftsWithoutThis = drafts?.filter((item: any) => item?.messageToUserID !== messageObj?.messageToUserID)
             //     dispatch({ type: reducerCases.SET_DRAFT_MESSAGE, draftMessages: filterDraftsWithoutThis })
             // }
+        } else {
+            setError("Message Sending Failed")
         }
     })
-    return isSuccess
 }
 
 export const handleSortByDateTime = (arr: any[]) => {
