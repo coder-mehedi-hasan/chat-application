@@ -31,8 +31,8 @@ export default function Dashboard() {
                         {tab === "stories" && <StoriesHistory />}
                     </div>
                     <div style={{ height: "60px" }}>
-                        <div className="d-flex justify-content-between align-items-center h-100 p-2">
-                            <div className={`text-center text-dark-emphasis cursor-pointer ${tab === "chats" && 'active'}`} onClick={() => handleBottomTab("chats")}>
+                        <div className="d-flex align-items-center h-100 p-2">
+                            <div className={`text-center text-dark-emphasis cursor-pointer mx-2 ${tab === "chats" && 'active'}`} onClick={() => handleBottomTab("chats")}>
                                 <p className='m-0'>
                                     <BsFillChatFill style={{ fontSize: "14px" }} />
                                 </p>
@@ -40,15 +40,15 @@ export default function Dashboard() {
                                     Chats
                                 </p>
                             </div>
-                            <div className={`text-center text-dark-emphasis cursor-pointer ${tab === "calls" && 'active'}`} onClick={() => handleBottomTab("calls")}>
+                            {/* <div className={`text-center text-dark-emphasis cursor-pointer ${tab === "calls" && 'active'}`} onClick={() => handleBottomTab("calls")}>
                                 <p className='m-0'>
                                     <FaVideo style={{ fontSize: "14px" }} />
                                 </p>
                                 <p className='m-0 text-sm fw-normal'>
                                     Calls
                                 </p>
-                            </div>
-                            <div className={`text-center text-dark-emphasis cursor-pointer ${tab === "people" && 'active'}`} onClick={() => handleBottomTab("people")}>
+                            </div> */}
+                            <div className={`text-center text-dark-emphasis mx-2 cursor-pointer ${tab === "people" && 'active'}`} onClick={() => handleBottomTab("people")}>
                                 <p className='m-0'>
                                     <BsPeopleFill style={{ fontSize: "14px" }} />
                                 </p>
@@ -56,14 +56,14 @@ export default function Dashboard() {
                                     People
                                 </p>
                             </div>
-                            <div className={`text-center text-dark-emphasis cursor-pointer ${tab === "stories" && 'active'}`} onClick={() => handleBottomTab("stories")}>
+                            {/* <div className={`text-center text-dark-emphasis cursor-pointer ${tab === "stories" && 'active'}`} onClick={() => handleBottomTab("stories")}>
                                 <p className='m-0'>
                                     <BsFillGeoFill style={{ fontSize: "14px" }} />
                                 </p>
                                 <p className='m-0 text-sm fw-normal'>
                                     Stories
                                 </p>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </div>

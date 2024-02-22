@@ -11,6 +11,7 @@ import { BsCheckAll, BsCheckLg } from 'react-icons/bs'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { updateMessage, updateMessageStatus, updateOtherMessageStatus, updateSendMessagesStatus } from '../../utils/updateMessage';
 import { isDateToday } from '../../utils/functions/times';
+import { useMediaQuery } from 'react-responsive'
 
 export default memo(function ChattingContainer() {
     const [{ currentChatUser, userInfo, socket, messages, socketEvent, otherMessages, sendMessages }, dispatch]: any = useStateProvider()
@@ -20,6 +21,7 @@ export default memo(function ChattingContainer() {
     const [perPage, setPerPage] = useState<number>(50)
     const [scrollBarPositionUp, setScrollBarPositionUp] = useState<boolean>(false)
     const [statusLastMessage, setStatusLastMessage] = useState<any[]>([]);
+    const isMobileWidth = useMediaQuery({ maxWidth: 576 })
 
     const { isError, refetch, isSuccess, data: allChattingMessages, isFetching, isLoading, isRefetching } = useQuery({
         queryKey: ["fetch latest messages"],
@@ -218,7 +220,7 @@ export default memo(function ChattingContainer() {
         })
     }
 
-    // console.log("messages from container", messages)
+    console.log("messages from container", messages)
     useEffect(() => {
         socket?.current?.on('updateSenderMessageStatusV2', (data: any) => {
             if (data) {
@@ -249,7 +251,7 @@ export default memo(function ChattingContainer() {
             case 2:
                 return <>{date?.time} <BsCheckAll /></>
             case 3:
-                return <>{date?.time} <BsCheckAll className="brand-color" /></>
+                return <span className='brand-color'>{date?.time} <BsCheckAll /></span>
             default:
                 break;
         }
@@ -291,10 +293,10 @@ export default memo(function ChattingContainer() {
                                         }
                                         <div className='d-flex justify-content-end'>
                                             {
-                                                isLastMessage ?
+                                                isLastMessage && isSender ?
                                                     <OverlayTrigger
                                                         placement="top"
-                                                        delay={{ show: 150, hide: 400 }}
+                                                        delay={{ show: 150, hide: 150 }}
                                                         overlay={(props) => renderSeenByTooltip(props, item, parseInt(isSender ? status : 3))}
                                                     >
                                                         <span className='text-dark fs-6 me-1F'>

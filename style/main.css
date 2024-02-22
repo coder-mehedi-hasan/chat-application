@@ -597,6 +597,40 @@
 .bg-receiver {
     background: #e6e7d7;
 }
+
 /* .file-content svg{
     width: 20px;
 } */
+
+@media only screen and (max-width: 600px) {
+    .react-audio-player {
+        max-width: 220px;
+    }
+
+    .image-content .image-gallery-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .image-content .image-gallery-icon svg {
+        font-size: 16px !important;
+    }
+
+    .image-content .image-gallery-svg {
+        height: 40px !important;
+    }
+
+    .cancel-btn {
+        height: 40px !important;
+        width: 40px !important;
+    }
+
+    .cross-button {
+        height: 16px;
+        width: 16px;
+    }
+}
+
+.selected-new-user {
+    border-color: #3cb29d !important;
+}

@@ -9,6 +9,7 @@ const VoiceContent = ({ message }) => {
             <ReactAudioPlayer
                 src={url}
                 controls
+                
             />
         </>
     );

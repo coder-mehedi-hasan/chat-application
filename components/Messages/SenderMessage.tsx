@@ -31,9 +31,10 @@ function SenderMessages({ data }: any) {
                     delay={{ show: 100, hide: 100 }}
                     overlay={(props) => renderMessageTime(props, data)}
                 >
-                    <div 
-                    onMouseEnter={() => handleAccordionButtonClick(data?._id)} onMouseLeave={() => handleAccordionButtonClick(null)}
-                     >
+                    <div
+                        onMouseEnter={() => handleAccordionButtonClick(data?._id)} onMouseLeave={() => handleAccordionButtonClick(null)}
+                        ref={contentRef}
+                    >
                         {getContent(data)}
                         <div className='reaction'>
                             {

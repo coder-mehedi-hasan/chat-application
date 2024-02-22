@@ -10,6 +10,7 @@ import { useStateProvider } from '../../context/StateContext';
 import { useQuery } from '@tanstack/react-query';
 import { get } from '../../services/api';
 import { Button, Form, InputGroup } from 'react-bootstrap';
+import { useMediaQuery } from 'react-responsive'
 
 
 export default function ChattingHistory() {
@@ -17,6 +18,7 @@ export default function ChattingHistory() {
     const [{ userInfo, otherMessages, chatHistoryUsers }, dispatch]: any = useStateProvider()
     const activeUserRef = useRef(null)
     const [searchInput, setSearchInput] = useState('')
+    const isMobileWidth = useMediaQuery({ maxWidth: 576 })
 
     const { isError, data: searchHistory, isSuccess } = useQuery({
         queryKey: ["searchHistory"],
@@ -51,7 +53,7 @@ export default function ChattingHistory() {
     return (
         <>
             <TopNavBar type={"chats"} />
-            <div style={{ width: "100%", height: "100%", overflow: "scroll" }} className='chat_history'>
+            <div style={{ width: "100%", height: "100%", overflow: "scroll" }} className='chat_history scrollbar_visible_y'>
                 <div className='my-2'>
                     <InputGroup size='sm' className="p-1 rounded-pill bg_gray" >
                         <Button variant="">
@@ -81,7 +83,8 @@ export default function ChattingHistory() {
                                     </div>)
                             })
                         }
-                    </> :
+                    </>
+                     :
                         <>
                             <div className='my-2'>
                                 <div className='h-100 d-flex align-items-start active-users' style={{ overflow: "scroll", scrollBehavior: "smooth", transition: ".4s" }} ref={activeUserRef} onMouseOver={handleOver} onMouseDown={handleGrabbing}>
@@ -112,7 +115,6 @@ export default function ChattingHistory() {
                             <div>
                                 {
                                     users?.map((item: any) => {
-                                        // console.log("from history map",item)
                                         return (
                                             <span key={item?.id}>
                                                 {

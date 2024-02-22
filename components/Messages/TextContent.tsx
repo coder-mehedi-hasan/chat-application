@@ -3,10 +3,13 @@ import { identifyTextOrLink } from '../../utils/identifyTextOrLink';
 import Link from 'next/link';
 import { useStateProvider } from '../../context/StateContext';
 import MessageSideAction from '../common/MessageSideAction';
+import { useMediaQuery } from 'react-responsive'
 
 export default function TextContent({ content, message, ...props }: any) {
     const [{ userInfo }, dispatch]: any = useStateProvider()
     const isSender = message?.messageFromUserID === userInfo?.id
+    const isMobileWidth = useMediaQuery({ maxWidth: 576 })
+
     let containerStyle: any = {
         padding: "8px 12px",
         wordWrap: "break-word",
@@ -45,7 +48,7 @@ export default function TextContent({ content, message, ...props }: any) {
     }
 
     return (
-        <div style={{ maxWidth: "564px" }}>
+        <div style={{ maxWidth: isMobileWidth ? "400px" : "564px" }}>
             {
                 props?.isReplay &&
                 <div className='cursor-pointer'>

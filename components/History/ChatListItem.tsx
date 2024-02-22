@@ -18,7 +18,7 @@ export default function ChatListItem({ user }: any) {
 
     return (
         <div style={{ padding: "10px 5px", height: "60px", cursor: "pointer" }} className={`${(currentChatUser?.id === user?.id) && "current_user_active"}`} onClick={handleClickContact} >
-            <UserInfoBox lastMessageSeenStatus={lastMessageSeen} lastMessage={lastMessage} user={user} size={45} />
+            <UserInfoBox  user={user} size={45} />
         </div>
     )
 }
