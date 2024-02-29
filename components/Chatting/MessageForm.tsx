@@ -278,6 +278,8 @@ function MessageForm() {
     const addAudioElement = async (blob: any) => {
         if (sendEvent) {
             const file = await blobToFile(blob, `${new Date().toString()}_voice.webm`)
+            // console.log(file)
+            // return
             const filesData = [{
                 "fileName": file.name,
                 "fileType": file.type,
@@ -297,25 +299,21 @@ function MessageForm() {
                         body: file,
                     });
                     if (response) {
-                        // socket.current.emit('messageFromClient', { ...message, cloudfrontUrl: url?.cloudfrontUrl, message: "" }, (response: any) => {
-                        //     dispatch({ type: reducerCases.ADD_MESSAGE, newMessage: response.sMessageObj })
-                        //     dispatch({ type: reducerCases.SOCKET_EVENT, socketEvent: true })
-                        //     setSendEvent(null)
-                        //     handleMessageStatus([response?._id], socket, 1)
-                        // })
                         handleSentMessage({
                             ...message,
                             cloudfrontUrl: url?.cloudfrontUrl,
                             message: "Audio",
                             messageMeta: {
                                 contentType: 4,
-                                privateSticker: false
+                                privateSticker: false,
+                                recordingDuration : recorderControls?.recordingTime
                             },
                             messageFiles: [
                                 {
                                     filepath: url?.cloudfrontUrl,
                                     filename: file?.name,
-                                    mimetype: file?.type
+                                    mimetype: file?.type,
+                                    recordingDuration : recorderControls?.recordingTime
                                 }
                             ]
                         }, socket, dispatch, draftMessages)
@@ -358,7 +356,7 @@ function MessageForm() {
         setInputFocus()
     }, [currentChatUser])
 
-    console.log("Error", error)
+    // console.log("Error", error)
 
 
     const RenderPreviewImage = (src: string, index: number) => {
@@ -476,6 +474,7 @@ function MessageForm() {
         })
     }
 
+    console.log(recorderControls?.recordingTime)
 
     return (
         <div className={`position-relative border-top message-form ${isMobileWidth ? "fixed-bottom" : ""}`}>

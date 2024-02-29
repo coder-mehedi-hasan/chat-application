@@ -1,115 +1,137 @@
-"use client"
-import { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect, forwardRef } from 'react';
 
-const Home = () => {
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(50);
-  const containerRef = useRef(null);
-  const [data, setData] = useState([])
+const ParentComponent = () => {
 
-  // const fetchMoreData = async (page: any) => {
-  //   const response = await fetch(`https://api.espd.school/api/v1/teacher?page=${page}`);
-  //   const newData = await response.json();
-  // };
+    const audioRef = useRef(null);
+    const [duration, setDuration] = useState('Loading...');
 
-  // const {
-  //   isLoading,
-  //   isError,
-  //   error,
-  //   data,
-  //   isFetching,
-  // } = useQuery({
-  //   queryKey: ['projects', page],
-  //   queryFn: () => fetchMoreData(page),
-  //   staleTime: 1,
-  //   enabled:!!page
-  // })
+    useEffect(() => {
+        const audioPlayer = audioRef.current;
 
+        const handleMetadataLoaded = () => {
+            const audioDuration = audioPlayer.duration;
+            setDuration(formatDuration(audioDuration));
+        };
 
-  // useEffect(() => {
-  //   const handleScroll = (e) => {
-  //     const scrollHeight = e.target.documentElement.scrollHeight
-  //     const currentHeight = e.target.documentElement.scrollTop + window.innerHeight
-  //     if (currentHeight + 1 >= scrollHeight) {
-  //       setPage(pre => pre + 1)
-  //     }
-  //   }
-  //   window.addEventListener('scroll', handleScroll)
-  //   return () => window.removeEventListener('scroll', handleScroll)
-  // }, [page])
+        if (audioPlayer) {
+            audioPlayer.addEventListener('loadedmetadata', handleMetadataLoaded);
 
-
-  // const fetchMoreData = async () => {
-  //   setLoading(true);
-  //   const response = await fetch(`https://api.espd.school/api/v1/teacher?page=${page}`);
-  //   const newData = await response.json();
-  //   setData((prevData) => [...prevData, ...newData?.data?.data]);
-  //   setPage((prevPage) => prevPage + 1);
-  //   setLoading(false);
-  // };
-
-  // useEffect(() => {
-  //   const handleScroll = (e) => {
-  //     const scrollHeight = e.target.documentElement.scrollHeight
-  //     const currentHeight = e.target.documentElement.scrollTop + window.innerHeight
-  //     if (
-  //       currentHeight + 1 >= scrollHeight
-  //     ) {
-  //       // When user reaches the bottom of the page, load more data
-  //       fetchMoreData();
-  //     }
-  //   };
-
-  //   // Add event listener for scroll
-  //   window.addEventListener('scroll', handleScroll);
-
-  //   // Remove event listener on component unmount
-  //   return () => {
-  //     window.removeEventListener('scroll', handleScroll);
-  //   };
-  // }, []);
-
-  const showNotification = () => {
-    if (Notification.permission === 'granted') {
-      new Notification('Hello, this is a notification!')
-    } else if (Notification.permission !== 'denied') {
-      Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-          new Notification('Permission granted! You can now receive notifications.');
+            // Clean up event listener on component unmount
+            return () => {
+                audioPlayer.removeEventListener('loadedmetadata', handleMetadataLoaded);
+            };
         }
-      });
-    }
-  };
-  /*
-  "contentInfo":"{
-    "c":false,
-    "i":"65cf48902296f80686cfb3c2",
-    "n":"Mehedi",
-    "o":"Hello",
-    "r":"Testing",
-    "rc":false
-  }"
-  ,
-  "{
-    "c":true,
-    "i":"65cf4ef52296f80686cfb3ce",
-    "n":"Mehedi",
-    "o":"https://cdn.kotha.app/messaging/1708084978537_user_feed_17080849770823550786385508246157.webp",
-    "r":"Oóo",
-    "rc":false
-  }"
-  
+    }, [audioRef]);
 
-  */
+    console.log(audioRef)
 
-  return (
-    <div>
-      {/* <h1>Welcome to My Next.js App</h1>
-      <button onClick={() => showNotification()}>Show Notification</button> */}
-      {/* <iframe width="560" height="315" src="https://www.youtube.com/embed/707roYCfOts?si=SNuy29cuZNuhmm8s" title="YouTube video player" allowFullScreen={true}  frameborder="0" allow='autoplay'></iframe> */}
-      <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/707roYCfOts?si=SNuy29cuZNuhmm8s" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-    </div>
+    const formatDuration = (seconds) => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = Math.floor(seconds % 60);
+        return `${minutes} minutes and ${remainingSeconds} seconds`;
+    };
 
-  );
+    useEffect(() => {
+        if (audioRef && !audioRef.current.currentTime) {
+            // audioRef?.current?.
+            audioRef.current.currentTime = 8
+        }
+    }, [audioRef])
+
+    return (
+        <div>
+            {/* <input type="file" name="" id="" onChange={(e) => console.log(e.target.files)} />
+            <button onClick={handleStartRecording}>Start Recording from Parent</button>
+            <button onClick={handleStopRecording}>Stop Recording from Parent</button> */}
+            {/* <AudioRecorder ref={audioRecorderRef} /> */}
+            <audio controls ref={audioRef}>
+                <source src="https://cdn.kotha.app/messaging/1709052363690_Recorder_11b22e07_e0ec_4fca_9d38_bccf2ae4dd29.m4a" />
+                Your browser does not support the audio element.
+            </audio>
+            <p>Duration: {duration}</p>
+        </div>
+    );
 };
-export default Home;
+
+const AudioRecorder = forwardRef((props, ref) => {
+    const [isRecording, setIsRecording] = useState(false);
+    const [recordingTime, setRecordingTime] = useState(0);
+    const mediaRecorderRef = useRef(null);
+    const chunksRef = useRef([]);
+    const timerRef = useRef(null);
+
+    const startRecording = () => {
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then((stream) => {
+                mediaRecorderRef.current = new MediaRecorder(stream, { mimeType: 'audio/wav' });
+                mediaRecorderRef.current.ondataavailable = handleDataAvailable;
+                mediaRecorderRef.current.onstop = handleStop;
+
+                setIsRecording(true);
+                setRecordingTime(0);
+                timerRef.current = setInterval(() => {
+                    setRecordingTime((prevTime) => prevTime + 1);
+                }, 1000);
+
+                mediaRecorderRef.current.start();
+            })
+            .catch((error) => {
+                console.error('Error accessing microphone:', error);
+            });
+    };
+
+    const stopRecording = () => {
+        if (mediaRecorderRef.current && isRecording) {
+            mediaRecorderRef.current.stop();
+            setIsRecording(false);
+            clearInterval(timerRef.current);
+        }
+    };
+
+    const handleDataAvailable = (event) => {
+        if (event.data.size > 0) {
+            chunksRef.current.push(event.data);
+        }
+    };
+
+    const handleStop = () => {
+        const recordedBlob = new Blob(chunksRef.current, { type: 'audio/wav' });
+        console.log(recordedBlob)
+        // You can now do something with the recorded audio Blob, e.g., save it or play it.
+    };
+
+    const formatTime = (seconds) => {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const remainingSeconds = seconds % 60;
+
+        return `${hours}:${minutes}:${remainingSeconds}`;
+    };
+
+    useEffect(() => {
+        if (ref) {
+            ref.current = {
+                startRecording,
+                stopRecording,
+                formatTime,
+                // Add other methods or properties if needed
+            };
+        }
+
+        return () => {
+            // Cleanup: stop recording and clear the interval when the component unmounts
+            stopRecording();
+        };
+    }, [ref, startRecording, stopRecording]);
+
+    return (
+        <div>
+            <div>Recording Time: {formatTime(recordingTime)}</div>
+            <button onClick={isRecording ? stopRecording : startRecording}>
+                {isRecording ? 'Stop Recording' : 'Start Recording'}
+            </button>
+        </div>
+    );
+});
+
+export default ParentComponent;
