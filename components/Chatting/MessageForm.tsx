@@ -150,7 +150,7 @@ function MessageForm() {
     }
 
     const handleError = () => {
-        console.log("Something is Wrong Message send Failed")
+        // console.log("Something is Wrong Message send Failed")
     }
 
     //handle submit message
@@ -270,10 +270,13 @@ function MessageForm() {
     };
 
     const handleSendVoiceMessage = (event: any) => {
+        setMessage({ ...message, recordingDuration: recorderControls?.recordingTime });
         recorderControls.stopRecording()
         setSendEvent({ event, sending: true })
     }
 
+
+    // console.log("recording time",recorderControls?.recordingTime)
     //send voice message
     const addAudioElement = async (blob: any) => {
         if (sendEvent) {
@@ -306,14 +309,13 @@ function MessageForm() {
                             messageMeta: {
                                 contentType: 4,
                                 privateSticker: false,
-                                recordingDuration : recorderControls?.recordingTime
+                                recordingDuration: message?.recordingDuration
                             },
                             messageFiles: [
                                 {
                                     filepath: url?.cloudfrontUrl,
                                     filename: file?.name,
                                     mimetype: file?.type,
-                                    recordingDuration : recorderControls?.recordingTime
                                 }
                             ]
                         }, socket, dispatch, draftMessages)
@@ -356,7 +358,7 @@ function MessageForm() {
         setInputFocus()
     }, [currentChatUser])
 
-    // console.log("Error", error)
+    // console.log("Error", message)
 
 
     const RenderPreviewImage = (src: string, index: number) => {
@@ -474,7 +476,7 @@ function MessageForm() {
         })
     }
 
-    console.log(recorderControls?.recordingTime)
+    // console.log(recorderControls?.recordingTime)
 
     return (
         <div className={`position-relative border-top message-form ${isMobileWidth ? "fixed-bottom" : ""}`}>
@@ -733,7 +735,7 @@ const StickerList = ({ category, handlStickerClick, ...props }: any) => {
             {
                 Array.isArray(stickers) && stickers?.length &&
                 stickers?.map(img => {
-                    console.log("sticker image", img)
+                    // console.log("sticker image", img)
                     return <>
                         <div className='cursor-pointer my-1' onClick={() => handlStickerClick(img)} style={{ width: "32%" }}>
                             <img src={img?.Url} alt="" className='img-fluid' />

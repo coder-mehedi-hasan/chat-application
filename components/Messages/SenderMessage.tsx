@@ -1,11 +1,10 @@
 import { useRef, useState } from 'react';
-import { Accordion, OverlayTrigger } from 'react-bootstrap';
+import { OverlayTrigger } from 'react-bootstrap';
+import { useMediaQuery } from 'react-responsive';
 import getContent from '../../utils/getContent';
 import MessageSideAction from '../common/MessageSideAction';
 import renderMessageTime from '../common/render-message-time';
-import AccordionCollapse from './AccordionCollapse';
 import Reactions from './Reactions';
-import { useMediaQuery } from 'react-responsive'
 
 
 function SenderMessages({ data }: any) {
@@ -39,9 +38,9 @@ function SenderMessages({ data }: any) {
                     {getContent(data)}
                     <div className='reaction'>
                         {
-                            reactionsAll?.length && Array.isArray(reactionsAll) ? reactionsAll?.map(item => {
+                            reactionsAll?.length && Array.isArray(reactionsAll) ? reactionsAll?.map((item,index) => {
                                 if (data?.reactionCounts[item] > 0)
-                                    return <Reactions reaction={item} messageId={data?._id} message={data} />
+                                    return <Reactions reaction={item} messageId={data?._id} message={data} key={index} />
                             }) : ""
                         }
                     </div>
