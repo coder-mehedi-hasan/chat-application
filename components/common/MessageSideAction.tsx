@@ -19,10 +19,10 @@ export default function MessageSideAction({ message }: any) {
 
     useEffect(() => {
         const handler = (e) => {
-            if (!moreContainer?.current?.contains(e.target) && !more?.current?.contains(e.target) ) {
+            if (!moreContainer?.current?.contains(e.target) && !more?.current?.contains(e.target)) {
                 setShowMore(false);
             }
-            if (!emojiContainer?.current?.contains(e.target) && !emoji?.current?.contains(e.target) ) {
+            if (!emojiContainer?.current?.contains(e.target) && !emoji?.current?.contains(e.target)) {
                 setShowReaction(false);
             }
         }
@@ -45,6 +45,7 @@ export default function MessageSideAction({ message }: any) {
 
     const handleClick = (reaction: any) => {
         handleReactionSend(message?._id, reaction?.name, true, socket, userInfo, messages, dispatch)
+        setShowReaction(false);
     };
 
     const handleDelClick = () => {
